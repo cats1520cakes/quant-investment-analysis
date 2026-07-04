@@ -43,7 +43,7 @@
 
 当前机器 macOS 系统 HTTP/HTTPS 代理为 `127.0.0.1:1082`。下载脚本现在默认启用 direct mode：清理代理环境变量、设置 `NO_PROXY=*`、禁用 Python proxy discovery，并设置 socket timeout；只有显式传 `--allow-proxy` 才允许代理路径。
 
-已用 direct mode 完成一个 BaoStock 免费路线 smoke：`sh.600000` / `600000.SH` raw 与 qfq 日线已落盘，`processed/phase2_free/stock_panel.parquet` 已生成 4,005 行。当前只是一只股票的管线验证，不具备统计意义；正式 free-real leaderboard 仍需扩大到 20、500、全量股票后再评估。
+已用 direct mode 完成 BaoStock 免费路线 100 只上市 A 股样本：raw 与 qfq 日线已落盘，`processed/phase2_free/stock_panel.parquet` 已生成 394,843 行、100 只股票，日期覆盖 `20100104` 到 `20260703`。完整 free-real 预榜已覆盖 42 个 S2/S3/S4 规格。当前仍是小样本近似榜，不具备全量统计意义；正式 free-real leaderboard 仍需扩大到 500、全量股票后再评估。BaoStock 高并发可能触发登录态失效，后续放大应使用低并发分片续跑。
 
 `free_real` 准入：
 

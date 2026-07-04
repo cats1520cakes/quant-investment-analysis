@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -185,7 +186,13 @@ def normalize_daily(frame: pd.DataFrame, signal: bool) -> pd.DataFrame:
 
 def write_frame(path: Path, frame: pd.DataFrame) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
-    frame.to_parquet(path, index=False)
+    tmp_path = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        frame.to_parquet(tmp_path, index=False)
+        tmp_path.replace(path)
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
     return path
 
 
@@ -271,39 +278,69 @@ class BaoStockClient:
 
 
 def write_manifest(config: FreeRealConfig, records: list[dict]) -> Path:
+    if not records:
+        return config.manifest_path
+    import fcntl
+
     config.manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    frame = pd.DataFrame(records)
-    if config.manifest_path.exists():
-        old = pd.read_csv(config.manifest_path)
-        frame = pd.concat([old, frame], ignore_index=True)
+    lock_path = config.manifest_path.with_suffix(config.manifest_path.suffix + ".lock")
+    with lock_path.open("w", encoding="utf-8") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        frame = pd.DataFrame(records)
+        if config.manifest_path.exists():
+            old = pd.read_csv(config.manifest_path)
+            frame = pd.concat([old, frame], ignore_index=True)
         frame = frame.drop_duplicates(["data_tier", "source", "table", "name", "path"], keep="last")
-    frame.to_csv(config.manifest_path, index=False, encoding="utf-8")
+        tmp_path = config.manifest_path.with_name(f".{config.manifest_path.name}.{os.getpid()}.tmp")
+        try:
+            frame.to_csv(tmp_path, index=False, encoding="utf-8")
+            tmp_path.replace(config.manifest_path)
+        finally:
+            if tmp_path.exists():
+                tmp_path.unlink()
+        fcntl.flock(lock, fcntl.LOCK_UN)
     return config.manifest_path
 
 
-def select_codes(stock_basic: pd.DataFrame, max_codes: int | None) -> list[str]:
+def select_codes(
+    stock_basic: pd.DataFrame,
+    max_codes: int | None,
+    start_index: int = 0,
+    end_index: int | None = None,
+) -> list[str]:
     frame = stock_basic.copy()
     if "type" in frame.columns:
         frame = frame.loc[frame["type"].astype(str) == "1"]
     if "list_status" in frame.columns:
         frame = frame.loc[frame["list_status"].astype(str) == "1"]
     codes = frame["source_code"].dropna().astype(str).sort_values().tolist()
-    return codes[:max_codes] if max_codes else codes
+    if max_codes:
+        codes = codes[:max_codes]
+    if start_index < 0:
+        raise ValueError("start_index must be non-negative")
+    if end_index is not None and end_index < start_index:
+        raise ValueError("end_index must be greater than or equal to start_index")
+    return codes[start_index:end_index]
 
 
-def download_baostock_free_real(config: FreeRealConfig, max_codes: int | None = None, force: bool = False) -> Path:
+def download_baostock_free_real(
+    config: FreeRealConfig,
+    max_codes: int | None = None,
+    force: bool = False,
+    start_index: int = 0,
+    end_index: int | None = None,
+) -> Path:
     ensure_dirs(config)
-    records: list[dict] = []
     with BaoStockClient(config) as client:
         stock_basic = client.stock_basic()
         stock_basic_path = write_frame(config.data_root / "raw/baostock/stock_basic.parquet", stock_basic)
-        records.append(manifest_record("baostock", "stock_basic", "all", stock_basic_path, stock_basic))
+        write_manifest(config, [manifest_record("baostock", "stock_basic", "all", stock_basic_path, stock_basic)])
 
         trade_calendar = client.trade_calendar()
         trade_calendar_path = write_frame(config.data_root / "raw/baostock/trade_calendar.parquet", trade_calendar)
-        records.append(manifest_record("baostock", "trade_calendar", "all", trade_calendar_path, trade_calendar))
+        write_manifest(config, [manifest_record("baostock", "trade_calendar", "all", trade_calendar_path, trade_calendar)])
 
-        codes = select_codes(stock_basic, max_codes=max_codes)
+        codes = select_codes(stock_basic, max_codes=max_codes, start_index=start_index, end_index=end_index)
         for i, source_code in enumerate(codes, start=1):
             print(f"[download] {i}/{len(codes)} {source_code}", flush=True)
             raw_path = config.data_root / "raw" / "baostock" / "daily_raw" / f"{source_code.replace('.', '_')}.parquet"
@@ -317,13 +354,18 @@ def download_baostock_free_real(config: FreeRealConfig, max_codes: int | None = 
                     qfq = client.daily(source_code, adjustflag=str(config.baostock.get("adjustflag_signal", "2")), signal=True)
                     write_frame(raw_path, raw)
                     write_frame(qfq_path, qfq)
-                records.append(manifest_record("baostock", "daily_raw", source_code, raw_path, raw))
-                records.append(manifest_record("baostock", "daily_qfq", source_code, qfq_path, qfq))
+                write_manifest(
+                    config,
+                    [
+                        manifest_record("baostock", "daily_raw", source_code, raw_path, raw),
+                        manifest_record("baostock", "daily_qfq", source_code, qfq_path, qfq),
+                    ],
+                )
             except Exception as exc:  # noqa: BLE001 - free source can be flaky; keep batch resumable.
                 message = f"{source_code}: {type(exc).__name__}: {exc}"
                 print(f"[fail] {message}", flush=True)
                 append_error(config, "daily", message)
-    return write_manifest(config, records)
+    return config.manifest_path
 
 
 def iter_existing_daily_files(config: FreeRealConfig, table: str) -> Iterable[Path]:

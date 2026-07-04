@@ -86,8 +86,7 @@ uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_d
 ```bash
 uv run python scripts/download_phase2_free_real_data.py \
   --config config/phase2_free_real_data.yaml \
-  --max-codes 20 \
-  --force
+  --max-codes 100
 
 uv run python scripts/validate_phase2_free_real_data.py \
   --config config/phase2_free_real_data.yaml
@@ -96,11 +95,10 @@ uv run python scripts/build_phase2_free_stock_panel.py \
   --config config/phase2_free_real_data.yaml
 
 uv run python scripts/run_phase2_free_real_experiment.py \
-  --config config/phase2_free_real_data.yaml \
-  --max-strategies 10
+  --config config/phase2_free_real_data.yaml
 ```
 
-当前已完成 `600000.SH` 单票 smoke，证明 direct mode 下载、free panel 构建和 S2 smoke leaderboard 能跑通；这只是管线验证，不是统计结论。
+当前已完成 BaoStock direct-mode 100 只上市 A 股样本：`processed/phase2_free/stock_panel.parquet` 为 394,843 行、100 只股票，覆盖 `20100104` 到 `20260703`。完整 free-real 预榜覆盖 42 个 S2/S3/S4 规格；这仍是小样本近似榜，不是 strict-real 真实排行榜或统计结论。BaoStock 高并发可能触发登录态失效，建议用 `--start-index/--end-index` 做低并发分片续跑。
 
 `free_real` 字段边界：
 

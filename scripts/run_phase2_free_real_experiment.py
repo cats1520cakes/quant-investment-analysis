@@ -92,6 +92,28 @@ def main() -> None:
     leaderboard_path.parent.mkdir(parents=True, exist_ok=True)
     leaderboard.to_csv(leaderboard_path, index=False, encoding="utf-8")
 
+    family_rows = []
+    allowed = leaderboard.loc[leaderboard["allowed"].fillna(False)].copy()
+    for family, group in leaderboard.groupby("family", sort=True):
+        allowed_group = group.loc[group["allowed"].fillna(False)].copy()
+        best = allowed_group.sort_values(["avg_top_score", "n_signal_days"], ascending=[False, False]).head(1)
+        family_rows.append(
+            {
+                "family": family,
+                "specs": int(len(group)),
+                "allowed_specs": int(allowed_group.shape[0]),
+                "best_strategy": "" if best.empty else str(best.iloc[0]["strategy"]),
+                "best_avg_top_score": float("nan") if best.empty else float(best.iloc[0]["avg_top_score"]),
+                "max_signal_days": 0 if allowed_group.empty else int(allowed_group["n_signal_days"].max()),
+            }
+        )
+    family_summary = pd.DataFrame(family_rows)
+    best_by_family = (
+        allowed.sort_values(["family", "avg_top_score", "n_signal_days"], ascending=[True, False, False])
+        .groupby("family", sort=True)
+        .head(3)
+    )
+
     top_path = Path(config.raw["paths"]["top_strategies"])
     lines = [
         "# Phase 2 Free Real Top Strategies",
@@ -99,8 +121,19 @@ def main() -> None:
         "- Data tier: `free_real`.",
         "- Strict real leaderboard remains separate and blocked until official/paid-grade fields exist.",
         "- `up_limit/down_limit` are derived; `is_suspended` is BaoStock `tradestatus` proxy.",
+        f"- Strategy specs evaluated: `{len(leaderboard)}`.",
+        "",
+        "## Family Coverage",
+        "",
+        family_summary.to_markdown(index=False) if not family_summary.empty else "No family rows.",
+        "",
+        "## Global Top 20",
         "",
         leaderboard.head(20).to_markdown(index=False) if not leaderboard.empty else "No strategy rows.",
+        "",
+        "## Best By Family",
+        "",
+        best_by_family.to_markdown(index=False) if not best_by_family.empty else "No allowed strategy rows.",
     ]
     top_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"leaderboard={leaderboard_path}")

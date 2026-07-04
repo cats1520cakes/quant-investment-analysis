@@ -18,6 +18,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Download Phase 2 free-real BaoStock data.")
     parser.add_argument("--config", default="config/phase2_free_real_data.yaml")
     parser.add_argument("--max-codes", type=int, default=0)
+    parser.add_argument("--start-index", type=int, default=0, help="0-based inclusive start index within the selected listed-stock universe.")
+    parser.add_argument("--end-index", type=int, default=0, help="0-based exclusive end index within the selected listed-stock universe; 0 means no slice end.")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--allow-proxy", action="store_true", help="Allow visible proxy/VPN settings for this download.")
     args = parser.parse_args()
@@ -33,7 +35,13 @@ def main() -> None:
     except ProxyDetectedError as exc:
         print(str(exc), file=sys.stderr)
         raise SystemExit(2) from exc
-    manifest = download_baostock_free_real(config, max_codes=args.max_codes or None, force=args.force)
+    manifest = download_baostock_free_real(
+        config,
+        max_codes=args.max_codes or None,
+        force=args.force,
+        start_index=args.start_index,
+        end_index=args.end_index or None,
+    )
     print(f"manifest={manifest}")
 
 

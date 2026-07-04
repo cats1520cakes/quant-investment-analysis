@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from quant_proof.free_sources.baostock_adapter import FreeRealConfig
+from quant_proof.free_sources.baostock_adapter import FreeRealConfig, select_codes, write_manifest
 from quant_proof.free_sources.code_map import baostock_to_ts_code, ts_code_to_baostock
 from quant_proof.free_sources.validators import strategy_allowed_in_tier
 from quant_proof.real_strategies import add_real_stock_eligibility
@@ -120,3 +120,41 @@ def test_free_real_and_proxy_strategy_admission() -> None:
     assert strategy_allowed_in_tier("S2_real_stock_momentum", "free_real").allowed
     assert not strategy_allowed_in_tier("S5_real_limitup_board", "free_real").allowed
     assert not strategy_allowed_in_tier("S2_real_stock_momentum", "proxy_research").allowed
+
+
+def test_select_codes_supports_prefix_and_slices() -> None:
+    stock_basic = pd.DataFrame(
+        {
+            "source_code": ["sh.600003", "sh.000001", "sh.600001", "sh.600002", "sz.000001"],
+            "type": ["1", "2", "1", "1", "1"],
+            "list_status": ["1", "1", "1", "0", "1"],
+        }
+    )
+
+    assert select_codes(stock_basic, max_codes=None) == ["sh.600001", "sh.600003", "sz.000001"]
+    assert select_codes(stock_basic, max_codes=2) == ["sh.600001", "sh.600003"]
+    assert select_codes(stock_basic, max_codes=3, start_index=1, end_index=3) == ["sh.600003", "sz.000001"]
+
+
+def test_write_manifest_upserts_records(tmp_path: Path) -> None:
+    config = free_config(tmp_path)
+    record = {
+        "data_tier": "free_real",
+        "source": "baostock",
+        "table": "daily_raw",
+        "name": "sh.600000",
+        "path": str(tmp_path / "raw.parquet"),
+        "rows": 1,
+        "columns": "a",
+        "sha256": "old",
+        "downloaded_at": "2026-01-01T00:00:00",
+    }
+    updated = record | {"rows": 2, "sha256": "new"}
+
+    write_manifest(config, [record])
+    write_manifest(config, [updated])
+
+    manifest = pd.read_csv(tmp_path / "00_meta" / "manifests" / "test.csv")
+    assert len(manifest) == 1
+    assert int(manifest.iloc[0]["rows"]) == 2
+    assert manifest.iloc[0]["sha256"] == "new"

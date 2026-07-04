@@ -92,7 +92,10 @@ def validate_panel(path: Path, data_root: Path) -> tuple[bool, str]:
         non_stock = sorted(set(frame["source_code"].dropna().astype(str)) - stock_codes)
         if non_stock:
             return False, f"panel contains non-stock source_code rows, e.g. {non_stock[:5]}"
-    return True, f"panel rows={len(frame)}"
+    n_stocks = frame["ts_code"].dropna().astype(str).nunique() if "ts_code" in frame.columns else 0
+    dates = frame["trade_date"].dropna().astype(str) if "trade_date" in frame.columns else pd.Series(dtype=str)
+    date_range = "NA" if dates.empty else f"{dates.min()}..{dates.max()}"
+    return True, f"panel rows={len(frame)}; stocks={n_stocks}; date_range={date_range}"
 
 
 def write_report(config_path: str | Path) -> Path:
@@ -131,6 +134,8 @@ def write_report(config_path: str | Path) -> Path:
         "## Raw Table Status",
         "",
         statuses.to_markdown(index=False),
+        "",
+        "Raw file counts may include older cache files. Panel admission is based on matched listed A-share stock raw/qfq files.",
         "",
         "## Panel Status",
         "",

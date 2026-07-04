@@ -45,7 +45,7 @@
 - 当前真实 leaderboard 被 validation 阻断：缺 `trade_cal`, `stock_basic`, `daily`, `adj_factor`, `daily_basic`, `stk_limit`, `suspend_d`, `namechange`, `fut_*`, `opt_*` 等真实表。
 - 参数化期权只能作为压力层，不能作为真实期权链 leaderboard。
 - 当前机器可见 macOS 系统代理 `127.0.0.1:1082`，但下载脚本默认 direct mode 会绕过 Python 可见代理。
-- 已完成 `600000.SH` 单票 BaoStock direct-mode smoke，生成 `processed/phase2_free/stock_panel.parquet` 4,005 行和 free-real smoke leaderboard；这只是管线验证，不是统计结论。
+- 已完成 BaoStock direct-mode 100 只上市 A 股样本，生成 `processed/phase2_free/stock_panel.parquet` 394,843 行、100 只股票、日期覆盖 `20100104` 到 `20260703`，并生成覆盖 42 个 S2/S3/S4 规格的 free-real 预榜；这仍是免费近似榜，不是 strict-real 真实排行榜或统计结论。
 
 ## 给 GPT Pro 的建议问题
 
