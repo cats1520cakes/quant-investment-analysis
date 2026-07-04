@@ -1,0 +1,24 @@
+.DS_Store
+._*
+
+.venv/
+.codebase-mcp/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+.env
+.env.*
+!.env.example
+
+data/
+logs/
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+
+# Large experiment artifacts live on /Volumes/PSSD1TB/量化数据.
+*.csv
+*.parquet
+*.zip

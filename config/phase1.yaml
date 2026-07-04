@@ -1,0 +1,65 @@
+data_root: /Volumes/PSSD1TB/量化数据
+data_source: baostock_index
+start_date: "20100101"
+end_date: null
+monthly_deposit: 30000
+target_month_12: 500000
+target_month_24: 1200000
+random_seed: 20260704
+
+instruments:
+  "000300":
+    name: 沪深300指数
+    baostock_code: sh.000300
+  "000905":
+    name: 中证500指数
+    baostock_code: sh.000905
+  "000852":
+    name: 中证1000指数
+    baostock_code: sh.000852
+  "399006":
+    name: 创业板指
+    baostock_code: sz.399006
+  "399673":
+    name: 创业板50指数
+    baostock_code: sz.399673
+  "000016":
+    name: 上证50指数
+    baostock_code: sh.000016
+  "000001":
+    name: 上证指数
+    baostock_code: sh.000001
+  "399001":
+    name: 深证成指
+    baostock_code: sz.399001
+  "399005":
+    name: 中小100指数
+    baostock_code: sz.399005
+
+execution:
+  commission_bps: 2.0
+  min_commission: 5.0
+  transfer_fee_bps_each_side: 0.1
+  stamp_tax_sell_bps: 0.0
+  slippage_bps: 5.0
+
+rolling:
+  window_months: 24
+  min_trading_days: 420
+  start_frequency: monthly
+
+bootstrap:
+  enabled: true
+  paths: 2000
+  trading_days: 504
+  block_sizes: [5, 20, 60]
+
+strategies:
+  benchmark_symbol: "000300"
+  dca_symbols: ["000300", "000905", "000852", "399006", "399673"]
+  momentum_lookbacks: [20, 60, 120]
+  momentum_top_k: [1, 2, 3]
+  rebalance: ["weekly", "monthly"]
+  market_filters: ["none", "ma200"]
+  gross_exposure: [1.0, 1.2, 1.5]
+  financing_rate_annual: [0.07]

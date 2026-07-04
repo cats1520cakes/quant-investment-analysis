@@ -1,0 +1,97 @@
+data_root: /Volumes/PSSD1TB/量化数据
+start_date: "20100101"
+end_date: null
+primary_source: tushare
+backup_sources: [akshare, baostock]
+token_env: TUSHARE_TOKEN
+write_format: parquet
+request_sleep_seconds: 0.25
+retry_attempts: 3
+
+paths:
+  manifest: 00_meta/manifests/phase2_real_data_manifest.csv
+  validation_report: reports/phase2_real_data_validation.md
+  errors_dir: 00_meta/errors
+  logs_dir: 00_meta/logs
+
+tushare:
+  exchanges:
+    stock: ""
+    index: [000300.SH, 000905.SH, 000852.SH, 399006.SZ, 399673.SZ, 000016.SH, 000001.SH, 399001.SZ, 399005.SZ]
+    futures: CFFEX
+    options: [SSE, SZSE, CFFEX]
+  stock_statuses: [L, D, P]
+  stock_daily_tables: [daily, adj_factor, daily_basic]
+  date_keyed_tables: [stk_limit]
+  lifecycle_tables: [stock_basic, namechange, suspend_d]
+  market_tables: [trade_cal, index_daily, index_weight, fund_basic, fund_daily, fut_basic, fut_daily, opt_basic, opt_daily]
+  etf_markets: [E]
+  max_rows_per_file: 500000
+
+required_for_leaderboard:
+  stock_strategies: [stock_basic, daily, adj_factor, daily_basic, stk_limit, suspend_d, namechange]
+  etf_strategies: [fund_basic, fund_daily]
+  futures_strategies: [fut_basic, fut_daily]
+  options_strategies: [opt_basic, opt_daily]
+
+phase2_strategy_gate:
+  no_index_proxy_in_real_leaderboard: true
+  no_current_constituents_backfill: true
+  no_drop_delisted_samples: true
+  require_limit_and_suspend_for_stock: true
+  require_real_futures_contracts: true
+  require_real_options_contracts: true
+
+derivatives_contract_specs:
+  futures:
+    IF:
+      underlying: 沪深300
+      multiplier: 300
+      exchange_min_margin_rate: 0.08
+      effective_margin_rates: [0.12, 0.15, 0.20]
+      integer_lots_only: true
+    IH:
+      underlying: 上证50
+      multiplier: 300
+      exchange_min_margin_rate: 0.08
+      effective_margin_rates: [0.12, 0.15, 0.20]
+      integer_lots_only: true
+    IC:
+      underlying: 中证500
+      multiplier: 200
+      exchange_min_margin_rate: 0.08
+      effective_margin_rates: [0.12, 0.15, 0.20]
+      integer_lots_only: true
+    IM:
+      underlying: 中证1000
+      multiplier: 200
+      exchange_min_margin_rate: 0.08
+      effective_margin_rates: [0.12, 0.15, 0.20]
+      integer_lots_only: true
+  index_options:
+    IO:
+      underlying: 沪深300
+      multiplier: 100
+      cash_settled: true
+    MO:
+      underlying: 中证1000
+      multiplier: 100
+      cash_settled: true
+    HO:
+      underlying: 上证50
+      multiplier: 100
+      cash_settled: true
+  etf_options:
+    default_contract_unit: 10000
+
+parametric_option_overlay:
+  enabled_only_as_stress_test: true
+  is_real_chain: false
+  pricing_models: [european_payoff, black_scholes_approx]
+  iv_multipliers_to_realized_vol: [1.0, 1.3, 1.6, 2.0]
+  iv_crush: [0.0, 0.3]
+  tenors_days: [30, 60, 90]
+  deltas: [0.25, 0.35, 0.50, 0.65]
+  monthly_budget_pct_nav: [0.005, 0.01, 0.02, 0.03, 0.05]
+  allowed_structures: [buy_call, bull_call_spread, protective_put, put_spread_hedge]
+  disallowed_until_real_chain: [naked_short_option, short_straddle, short_strangle]
