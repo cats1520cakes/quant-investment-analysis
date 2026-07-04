@@ -11,7 +11,7 @@
 - Phase 2 engine 撮合规则骨架：T+1、停牌、涨跌停、卖出印花税和成交金额上限。
 - S2/S3/S4 真实个股策略规格与信号打分入口。
 - Phase 2 Free Real 路线：BaoStock 主源、AKShare 补充、Qlib 作为 proxy research，严格区分 `strict_real/free_real/proxy_research`。
-- 下载脚本默认拒绝可见 macOS/环境代理，避免市场数据请求走 VPN / 本地代理流量。
+- 下载脚本默认启用 direct mode：清理代理环境变量、设置 `NO_PROXY=*`、禁用 Python proxy discovery，并设置 socket timeout；只有 `--allow-proxy` 才允许代理路径。
 - 个股、股指期货、股指/ETF 期权的 Phase 2 边界文档。
 - `reports/current_repo_healthcheck.md` 记录当前仓库可运行状态。
 
@@ -44,8 +44,8 @@
 - Phase 1 结果是 BaoStock 指数代理，不等价于真实 ETF、全 A 个股、真实期货或真实期权回测。
 - 当前真实 leaderboard 被 validation 阻断：缺 `trade_cal`, `stock_basic`, `daily`, `adj_factor`, `daily_basic`, `stk_limit`, `suspend_d`, `namechange`, `fut_*`, `opt_*` 等真实表。
 - 参数化期权只能作为压力层，不能作为真实期权链 leaderboard。
-- 当前机器可见 macOS 系统代理 `127.0.0.1:1082`，下载脚本会拒绝联网；需关闭代理/VPN 路径后再拉 BaoStock/AKShare/Tushare 数据。
-- 当前外置盘 `raw/baostock/daily_raw` 残留的是指数缓存；free validation 已识别没有 matched listed stock daily files，free stock panel 不会构建。
+- 当前机器可见 macOS 系统代理 `127.0.0.1:1082`，但下载脚本默认 direct mode 会绕过 Python 可见代理。
+- 已完成 `600000.SH` 单票 BaoStock direct-mode smoke，生成 `processed/phase2_free/stock_panel.parquet` 4,005 行和 free-real smoke leaderboard；这只是管线验证，不是统计结论。
 
 ## 给 GPT Pro 的建议问题
 

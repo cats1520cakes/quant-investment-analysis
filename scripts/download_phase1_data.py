@@ -11,7 +11,7 @@ from quant_proof.data import (
     write_download_manifest,
     write_processed_prices,
 )
-from quant_proof.network_guard import ProxyDetectedError, require_direct_network
+from quant_proof.network_guard import ProxyDetectedError, direct_network_message, require_direct_network
 
 
 def main() -> None:
@@ -25,7 +25,9 @@ def main() -> None:
     config = load_config(args.config)
     ensure_data_dirs(config.data_root)
     try:
-        require_direct_network(allow_proxy=args.allow_proxy)
+        visible = require_direct_network(allow_proxy=args.allow_proxy)
+        if not args.allow_proxy:
+            print(f"[network] {direct_network_message(visible)}", flush=True)
     except ProxyDetectedError as exc:
         print(str(exc))
         raise SystemExit(2) from exc

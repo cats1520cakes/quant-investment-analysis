@@ -3,7 +3,7 @@
 ## Leaderboard Tiers
 
 - `strict_real_leaderboard`: remains blocked unless paid/official fields exist (`official stk_limit`, `suspend_d`, `daily_basic`, `adj_factor`, futures/options chains).
-- `free_real_leaderboard`: blocked until BaoStock raw/qfq data or free panel exists; uses BaoStock/AKShare derived fields.
+- `free_real_leaderboard`: can run after panel build; uses BaoStock/AKShare derived fields.
 - `proxy_research_leaderboard`: Qlib/index proxy only; cannot enter real leaderboards.
 
 ## Raw Table Status
@@ -12,13 +12,13 @@
 |:---------------|--------:|-------:|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | stock_basic    |       1 |   8819 | True      | delist_date, list_date, list_status, name, source_code, ts_code, type                                                                                             |
 | trade_calendar |       1 |   6029 | True      | is_open, trade_date                                                                                                                                               |
-| daily_raw      |       6 |  24030 | True      | amount, close, high, is_st_raw, low, open, pb, pcf_ttm, pct_chg, pe_ttm, pre_close, ps_ttm, source_code, trade_date, trade_status, ts_code, turnover_rate, volume |
-| daily_qfq      |       6 |  24030 | True      | adj_close_for_signal, adj_high_for_signal, adj_low_for_signal, adj_open_for_signal, source_code, trade_date, ts_code                                              |
+| daily_raw      |       7 |  28035 | True      | amount, close, high, is_st_raw, low, open, pb, pcf_ttm, pct_chg, pe_ttm, pre_close, ps_ttm, source_code, trade_date, trade_status, ts_code, turnover_rate, volume |
+| daily_qfq      |       7 |  28035 | True      | adj_close_for_signal, adj_high_for_signal, adj_low_for_signal, adj_open_for_signal, source_code, trade_date, ts_code                                              |
 
 ## Panel Status
 
-- `/Volumes/PSSD1TB/量化数据/processed/phase2_free/stock_panel.parquet`: missing panel: /Volumes/PSSD1TB/量化数据/processed/phase2_free/stock_panel.parquet
-- matched listed stock daily files: `0`
+- `/Volumes/PSSD1TB/量化数据/processed/phase2_free/stock_panel.parquet`: panel rows=4005
+- matched listed stock daily files: `1`
 
 ## Strategy Admission
 

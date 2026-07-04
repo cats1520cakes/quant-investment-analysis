@@ -15,7 +15,7 @@ import yaml
 from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
-from quant_proof.network_guard import ProxyDetectedError, require_direct_network
+from quant_proof.network_guard import ProxyDetectedError, direct_network_message, require_direct_network
 
 
 @dataclass(frozen=True)
@@ -343,7 +343,9 @@ def main() -> None:
     config = load_config(args.config)
     ensure_dirs(config)
     try:
-        require_direct_network(allow_proxy=args.allow_proxy)
+        visible = require_direct_network(allow_proxy=args.allow_proxy)
+        if not args.allow_proxy:
+            print(f"[network] {direct_network_message(visible)}", flush=True)
     except ProxyDetectedError as exc:
         print(str(exc), file=sys.stderr)
         raise SystemExit(2) from exc

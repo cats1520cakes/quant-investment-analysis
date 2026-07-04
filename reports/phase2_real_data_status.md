@@ -41,7 +41,9 @@
 
 `free_real` 使用 BaoStock 不复权 OHLCV 做撮合、前复权收盘价做信号、`tradestatus` 做停牌代理、`isST` 做 ST 过滤，并派生涨跌停价和 `circ_mv_approx`。
 
-当前机器 macOS 系统 HTTP/HTTPS 代理为 `127.0.0.1:1082`，下载脚本已经默认拒绝在这种状态下联网，以避免走 VPN / 本地代理流量。当前外置盘只残留早前下载的 BaoStock 指数缓存，`validate_phase2_free_real_data.py` 已识别 `matched listed stock daily files = 0`，因此不会构建或运行 free-real 股票榜。
+当前机器 macOS 系统 HTTP/HTTPS 代理为 `127.0.0.1:1082`。下载脚本现在默认启用 direct mode：清理代理环境变量、设置 `NO_PROXY=*`、禁用 Python proxy discovery，并设置 socket timeout；只有显式传 `--allow-proxy` 才允许代理路径。
+
+已用 direct mode 完成一个 BaoStock 免费路线 smoke：`sh.600000` / `600000.SH` raw 与 qfq 日线已落盘，`processed/phase2_free/stock_panel.parquet` 已生成 4,005 行。当前只是一只股票的管线验证，不具备统计意义；正式 free-real leaderboard 仍需扩大到 20、500、全量股票后再评估。
 
 `free_real` 准入：
 

@@ -65,7 +65,7 @@ uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_d
 
 ## Phase 2 小样本下载
 
-所有行情下载脚本默认检测并拒绝可见代理，避免市场数据请求走 VPN / 本地代理流量。当前如果 macOS 系统代理仍指向 `127.0.0.1:1082`，下载脚本会在联网前退出。先关闭系统代理或确认直连网络，再运行下载。
+所有行情下载脚本默认启用 direct mode：清理代理环境变量、设置 `NO_PROXY=*`、禁用 Python proxy discovery，并设置 socket timeout。即使 macOS 系统代理仍指向 `127.0.0.1:1082`，脚本也会尝试让本进程行情请求直连；只有显式传 `--allow-proxy` 才允许代理路径。
 
 ```bash
 export TUSHARE_TOKEN="..."
@@ -99,6 +99,8 @@ uv run python scripts/run_phase2_free_real_experiment.py \
   --config config/phase2_free_real_data.yaml \
   --max-strategies 10
 ```
+
+当前已完成 `600000.SH` 单票 smoke，证明 direct mode 下载、free panel 构建和 S2 smoke leaderboard 能跑通；这只是管线验证，不是统计结论。
 
 `free_real` 字段边界：
 

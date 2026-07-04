@@ -11,7 +11,7 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from quant_proof.free_sources.baostock_adapter import download_baostock_free_real, load_config
-from quant_proof.network_guard import ProxyDetectedError, require_direct_network
+from quant_proof.network_guard import ProxyDetectedError, direct_network_message, require_direct_network
 
 
 def main() -> None:
@@ -27,7 +27,9 @@ def main() -> None:
         print("config data_tier must be free_real", file=sys.stderr)
         raise SystemExit(2)
     try:
-        require_direct_network(allow_proxy=args.allow_proxy)
+        visible = require_direct_network(allow_proxy=args.allow_proxy)
+        if not args.allow_proxy:
+            print(f"[network] {direct_network_message(visible)}", flush=True)
     except ProxyDetectedError as exc:
         print(str(exc), file=sys.stderr)
         raise SystemExit(2) from exc

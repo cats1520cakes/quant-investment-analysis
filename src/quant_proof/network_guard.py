@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import os
+import socket
 import subprocess
+import urllib.request
 
 
 PROXY_ENV_KEYS = (
@@ -20,6 +22,12 @@ class ProxyDetectedError(RuntimeError):
     """Raised when a data download would use a visible proxy path."""
 
 
+_ORIGINAL_URLLIB_GETPROXIES = urllib.request.getproxies
+_ORIGINAL_URLLIB_GETPROXIES_ENVIRONMENT = urllib.request.getproxies_environment
+_ORIGINAL_SOCKET_TIMEOUT = socket.getdefaulttimeout()
+_DIRECT_PATCH_ACTIVE = False
+
+
 def clear_proxy_environment() -> dict[str, str]:
     removed: dict[str, str] = {}
     for key in PROXY_ENV_KEYS:
@@ -29,6 +37,27 @@ def clear_proxy_environment() -> dict[str, str]:
     os.environ["NO_PROXY"] = "*"
     os.environ["no_proxy"] = "*"
     return removed
+
+
+def disable_python_proxy_discovery() -> None:
+    global _DIRECT_PATCH_ACTIVE
+    urllib.request.getproxies = lambda: {}
+    urllib.request.getproxies_environment = lambda: {}
+    try:
+        import requests.utils
+
+        requests.utils.get_environ_proxies = lambda url, no_proxy=None: {}
+        requests.utils.should_bypass_proxies = lambda url, no_proxy=None: True
+    except Exception:
+        pass
+    _DIRECT_PATCH_ACTIVE = True
+
+
+def restore_python_proxy_discovery() -> None:
+    global _DIRECT_PATCH_ACTIVE
+    urllib.request.getproxies = _ORIGINAL_URLLIB_GETPROXIES
+    urllib.request.getproxies_environment = _ORIGINAL_URLLIB_GETPROXIES_ENVIRONMENT
+    _DIRECT_PATCH_ACTIVE = False
 
 
 def macos_proxy_state() -> dict[str, str]:
@@ -72,15 +101,17 @@ def visible_proxy_summary() -> list[str]:
     return summary
 
 
-def require_direct_network(allow_proxy: bool = False) -> None:
-    removed = clear_proxy_environment()
-    visible = visible_proxy_summary()
+def require_direct_network(allow_proxy: bool = False, socket_timeout_seconds: float = 30.0) -> list[str]:
     if allow_proxy:
-        return
-    if removed or visible:
-        details = "; ".join([*(f"removed {key}" for key in removed), *visible])
-        raise ProxyDetectedError(
-            "Visible proxy settings detected; refusing market-data download to avoid VPN/proxy traffic. "
-            "Disable the system proxy/VPN route first, or pass --allow-proxy only if you intentionally accept proxy traffic. "
-            f"Detected: {details}"
-        )
+        return visible_proxy_summary()
+    clear_proxy_environment()
+    visible = visible_proxy_summary()
+    disable_python_proxy_discovery()
+    socket.setdefaulttimeout(socket_timeout_seconds)
+    return visible
+
+
+def direct_network_message(visible: list[str]) -> str:
+    if not visible:
+        return "direct network mode active; no visible proxy settings detected"
+    return "direct network mode active; bypassing visible proxy settings: " + "; ".join(visible)
