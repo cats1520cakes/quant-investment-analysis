@@ -10,8 +10,10 @@ Date: 2026-07-04
 | Compile | `uv run python -m compileall src scripts` | PASS | Source and script files compile. |
 | Phase 1 smoke | `uv run python scripts/run_phase1_experiment.py --config config/phase1.yaml --max-strategies 3 --bootstrap-paths 0` | PASS | Ran 3 strategy specs and 1,050 rolling windows. Output leaderboard: `/Volumes/PSSD1TB/量化数据/reports/phase1_leaderboard.csv`. |
 | Phase 2 validation | `uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_data.yaml` | PASS, BLOCKING | Validator ran and wrote `/Volumes/PSSD1TB/量化数据/reports/phase2_real_data_validation.md`; all required Phase 2 real-data tables are currently missing or empty. |
-| Tests | `uv run pytest -q` | PASS | 15 tests passed, covering validation, stock panel, deposits/targets, drawdown, and engine rules. |
+| Tests | `uv run pytest -q` | PASS | 24 tests passed, covering strict/free validation, proxy guard, stock panels, deposits/targets, drawdown, and engine rules. |
 | Phase 2 realdata build | `uv run python scripts/build_phase2_realdata.py --config config/phase2_real_data.yaml` | EXPECTED BLOCK | Exit 2 because real raw tables are missing; script refuses to build `stock_panel` from index/proxy data. |
+| Phase 2 free validation | `uv run python scripts/validate_phase2_free_real_data.py --config config/phase2_free_real_data.yaml` | PASS, BLOCKING | Free-real report is generated. Current raw cache contains BaoStock index daily files, but no matched listed-stock raw/qfq files. |
+| Download proxy guard | `uv run python scripts/download_phase2_real_data.py --config config/phase2_real_data.yaml --tables stock_basic` | EXPECTED BLOCK | Exit 2 before network access because macOS HTTP/HTTPS proxy is visible at `127.0.0.1:1082`. |
 
 ## Phase 1 Status
 
@@ -29,6 +31,18 @@ The Phase 2 validation script now checks more than table presence:
 - stock-code intersection across `daily`, `adj_factor`, `daily_basic`, `stk_limit`, and `suspend_d`;
 - delisted stock, ST/namechange, suspension, and limit-price evidence;
 - hard strategy gates for `S2_real_stock_momentum`, `S3_real_stock_breakout`, `S4_real_smallcap_factor`, futures integer-lot overlay, and option convexity budget.
+
+## Phase 2 Free Real Status
+
+The repository now has three data tiers:
+
+- `strict_real`: paid/official-grade fields; remains blocked until official `stk_limit`, `suspend_d`, `daily_basic`, `adj_factor`, futures, and options data exist.
+- `free_real`: BaoStock/AKShare-derived fields; admits S2/S3/S4 only after listed-stock raw and qfq files match.
+- `proxy_research`: Qlib/index proxy only; cannot enter real leaderboards.
+
+Current local machine has visible macOS system proxies at `127.0.0.1:1082`, so all market-data download scripts refuse to run by default. This is intentional to avoid VPN/proxy traffic.
+
+The existing external-drive BaoStock daily cache under `raw/baostock/daily_raw` is index data (`sh.000001`, etc.), not listed A-share stock data. The free-real validation report detects `matched listed stock daily files = 0`, and `scripts/build_phase2_free_stock_panel.py` refuses to build a stock panel from those files.
 
 Current missing table set:
 

@@ -10,6 +10,38 @@ from .realdata.schema import PANEL_COLUMNS
 
 
 REQUIRED_REAL_STOCK_COLUMNS = set(PANEL_COLUMNS)
+FREE_REAL_STOCK_COLUMNS = {
+    "trade_date",
+    "ts_code",
+    "source_code",
+    "open",
+    "high",
+    "low",
+    "close",
+    "pre_close",
+    "volume",
+    "amount",
+    "turnover_rate",
+    "pct_chg",
+    "pe_ttm",
+    "pb",
+    "ps_ttm",
+    "pcf_ttm",
+    "adj_close_for_signal",
+    "trade_status",
+    "is_suspended",
+    "is_st",
+    "list_date",
+    "delist_date",
+    "list_status",
+    "listing_days",
+    "board",
+    "limit_pct",
+    "up_limit",
+    "down_limit",
+    "circ_mv_approx",
+    "data_tier",
+}
 REAL_STOCK_REQUIRED_TABLES = (
     "trade_cal",
     "stock_basic",
@@ -31,6 +63,8 @@ class RealStockStrategySpec:
 
 def require_real_stock_panel(panel: pd.DataFrame) -> None:
     missing = sorted(REQUIRED_REAL_STOCK_COLUMNS - set(panel.columns))
+    if missing and FREE_REAL_STOCK_COLUMNS.issubset(panel.columns):
+        missing = []
     if missing:
         raise ValueError(f"stock_panel missing required real-stock columns: {missing}")
     duplicated = panel.duplicated(["trade_date", "ts_code"]).sum()
@@ -56,8 +90,13 @@ def _date_rebalance_mask(dates: pd.Series, frequency: str) -> pd.Series:
 
 
 def _as_panel(panel: pd.DataFrame) -> pd.DataFrame:
-    require_real_stock_panel(panel)
     frame = panel.copy()
+    if not REQUIRED_REAL_STOCK_COLUMNS.issubset(frame.columns) and FREE_REAL_STOCK_COLUMNS.issubset(frame.columns):
+        frame["adj_factor"] = np.nan
+        frame["total_mv"] = frame["circ_mv_approx"]
+        frame["circ_mv"] = frame["circ_mv_approx"]
+        frame["exchange"] = frame["ts_code"].astype(str).str.split(".").str[-1]
+    require_real_stock_panel(frame)
     frame["trade_date"] = frame["trade_date"].astype(str)
     frame["ts_code"] = frame["ts_code"].astype(str)
     frame = frame.sort_values(["ts_code", "trade_date"]).reset_index(drop=True)

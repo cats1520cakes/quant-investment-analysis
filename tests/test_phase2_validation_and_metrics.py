@@ -86,7 +86,7 @@ def test_download_script_fails_clearly_without_tushare_token(tmp_path: Path) -> 
     env.pop("TUSHARE_TOKEN", None)
 
     result = run_python(
-        ["scripts/download_phase2_real_data.py", "--config", str(config_path), "--tables", "stock_basic"],
+        ["scripts/download_phase2_real_data.py", "--config", str(config_path), "--tables", "stock_basic", "--allow-proxy"],
         cwd=Path.cwd(),
         env=env,
     )
@@ -94,6 +94,21 @@ def test_download_script_fails_clearly_without_tushare_token(tmp_path: Path) -> 
     assert result.returncode == 2
     assert "Missing TUSHARE_TOKEN" in result.stderr
     assert 'export TUSHARE_TOKEN="..."' in result.stderr
+
+
+def test_download_script_refuses_visible_proxy_by_default(tmp_path: Path) -> None:
+    config_path = write_phase2_config(tmp_path)
+    env = os.environ.copy()
+    env["HTTP_PROXY"] = "http://127.0.0.1:1082"
+
+    result = run_python(
+        ["scripts/download_phase2_real_data.py", "--config", str(config_path), "--tables", "stock_basic"],
+        cwd=Path.cwd(),
+        env=env,
+    )
+
+    assert result.returncode == 2
+    assert "refusing market-data download" in result.stderr
 
 
 def test_validation_reports_missing_tables_and_blocks_stock_strategies(tmp_path: Path) -> None:

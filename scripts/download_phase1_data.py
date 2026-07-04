@@ -11,6 +11,7 @@ from quant_proof.data import (
     write_download_manifest,
     write_processed_prices,
 )
+from quant_proof.network_guard import ProxyDetectedError, require_direct_network
 
 
 def main() -> None:
@@ -18,10 +19,16 @@ def main() -> None:
     parser.add_argument("--config", default="config/phase1.yaml")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--retries", type=int, default=3)
+    parser.add_argument("--allow-proxy", action="store_true", help="Allow visible proxy/VPN settings for this download.")
     args = parser.parse_args()
 
     config = load_config(args.config)
     ensure_data_dirs(config.data_root)
+    try:
+        require_direct_network(allow_proxy=args.allow_proxy)
+    except ProxyDetectedError as exc:
+        print(str(exc))
+        raise SystemExit(2) from exc
     outputs = download_etf_daily(config, force=args.force, retries=args.retries)
     frames = load_raw_etf_prices(config)
     close, amount = build_close_matrix(frames)

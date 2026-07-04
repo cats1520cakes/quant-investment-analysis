@@ -45,6 +45,14 @@ Phase 2 的重点算力方向是：
 
 真实排行榜必须先通过数据门禁；不得静默降级为 Phase 1 指数代理，不得用当前成分回填历史，不得删除退市样本。
 
+三层数据门禁：
+
+| Tier | 用途 | 可进榜策略 | 禁止项 |
+| --- | --- | --- | --- |
+| `strict_real` | 付费级 / 官方级字段 | 严格真实榜 | 缺 `stk_limit/suspend_d/daily_basic/adj_factor` 时阻断 |
+| `free_real` | BaoStock 主源 + AKShare 校验/补充 | S2/S3/S4 免费真实近似榜 | S5 打板、期货 overlay、期权 overlay |
+| `proxy_research` | Qlib / 指数代理 / 缺成交限制数据 | 预筛研究 | 不允许进入 real leaderboard |
+
 ```bash
 uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_data.yaml
 ```
@@ -57,6 +65,8 @@ uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_d
 
 ## Phase 2 小样本下载
 
+所有行情下载脚本默认检测并拒绝可见代理，避免市场数据请求走 VPN / 本地代理流量。当前如果 macOS 系统代理仍指向 `127.0.0.1:1082`，下载脚本会在联网前退出。先关闭系统代理或确认直连网络，再运行下载。
+
 ```bash
 export TUSHARE_TOKEN="..."
 
@@ -68,6 +78,36 @@ uv run python scripts/download_phase2_real_data.py \
 
 uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_data.yaml
 ```
+
+## Phase 2 Free Real 路线
+
+不走 Tushare 付费 API 时，使用 BaoStock 免费源建立 `free_real` 面板：
+
+```bash
+uv run python scripts/download_phase2_free_real_data.py \
+  --config config/phase2_free_real_data.yaml \
+  --max-codes 20 \
+  --force
+
+uv run python scripts/validate_phase2_free_real_data.py \
+  --config config/phase2_free_real_data.yaml
+
+uv run python scripts/build_phase2_free_stock_panel.py \
+  --config config/phase2_free_real_data.yaml
+
+uv run python scripts/run_phase2_free_real_experiment.py \
+  --config config/phase2_free_real_data.yaml \
+  --max-strategies 10
+```
+
+`free_real` 字段边界：
+
+- raw `open/high/low/close/pre_close` 来自 BaoStock `adjustflag=3`，只用于撮合。
+- `adj_close_for_signal` 来自 BaoStock `adjustflag=2` 或 AKShare qfq，只用于信号。
+- `is_suspended` 来自 BaoStock `tradestatus != 1`，是停牌代理证据。
+- `is_st` 来自 BaoStock `isST`，不是完整 `namechange`。
+- `up_limit/down_limit` 由 `pre_close` 和板块规则派生，标记为 `derived`。
+- `circ_mv_approx` 由 `amount / (turnover_rate / 100)` 近似，不能写成官方 `circ_mv`。
 
 ## Phase 2 处理与撮合入口
 

@@ -10,6 +10,8 @@
 - Phase 2 realdata 处理层：生成 `processed/phase2/stock_panel.parquet`。
 - Phase 2 engine 撮合规则骨架：T+1、停牌、涨跌停、卖出印花税和成交金额上限。
 - S2/S3/S4 真实个股策略规格与信号打分入口。
+- Phase 2 Free Real 路线：BaoStock 主源、AKShare 补充、Qlib 作为 proxy research，严格区分 `strict_real/free_real/proxy_research`。
+- 下载脚本默认拒绝可见 macOS/环境代理，避免市场数据请求走 VPN / 本地代理流量。
 - 个股、股指期货、股指/ETF 期权的 Phase 2 边界文档。
 - `reports/current_repo_healthcheck.md` 记录当前仓库可运行状态。
 
@@ -21,10 +23,16 @@
 - `docs/codex_phase2_real_data_task.md`
 - `docs/phase2_stock_derivatives_plan.md`
 - `config/phase2_real_data.yaml`
+- `config/phase2_free_real_data.yaml`
 - `scripts/download_phase2_real_data.py`
 - `scripts/validate_phase2_real_data.py`
 - `scripts/build_phase2_realdata.py`
+- `scripts/download_phase2_free_real_data.py`
+- `scripts/validate_phase2_free_real_data.py`
+- `scripts/build_phase2_free_stock_panel.py`
+- `scripts/run_phase2_free_real_experiment.py`
 - `src/quant_proof/realdata/`
+- `src/quant_proof/free_sources/`
 - `src/quant_proof/engine/`
 - `src/quant_proof/real_strategies.py`
 - `tests/`
@@ -36,6 +44,8 @@
 - Phase 1 结果是 BaoStock 指数代理，不等价于真实 ETF、全 A 个股、真实期货或真实期权回测。
 - 当前真实 leaderboard 被 validation 阻断：缺 `trade_cal`, `stock_basic`, `daily`, `adj_factor`, `daily_basic`, `stk_limit`, `suspend_d`, `namechange`, `fut_*`, `opt_*` 等真实表。
 - 参数化期权只能作为压力层，不能作为真实期权链 leaderboard。
+- 当前机器可见 macOS 系统代理 `127.0.0.1:1082`，下载脚本会拒绝联网；需关闭代理/VPN 路径后再拉 BaoStock/AKShare/Tushare 数据。
+- 当前外置盘 `raw/baostock/daily_raw` 残留的是指数缓存；free validation 已识别没有 matched listed stock daily files，free stock panel 不会构建。
 
 ## 给 GPT Pro 的建议问题
 
@@ -48,6 +58,7 @@
 5. 不要把指数代理结果解释成真实可交易策略；请重点检查 claim boundary。
 6. 请重点审 `src/quant_proof/realdata/` 的 `stock_panel` 字段是否足以支撑 S2/S3/S4，并确认 `adj_close_for_signal` 没有被用于执行价。
 7. 请审 `src/quant_proof/engine/` 是否还缺 A 股整百股、涨跌停部分成交概率、流动性成交额上限和退市处理。
+8. 请审 `free_real` 中 `tradestatus/isST/derived limit/circ_mv_approx` 的声明是否足够清楚，是否还能进一步惩罚 derived/proxy 字段不确定性。
 
 ## 当前验证命令
 
@@ -56,6 +67,7 @@ uv sync --dev
 uv run python -m compileall src scripts tests
 uv run pytest -q
 uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_data.yaml
+uv run python scripts/validate_phase2_free_real_data.py --config config/phase2_free_real_data.yaml
 uv run python scripts/build_phase2_realdata.py --config config/phase2_real_data.yaml
 ```
 

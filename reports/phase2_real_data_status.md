@@ -28,6 +28,27 @@
 
 原因是缺少真实行情、复权因子、日频基本面、涨跌停、停牌、ST/退市和真实衍生品合约数据。
 
+## Free Real 当前状态
+
+已新增免费路线：
+
+- 配置：`config/phase2_free_real_data.yaml`
+- 下载：`scripts/download_phase2_free_real_data.py`
+- 验证：`scripts/validate_phase2_free_real_data.py`
+- 构建：`scripts/build_phase2_free_stock_panel.py`
+- 预榜：`scripts/run_phase2_free_real_experiment.py`
+- 报告：`reports/phase2_free/free_real_data_validation.md`
+
+`free_real` 使用 BaoStock 不复权 OHLCV 做撮合、前复权收盘价做信号、`tradestatus` 做停牌代理、`isST` 做 ST 过滤，并派生涨跌停价和 `circ_mv_approx`。
+
+当前机器 macOS 系统 HTTP/HTTPS 代理为 `127.0.0.1:1082`，下载脚本已经默认拒绝在这种状态下联网，以避免走 VPN / 本地代理流量。当前外置盘只残留早前下载的 BaoStock 指数缓存，`validate_phase2_free_real_data.py` 已识别 `matched listed stock daily files = 0`，因此不会构建或运行 free-real 股票榜。
+
+`free_real` 准入：
+
+- 允许：`S2_real_stock_momentum`, `S3_real_stock_breakout`, `S4_real_smallcap_factor`
+- 禁止：`S5_real_limitup_board`, futures overlay, options overlay
+- `proxy_research` 不允许进入 real leaderboard
+
 ## 先跑小样本
 
 ```bash

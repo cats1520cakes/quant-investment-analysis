@@ -15,6 +15,8 @@ import yaml
 from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
+from quant_proof.network_guard import ProxyDetectedError, require_direct_network
+
 
 @dataclass(frozen=True)
 class Phase2Config:
@@ -335,10 +337,16 @@ def main() -> None:
     parser.add_argument("--max-codes", type=int, default=0)
     parser.add_argument("--max-dates", type=int, default=0)
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--allow-proxy", action="store_true", help="Allow visible proxy/VPN settings for this download.")
     args = parser.parse_args()
 
     config = load_config(args.config)
     ensure_dirs(config)
+    try:
+        require_direct_network(allow_proxy=args.allow_proxy)
+    except ProxyDetectedError as exc:
+        print(str(exc), file=sys.stderr)
+        raise SystemExit(2) from exc
     try:
         dl = TushareDownloader(config)
     except RuntimeError as exc:

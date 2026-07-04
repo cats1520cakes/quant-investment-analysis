@@ -2,6 +2,12 @@
 
 本阶段目标是在 Phase 1 指数代理穷尽基线之外，加入更接近附文收益目标的高弹性资产与衍生品模块。结论仍以仿真实验证据为准，不把任何策略包装成收益承诺。
 
+Phase 2 现在分三层：
+
+- `strict_real`：付费级 / 官方级字段，缺 `stk_limit`, `suspend_d`, `daily_basic`, `adj_factor` 时继续阻断。
+- `free_real`：BaoStock 主源 + AKShare 校验/补充，允许 S2/S3/S4 的免费真实近似榜。
+- `proxy_research`：Qlib / 指数代理预筛，不能进入 real leaderboard。
+
 ## 1. 全 A 个股线
 
 第一批策略族：
@@ -33,6 +39,13 @@
 - 涨停买入成交率：0%、20%、50%。
 - 跌停卖出成交率：0%、10%、30%。
 - 卖不出时记录 liquidity_trap，并继续持仓。
+
+免费真实近似榜的字段声明：
+
+- 停牌：BaoStock `tradestatus != 1`。
+- ST：BaoStock `isST == 1`。
+- 涨跌停：按 `pre_close`、板块、上市天数和 ST 状态派生。
+- 小盘因子：使用 `circ_mv_approx = amount / (turnover_rate / 100)`，不得写作官方 `circ_mv`。
 
 ## 2. 股指期货 overlay 线
 

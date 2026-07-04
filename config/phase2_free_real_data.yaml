@@ -1,0 +1,88 @@
+data_tier: free_real
+primary_source: baostock
+secondary_source: akshare
+proxy_source: qlib
+data_root: /Volumes/PSSD1TB/量化数据
+
+date_range:
+  start_date: "20100101"
+  end_date: "20260704"
+
+paths:
+  manifest: 00_meta/manifests/phase2_free_real_manifest.csv
+  validation_report: reports/phase2_free/free_real_data_validation.md
+  leaderboard: reports/phase2_free/free_real_stock_leaderboard.csv
+  top_strategies: reports/phase2_free/free_real_top_strategies.md
+
+sources:
+  baostock:
+    enabled: true
+    adjustflag_raw: "3"
+    adjustflag_signal: "2"
+    fields_raw:
+      - date
+      - code
+      - open
+      - high
+      - low
+      - close
+      - preclose
+      - volume
+      - amount
+      - turn
+      - tradestatus
+      - pctChg
+      - peTTM
+      - pbMRQ
+      - psTTM
+      - pcfNcfTTM
+      - isST
+  akshare:
+    enabled: true
+    use_for_cross_check: true
+    use_for_etf: true
+    use_for_index: true
+  qlib:
+    enabled: false
+    data_tier: proxy_research
+
+free_real_gates:
+  allow_s2_stock_momentum: true
+  allow_s3_stock_breakout: true
+  allow_s4_smallcap_factor: true
+  allow_s5_limitup_board: false
+  allow_futures_overlay: false
+  allow_options_overlay: false
+
+field_sources:
+  daily: baostock_unadjusted
+  adj_close_for_signal: baostock_qfq_or_akshare_qfq
+  is_suspended: baostock_tradestatus
+  is_st: baostock_isST
+  up_limit: derived_from_preclose_and_board_rules
+  down_limit: derived_from_preclose_and_board_rules
+  circ_mv_approx: derived_from_amount_and_turnover
+
+phase2_real_stock_strategies:
+  S2_real_stock_momentum:
+    min_listing_days: 120
+    min_price: 3.0
+    min_avg_amount_20d: 20000000
+    holding_k: [1, 2, 3, 5, 8, 10]
+    rebalance: [daily, 2d, weekly]
+    stop_loss: 0.12
+    trailing_stop: 0.18
+  S3_real_stock_breakout:
+    donchian: [20, 55]
+    exit_donchian: 20
+    risk_per_trade: [0.005, 0.01, 0.015, 0.02]
+    atr_stop: 2.0
+    max_holding_days: 60
+    min_volume_breakout: 1.2
+  S4_real_smallcap_factor:
+    min_listing_days: 180
+    min_price: 3.0
+    min_avg_amount_20d: 10000000
+    factor_modes: [low_turnover, high_turnover_breakout]
+    rebalance: [weekly, monthly]
+    holding_k: [10, 20, 30, 50]
