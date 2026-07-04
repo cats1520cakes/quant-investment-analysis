@@ -24,8 +24,9 @@ export TUSHARE_TOKEN="..."
 
 uv run python scripts/download_phase2_real_data.py \
   --config config/phase2_real_data.yaml \
-  --tables stock_basic,trade_cal,daily,adj_factor,daily_basic,stk_limit \
-  --max-codes 10
+  --tables stock_basic,trade_cal,daily,adj_factor,daily_basic,stk_limit,suspend_d,namechange \
+  --max-codes 10 \
+  --max-dates 30
 
 uv run python scripts/validate_phase2_real_data.py \
   --config config/phase2_real_data.yaml
@@ -79,11 +80,10 @@ uv run python scripts/validate_phase2_real_data.py \
 - `S2_real_stock_momentum`
 - `S3_real_stock_breakout`
 - `S4_real_smallcap_factor`
-- `S5_real_limitup_model`
-- `S7_real_margin_stock_overlay`
 - `S8_real_index_futures_overlay`
 - `S9_real_etf_options_overlay`
-- `S10_real_mixed_allocator`
+
+当前算力优先级是 S2/S3/S4。`S5_real_limitup_model`、融资融券增强和混合 allocator 必须等真实个股撮合层稳定后再进入。
 
 先看这些列：
 
@@ -99,3 +99,21 @@ uv run python scripts/validate_phase2_real_data.py \
 - `slippage_drag`
 - `parameter_stability`
 
+## 当前代码入口
+
+- `scripts/validate_phase2_real_data.py`：真实数据门禁，不允许缺表或字段不全时进榜。
+- `scripts/build_phase2_realdata.py`：生成 `processed/phase2` 的真实个股面板。
+- `src/quant_proof/realdata/`：交易日历、股票池、复权因子、涨跌停、停牌、ST 和 `stock_panel` 构造。
+- `src/quant_proof/engine/`：真实撮合规则骨架。
+- `src/quant_proof/real_strategies.py`：S2/S3/S4 真实个股候选策略规格与信号打分。
+
+真实 leaderboard 输出只能在 validation 通过后生成：
+
+```text
+reports/phase2/real_stock_windows.csv
+reports/phase2/real_stock_leaderboard.csv
+reports/phase2/real_stock_top_strategies.md
+reports/phase2/real_stock_regime_breakdown.csv
+reports/phase2/equity_curves/*.csv
+reports/phase2/drawdown_curves/*.csv
+```

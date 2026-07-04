@@ -14,6 +14,14 @@ paths:
   errors_dir: 00_meta/errors
   logs_dir: 00_meta/logs
 
+validation:
+  max_files_per_table: 80
+  max_sample_rows_per_table: 250000
+  backup_source_status: not_implemented
+  require_checksums: true
+  require_stock_code_intersection: true
+  require_delisted_samples_for_full_run: true
+
 tushare:
   exchanges:
     stock: ""
@@ -29,10 +37,26 @@ tushare:
   max_rows_per_file: 500000
 
 required_for_leaderboard:
-  stock_strategies: [stock_basic, daily, adj_factor, daily_basic, stk_limit, suspend_d, namechange]
-  etf_strategies: [fund_basic, fund_daily]
-  futures_strategies: [fut_basic, fut_daily]
-  options_strategies: [opt_basic, opt_daily]
+  stock_strategies: [trade_cal, stock_basic, daily, adj_factor, daily_basic, stk_limit, suspend_d, namechange]
+  etf_strategies: [trade_cal, fund_basic, fund_daily]
+  futures_strategies: [trade_cal, fut_basic, fut_daily]
+  options_strategies: [trade_cal, opt_basic, opt_daily]
+
+table_schemas:
+  trade_cal: [cal_date, is_open]
+  stock_basic: [ts_code, symbol, name, list_date, list_status, exchange]
+  daily: [ts_code, trade_date, open, high, low, close, pre_close, vol, amount]
+  adj_factor: [ts_code, trade_date, adj_factor]
+  daily_basic: [ts_code, trade_date, turnover_rate, total_mv, circ_mv]
+  stk_limit: [ts_code, trade_date, up_limit, down_limit]
+  suspend_d: [ts_code, suspend_date]
+  namechange: [ts_code, name, start_date]
+  fund_basic: [ts_code, name, market]
+  fund_daily: [ts_code, trade_date, open, high, low, close, vol, amount]
+  fut_basic: [ts_code, symbol, name, exchange, list_date, delist_date]
+  fut_daily: [ts_code, trade_date, open, high, low, close, vol, amount]
+  opt_basic: [ts_code, name, exchange, call_put, exercise_price, list_date, delist_date]
+  opt_daily: [ts_code, trade_date, open, high, low, close, vol, amount]
 
 phase2_strategy_gate:
   no_index_proxy_in_real_leaderboard: true
@@ -41,6 +65,30 @@ phase2_strategy_gate:
   require_limit_and_suspend_for_stock: true
   require_real_futures_contracts: true
   require_real_options_contracts: true
+
+phase2_real_stock_strategies:
+  S2_real_stock_momentum:
+    min_listing_days: 120
+    min_price: 3.0
+    min_avg_amount_20d: 20000000
+    holding_k: [1, 2, 3, 5, 8, 10]
+    rebalance: [daily, 2d, weekly]
+    stop_loss: 0.12
+    trailing_stop: 0.18
+  S3_real_stock_breakout:
+    donchian: [20, 55]
+    exit_donchian: 20
+    risk_per_trade: [0.005, 0.01, 0.015, 0.02]
+    atr_stop: 2.0
+    max_holding_days: 60
+    min_volume_breakout: 1.2
+  S4_real_smallcap_factor:
+    min_listing_days: 180
+    min_price: 3.0
+    min_avg_amount_20d: 10000000
+    factor_modes: [low_turnover, high_turnover_breakout]
+    rebalance: [weekly, monthly]
+    holding_k: [10, 20, 30, 50]
 
 derivatives_contract_specs:
   futures:

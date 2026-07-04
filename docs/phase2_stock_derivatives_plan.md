@@ -18,7 +18,7 @@
 - 复权因子或复权价：信号使用复权价，撮合使用真实价。
 - ST、停牌、退市状态。
 - 涨跌停价：至少要有 limit_up / limit_down。
-- 指数成分历史或明确标记为当前成分股代理。
+- 如果使用指数成分，必须使用历史成分；当前成分股回填不能进入真实排行榜。
 
 第一版过滤：
 
@@ -107,6 +107,15 @@ ETF 期权先按常见 10000 份合约单位建模；中金所股指期权按每
 3. 再加股指期货 overlay，但严格执行整手合约和保证金约束。
 4. 再加期权近似层，验证凸性预算是否值得拉真实期权链。
 5. 最后才做真实期权链和打板/连板模型。
+
+当前仓库已经具备 Phase 2 的入口骨架：
+
+- `scripts/build_phase2_realdata.py`：真实 raw 表到 `processed/phase2/stock_panel.parquet`。
+- `src/quant_proof/realdata/`：交易日历、股票池、复权信号价、涨跌停、停牌、ST 和退市状态。
+- `src/quant_proof/engine/`：T+1、停牌、涨跌停、费用、印花税和成交金额上限。
+- `src/quant_proof/real_strategies.py`：S2/S3/S4 的真实个股候选配置与信号打分。
+
+这些入口不代表真实 leaderboard 已可运行；必须先通过 `scripts/validate_phase2_real_data.py` 的数据门禁。
 
 ## 5. Phase 2 成功门槛
 

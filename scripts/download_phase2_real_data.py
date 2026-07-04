@@ -206,13 +206,32 @@ def download_single_table(config: Phase2Config, dl: TushareDownloader, table: st
 
 
 def manifest_record(config: Phase2Config, table: str, name: str, path: Path, frame: pd.DataFrame) -> dict:
+    date_columns = ["trade_date", "cal_date", "suspend_date", "start_date", "list_date"]
+    date_min = ""
+    date_max = ""
+    for column in date_columns:
+        if column in frame.columns and not frame[column].dropna().empty:
+            values = frame[column].dropna().astype(str)
+            date_min = str(values.min())
+            date_max = str(values.max())
+            break
+    key_column = "ts_code" if "ts_code" in frame.columns else "symbol" if "symbol" in frame.columns else ""
+    key_values = frame[key_column].dropna().astype(str) if key_column else pd.Series(dtype=str)
     return {
         "source": "tushare",
         "table": table,
+        "api_name": table,
         "name": name,
         "path": str(path),
+        "file_format": path.suffix.lstrip("."),
         "rows": int(len(frame)),
+        "empty": bool(frame.empty),
         "columns": ",".join(map(str, frame.columns)),
+        "date_min": date_min,
+        "date_max": date_max,
+        "key_column": key_column,
+        "key_min": str(key_values.min()) if not key_values.empty else "",
+        "key_max": str(key_values.max()) if not key_values.empty else "",
         "start_date": config.start_date,
         "end_date": config.end_date,
         "sha256": checksum(path) if path.exists() else "",
