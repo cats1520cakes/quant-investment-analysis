@@ -1,0 +1,230 @@
+from __future__ import annotations
+
+import argparse
+from datetime import datetime
+from pathlib import Path
+import sys
+
+import pandas as pd
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+from quant_proof.free_real_backtest import (
+    _prepare_daily_panel,
+    aggregate_free_real_windows,
+    evaluate_free_real_strategy,
+    load_backtest_config,
+)
+from quant_proof.free_sources.baostock_adapter import load_config
+from quant_proof.free_sources.validators import strategy_allowed_in_tier
+from quant_proof.real_strategies import build_real_stock_strategy_specs
+
+
+def _fmt_pct(value: float) -> str:
+    return f"{value * 100:.2f}%"
+
+
+def _fmt_money(value: float) -> str:
+    return f"{value:,.0f}"
+
+
+def inspect_panel(panel: pd.DataFrame, min_symbols: int) -> dict[str, object]:
+    required = {
+        "trade_date",
+        "ts_code",
+        "source_code",
+        "data_tier",
+        "open",
+        "close",
+        "is_suspended",
+        "up_limit",
+        "down_limit",
+    }
+    missing = sorted(required - set(panel.columns))
+    if missing:
+        raise ValueError(f"free-real target backtest panel missing required columns: {missing}")
+
+    frame = panel.copy()
+    frame["trade_date"] = frame["trade_date"].astype(str)
+    frame["ts_code"] = frame["ts_code"].astype(str)
+    frame["source_code"] = frame["source_code"].astype(str).str.lower()
+    frame["data_tier"] = frame["data_tier"].astype(str)
+
+    tiers = sorted(frame["data_tier"].dropna().unique().tolist())
+    if tiers != ["free_real"]:
+        raise ValueError(f"target backtest requires data_tier=free_real only; observed={tiers}")
+
+    index_like = sorted(
+        source
+        for source in frame["source_code"].dropna().unique().tolist()
+        if source.startswith("sh.000") or source.startswith("sz.399")
+    )
+    if index_like:
+        raise ValueError(f"target backtest panel appears to contain index-like source_code values: {index_like[:10]}")
+
+    n_symbols = int(frame["ts_code"].nunique())
+    if min_symbols > 0 and n_symbols < min_symbols:
+        raise ValueError(f"target backtest requires at least {min_symbols} free-real symbols; observed={n_symbols}")
+
+    return {
+        "rows": int(len(frame)),
+        "symbols": n_symbols,
+        "date_min": str(frame["trade_date"].min()),
+        "date_max": str(frame["trade_date"].max()),
+        "data_tiers": ", ".join(tiers),
+        "min_symbols": int(min_symbols),
+    }
+
+
+def write_report(
+    path: Path,
+    leaderboard: pd.DataFrame,
+    windows: pd.DataFrame,
+    config_path: str,
+    panel_path: Path,
+    panel_snapshot: dict[str, object],
+    run_scope: str,
+    generated_at: datetime,
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# Phase 2 Free Real Target Backtest",
+        "",
+        f"Generated at: {generated_at.strftime('%Y-%m-%d %H:%M:%S')}",
+        "",
+        "## Scope",
+        "",
+        "- Data tier: `free_real`.",
+        "- Strict real leaderboard remains separate and blocked until official/paid-grade fields exist.",
+        "- This target backtest uses BaoStock raw OHLC for execution, qfq prices for signals, derived limit prices, and BaoStock `tradestatus` as suspension proxy.",
+        "- It models monthly deposits, 12/24-month hard targets, T+1, suspended/no-trade checks, limit-up buy rejection, limit-down sell rejection, A-share board-lot buying, fixed order-notional caps, commission, transfer fee, stamp tax, and slippage.",
+        "- Known gaps: no participation-rate cap from daily amount yet, no dividend/corporate-action cash adjustment, and free-real suspension/limit evidence is proxy/derived rather than official.",
+        "",
+        "## Inputs",
+        "",
+        f"- Config: `{config_path}`",
+        f"- Panel: `{panel_path}`",
+        f"- Panel snapshot: rows=`{panel_snapshot['rows']}`, symbols=`{panel_snapshot['symbols']}`, date_range=`{panel_snapshot['date_min']}..{panel_snapshot['date_max']}`, data_tier=`{panel_snapshot['data_tiers']}`.",
+        f"- Minimum symbol gate: `{panel_snapshot['min_symbols']}`.",
+        f"- Run scope: `{run_scope}`.",
+        f"- Window rows: `{len(windows)}`",
+        "",
+        "## Execution Semantics",
+        "",
+        "- Strategy rankings and filters come from S2/S3/S4 specs, then the target layer converts selected names into equal-weight rebalances under execution constraints.",
+        "- S2/S3 stop-loss, trailing-stop, ATR stop, `risk_per_trade`, and `max_holding_days` parameters are not implemented as separate intra-window exits in this free-real target layer; they remain candidate-spec metadata until a stricter order-policy layer is added.",
+        "- `avg_turnover` is reported as traded notional divided by summed daily wealth across the window, not annualized portfolio turnover.",
+        "",
+        "## Leaderboard",
+        "",
+    ]
+    if leaderboard.empty:
+        lines.append("No target-backtest rows were generated.")
+    else:
+        table = leaderboard.head(20).copy()
+        for column in ["p_success", "p_w12", "p_w24", "p95_max_drawdown", "p_w24_below_deposit", "p_drawdown_gt_35"]:
+            if column in table.columns:
+                table[column] = table[column].map(_fmt_pct)
+        for column in ["median_w24", "p10_w24", "p90_w24", "avg_fees"]:
+            if column in table.columns:
+                table[column] = table[column].map(_fmt_money)
+        keep = [
+            "strategy",
+            "family",
+            "deposit_timing",
+            "n_windows",
+            "p_success",
+            "p_w12",
+            "p_w24",
+            "median_w24",
+            "p95_max_drawdown",
+            "p_w24_below_deposit",
+            "avg_rejected_orders",
+            "avg_clipped_orders",
+            "score",
+        ]
+        lines.append(table[[col for col in keep if col in table.columns]].to_markdown(index=False))
+
+        best = leaderboard.iloc[0]
+        highest_success = leaderboard.sort_values(["p_success", "median_w24"], ascending=False).iloc[0]
+        lines.extend(
+            [
+                "",
+                "## Readout",
+                "",
+                f"- Best score: `{best['strategy']}` / `{best['deposit_timing']}`, success={_fmt_pct(best['p_success'])}, median_w24={_fmt_money(best['median_w24'])}.",
+                f"- Highest success: `{highest_success['strategy']}` / `{highest_success['deposit_timing']}`, success={_fmt_pct(highest_success['p_success'])}, median_w24={_fmt_money(highest_success['median_w24'])}.",
+                "- A positive signal leaderboard is not enough; target proof requires these rolling-window success and drawdown fields.",
+            ]
+        )
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Run Phase 2 free-real target-constrained backtest.")
+    parser.add_argument("--config", default="config/phase2_free_real_data.yaml")
+    parser.add_argument("--max-strategies", type=int, default=0, help="Debug limit; 0 means all S2/S3/S4 specs.")
+    parser.add_argument("--max-windows", type=int, default=0, help="Debug limit per strategy/timing; 0 means all rolling windows.")
+    args = parser.parse_args()
+
+    config = load_config(args.config)
+    panel_path = config.data_root / "processed/phase2_free/stock_panel.parquet"
+    if not panel_path.exists():
+        print(f"missing free-real stock panel: {panel_path}; run scripts/build_phase2_free_stock_panel.py first", file=sys.stderr)
+        raise SystemExit(2)
+    panel = pd.read_parquet(panel_path)
+    cfg = load_backtest_config(config.raw)
+    panel_snapshot = inspect_panel(panel, min_symbols=cfg.min_symbols)
+    panel_by_date = _prepare_daily_panel(panel)
+    specs = build_real_stock_strategy_specs(config.raw)
+    specs = [spec for spec in specs if strategy_allowed_in_tier(spec.family, "free_real").allowed]
+    if args.max_strategies > 0:
+        specs = specs[: args.max_strategies]
+
+    frames = []
+    for index, spec in enumerate(specs, start=1):
+        print(f"[target-backtest] {index}/{len(specs)} {spec.name}", flush=True)
+        frame = evaluate_free_real_strategy(
+            panel,
+            spec,
+            cfg=cfg,
+            max_windows=args.max_windows,
+            panel_by_date=panel_by_date,
+        )
+        if not frame.empty:
+            frames.append(frame)
+    windows = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+    leaderboard = aggregate_free_real_windows(windows, cfg)
+
+    windows_path = Path(config.raw["paths"]["target_windows"])
+    leaderboard_path = Path(config.raw["paths"]["target_leaderboard"])
+    report_path = Path(config.raw["paths"]["target_report"])
+    windows_path.parent.mkdir(parents=True, exist_ok=True)
+    windows.to_csv(windows_path, index=False, encoding="utf-8")
+    leaderboard.to_csv(leaderboard_path, index=False, encoding="utf-8")
+    write_report(
+        path=report_path,
+        leaderboard=leaderboard,
+        windows=windows,
+        config_path=args.config,
+        panel_path=panel_path,
+        panel_snapshot=panel_snapshot,
+        run_scope=(
+            f"max_strategies={args.max_strategies or 'all'}, max_windows={args.max_windows or 'all'}"
+        ),
+        generated_at=datetime.now(),
+    )
+    print(f"strategies={len(specs)}")
+    print(f"windows={len(windows)}")
+    print(f"leaderboard={leaderboard_path}")
+    print(f"report={report_path}")
+    if not leaderboard.empty:
+        print(leaderboard.head(8).to_string(index=False))
+
+
+if __name__ == "__main__":
+    main()

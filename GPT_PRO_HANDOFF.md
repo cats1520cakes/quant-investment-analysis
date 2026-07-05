@@ -45,7 +45,8 @@
 - 当前真实 leaderboard 被 validation 阻断：缺 `trade_cal`, `stock_basic`, `daily`, `adj_factor`, `daily_basic`, `stk_limit`, `suspend_d`, `namechange`, `fut_*`, `opt_*` 等真实表。
 - 参数化期权只能作为压力层，不能作为真实期权链 leaderboard。
 - 当前机器可见 macOS 系统代理 `127.0.0.1:1082`，但下载脚本默认 direct mode 会绕过 Python 可见代理。
-- 已完成 BaoStock direct-mode 100 只上市 A 股样本，生成 `processed/phase2_free/stock_panel.parquet` 394,843 行、100 只股票、日期覆盖 `20100104` 到 `20260703`，并生成覆盖 42 个 S2/S3/S4 规格的 free-real 预榜；这仍是免费近似榜，不是 strict-real 真实排行榜或统计结论。
+- 已完成 BaoStock direct-mode 505 只 raw+qfq+上市普通股匹配样本，生成 `processed/phase2_free/stock_panel.parquet` 2,016,868 行、505 只股票、日期覆盖 `20100104` 到 `20260703`，并生成覆盖 42 个 S2/S3/S4 规格的 free-real 预榜；这仍是免费近似榜，不是 strict-real 真实排行榜或统计结论。
+- 已完成 505 股 free-real target backtest：42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口、月入金 30,000、硬目标 `W_12 >= 500000` 且 `W_24 >= 1200000`。当前最优为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；S2/S3 family best 达标率仍为 0%。信号预榜不能替代目标约束回测。
 
 ## 给 GPT Pro 的建议问题
 
@@ -68,6 +69,7 @@ uv run python -m compileall src scripts tests
 uv run pytest -q
 uv run python scripts/validate_phase2_real_data.py --config config/phase2_real_data.yaml
 uv run python scripts/validate_phase2_free_real_data.py --config config/phase2_free_real_data.yaml
+uv run python scripts/run_phase2_free_real_target_backtest.py --config config/phase2_free_real_data.yaml
 uv run python scripts/build_phase2_realdata.py --config config/phase2_real_data.yaml
 ```
 

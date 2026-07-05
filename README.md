@@ -96,9 +96,14 @@ uv run python scripts/build_phase2_free_stock_panel.py \
 
 uv run python scripts/run_phase2_free_real_experiment.py \
   --config config/phase2_free_real_data.yaml
+
+uv run python scripts/run_phase2_free_real_target_backtest.py \
+  --config config/phase2_free_real_data.yaml
 ```
 
-当前已完成 BaoStock direct-mode 100 只上市 A 股样本：`processed/phase2_free/stock_panel.parquet` 为 394,843 行、100 只股票，覆盖 `20100104` 到 `20260703`。完整 free-real 预榜覆盖 42 个 S2/S3/S4 规格；这仍是小样本近似榜，不是 strict-real 真实排行榜或统计结论。BaoStock 高并发可能触发登录态失效，建议用 `--start-index/--end-index` 做低并发分片续跑。
+上面的 `--max-codes 100` 是 smoke 示例。当前已完成 BaoStock direct-mode 505 只 raw+qfq+上市普通股匹配样本：`processed/phase2_free/stock_panel.parquet` 为 2,016,868 行、505 只股票，覆盖 `20100104` 到 `20260703`。完整 free-real 预榜覆盖 42 个 S2/S3/S4 规格；这仍是免费真实近似榜，不是 strict-real 真实排行榜或统计结论。BaoStock 高并发可能触发登录态失效，建议用 `--start-index/--end-index` 或 `--codes-file` 做低并发分片续跑。
+
+Target backtest 已在 505 只样本上覆盖 42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口、月入金 30,000、硬目标 `W_12 >= 500000` 且 `W_24 >= 1200000`。当前最优为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；S2/S3 family best 的达标率仍为 0%。这说明信号预榜不能替代目标约束回测，当前 S2/S3/S4 free-real 线仍未形成主方案证据。
 
 `free_real` 字段边界：
 

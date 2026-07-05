@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import sys
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -198,9 +199,12 @@ def write_frame(path: Path, frame: pd.DataFrame) -> Path:
 
 def append_error(config: FreeRealConfig, table: str, message: str) -> None:
     path = config.data_root / "00_meta" / "errors" / f"phase2_free_{table}.log"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as handle:
-        handle.write(f"{datetime.now().isoformat()} {message}\n")
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("a", encoding="utf-8") as handle:
+            handle.write(f"{datetime.now().isoformat()} {message}\n")
+    except OSError as exc:
+        print(f"[warn] could not append error log {path}: {type(exc).__name__}: {exc}", file=sys.stderr, flush=True)
 
 
 def manifest_record(source: str, table: str, name: str, path: Path, frame: pd.DataFrame, data_tier: str = "free_real") -> dict:
@@ -329,6 +333,7 @@ def download_baostock_free_real(
     force: bool = False,
     start_index: int = 0,
     end_index: int | None = None,
+    codes_override: list[str] | None = None,
 ) -> Path:
     ensure_dirs(config)
     with BaoStockClient(config) as client:
@@ -340,7 +345,7 @@ def download_baostock_free_real(
         trade_calendar_path = write_frame(config.data_root / "raw/baostock/trade_calendar.parquet", trade_calendar)
         write_manifest(config, [manifest_record("baostock", "trade_calendar", "all", trade_calendar_path, trade_calendar)])
 
-        codes = select_codes(stock_basic, max_codes=max_codes, start_index=start_index, end_index=end_index)
+        codes = codes_override if codes_override is not None else select_codes(stock_basic, max_codes=max_codes, start_index=start_index, end_index=end_index)
         for i, source_code in enumerate(codes, start=1):
             print(f"[download] {i}/{len(codes)} {source_code}", flush=True)
             raw_path = config.data_root / "raw" / "baostock" / "daily_raw" / f"{source_code.replace('.', '_')}.parquet"

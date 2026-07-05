@@ -51,6 +51,20 @@ def summarize_scores(scores: pd.DataFrame, strategy: str, family: str, holding_k
     }
 
 
+def panel_snapshot(panel: pd.DataFrame) -> dict[str, object]:
+    frame = panel.copy()
+    frame["trade_date"] = frame["trade_date"].astype(str)
+    frame["ts_code"] = frame["ts_code"].astype(str)
+    tiers = sorted(frame["data_tier"].astype(str).dropna().unique().tolist()) if "data_tier" in frame else []
+    return {
+        "rows": int(len(frame)),
+        "symbols": int(frame["ts_code"].nunique()),
+        "date_min": str(frame["trade_date"].min()),
+        "date_max": str(frame["trade_date"].max()),
+        "data_tiers": ", ".join(tiers) if tiers else "unknown",
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run Phase 2 free-real S2/S3/S4 signal leaderboard.")
     parser.add_argument("--config", default="config/phase2_free_real_data.yaml")
@@ -63,6 +77,7 @@ def main() -> None:
         print(f"missing free-real stock panel: {panel_path}; run scripts/build_phase2_free_stock_panel.py first", file=sys.stderr)
         raise SystemExit(2)
     panel = pd.read_parquet(panel_path)
+    snapshot = panel_snapshot(panel)
     specs = build_real_stock_strategy_specs(config.raw)
     if args.max_strategies:
         specs = specs[: args.max_strategies]
@@ -119,6 +134,7 @@ def main() -> None:
         "# Phase 2 Free Real Top Strategies",
         "",
         "- Data tier: `free_real`.",
+        f"- Panel snapshot: rows=`{snapshot['rows']}`, symbols=`{snapshot['symbols']}`, date_range=`{snapshot['date_min']}..{snapshot['date_max']}`, data_tier=`{snapshot['data_tiers']}`.",
         "- Strict real leaderboard remains separate and blocked until official/paid-grade fields exist.",
         "- `up_limit/down_limit` are derived; `is_suspended` is BaoStock `tradestatus` proxy.",
         f"- Strategy specs evaluated: `{len(leaderboard)}`.",

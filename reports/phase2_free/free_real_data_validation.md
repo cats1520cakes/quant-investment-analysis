@@ -8,19 +8,19 @@
 
 ## Raw Table Status
 
-| table          |   files |   rows | present   | columns                                                                                                                                                           |
-|:---------------|--------:|-------:|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| stock_basic    |       1 |   8819 | True      | delist_date, list_date, list_status, name, source_code, ts_code, type                                                                                             |
-| trade_calendar |       1 |   6029 | True      | is_open, trade_date                                                                                                                                               |
-| daily_raw      |     106 | 418873 | True      | amount, close, high, is_st_raw, low, open, pb, pcf_ttm, pct_chg, pe_ttm, pre_close, ps_ttm, source_code, trade_date, trade_status, ts_code, turnover_rate, volume |
-| daily_qfq      |     106 | 418873 | True      | adj_close_for_signal, adj_high_for_signal, adj_low_for_signal, adj_open_for_signal, source_code, trade_date, ts_code                                              |
+| table          |   files |    rows | present   | columns                                                                                                                                                           |
+|:---------------|--------:|--------:|:----------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| stock_basic    |       1 |    8819 | True      | delist_date, list_date, list_status, name, source_code, ts_code, type                                                                                             |
+| trade_calendar |       1 |    6029 | True      | is_open, trade_date                                                                                                                                               |
+| daily_raw      |     511 | 2040898 | True      | amount, close, high, is_st_raw, low, open, pb, pcf_ttm, pct_chg, pe_ttm, pre_close, ps_ttm, source_code, trade_date, trade_status, ts_code, turnover_rate, volume |
+| daily_qfq      |     511 | 2035388 | True      | adj_close_for_signal, adj_high_for_signal, adj_low_for_signal, adj_open_for_signal, source_code, trade_date, ts_code                                              |
 
 Raw file counts may include older cache files. Panel admission is based on matched listed A-share stock raw/qfq files.
 
 ## Panel Status
 
-- `/Volumes/PSSD1TB/量化数据/processed/phase2_free/stock_panel.parquet`: panel rows=394843; stocks=100; date_range=20100104..20260703
-- matched listed stock daily files: `100`
+- `/Volumes/PSSD1TB/量化数据/processed/phase2_free/stock_panel.parquet`: panel rows=2016868; stocks=505; date_range=20100104..20260703
+- matched listed stock daily files: `505`
 
 ## Strategy Admission
 

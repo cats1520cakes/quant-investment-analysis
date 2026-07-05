@@ -43,7 +43,9 @@
 
 当前机器 macOS 系统 HTTP/HTTPS 代理为 `127.0.0.1:1082`。下载脚本现在默认启用 direct mode：清理代理环境变量、设置 `NO_PROXY=*`、禁用 Python proxy discovery，并设置 socket timeout；只有显式传 `--allow-proxy` 才允许代理路径。
 
-已用 direct mode 完成 BaoStock 免费路线 100 只上市 A 股样本：raw 与 qfq 日线已落盘，`processed/phase2_free/stock_panel.parquet` 已生成 394,843 行、100 只股票，日期覆盖 `20100104` 到 `20260703`。完整 free-real 预榜已覆盖 42 个 S2/S3/S4 规格。当前仍是小样本近似榜，不具备全量统计意义；正式 free-real leaderboard 仍需扩大到 500、全量股票后再评估。BaoStock 高并发可能触发登录态失效，后续放大应使用低并发分片续跑。
+已用 direct mode 完成 BaoStock 免费路线 505 只 raw+qfq+上市普通股匹配样本：raw 与 qfq 日线已落盘，`processed/phase2_free/stock_panel.parquet` 已生成 2,016,868 行、505 只股票，日期覆盖 `20100104` 到 `20260703`。完整 free-real 预榜已覆盖 42 个 S2/S3/S4 规格。当前仍是免费近似榜，不具备 strict-real 统计意义；后续若继续放大到全量股票，应使用低并发分片续跑。
+
+已完成目标约束回测：505 股样本上覆盖 42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口，月入金 30,000，硬目标为 `W_12 >= 500000` 且 `W_24 >= 1200000`。当前最优为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；S2/S3 family best 达标率仍为 0%。信号预榜不能替代目标约束回测。
 
 `free_real` 准入：
 

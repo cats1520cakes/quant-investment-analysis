@@ -40,7 +40,7 @@ uv run python scripts/validate_phase2_real_data.py \
   --config config/phase2_real_data.yaml
 ```
 
-## Free Real 小样本
+## Free Real smoke / 500+ 样本
 
 ```bash
 uv run python scripts/download_phase2_free_real_data.py \
@@ -55,9 +55,12 @@ uv run python scripts/build_phase2_free_stock_panel.py \
 
 uv run python scripts/run_phase2_free_real_experiment.py \
   --config config/phase2_free_real_data.yaml
+
+uv run python scripts/run_phase2_free_real_target_backtest.py \
+  --config config/phase2_free_real_data.yaml
 ```
 
-更大 BaoStock 样本应使用低并发分片，例如 `--start-index 100 --end-index 200`；高并发突发请求可能使 BaoStock 登录态失效。
+`--max-codes 100` 只作为 smoke 示例。当前 canonical free-real panel 是 505 只 raw+qfq+上市普通股匹配股票、2,016,868 行、日期覆盖 `20100104` 到 `20260703`。更大 BaoStock 样本应使用低并发分片，例如 `--start-index 100 --end-index 200`，或用 `--codes-file` 重试缺失代码；高并发突发请求可能使 BaoStock 登录态失效。
 
 ## 全量数据表
 

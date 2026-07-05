@@ -13,6 +13,9 @@ paths:
   validation_report: reports/phase2_free/free_real_data_validation.md
   leaderboard: reports/phase2_free/free_real_stock_leaderboard.csv
   top_strategies: reports/phase2_free/free_real_top_strategies.md
+  target_windows: reports/phase2_free/free_real_target_windows.csv
+  target_leaderboard: reports/phase2_free/free_real_target_leaderboard.csv
+  target_report: reports/phase2_free/free_real_target_backtest.md
 
 sources:
   baostock:
@@ -86,3 +89,20 @@ phase2_real_stock_strategies:
     factor_modes: [low_turnover, high_turnover_breakout]
     rebalance: [weekly, monthly]
     holding_k: [10, 20, 30, 50]
+
+target_backtest:
+  monthly_deposit: 30000
+  target_month_12: 500000
+  target_month_24: 1200000
+  window_months: 24
+  min_trading_days: 420
+  min_symbols: 500
+  execution:
+    lot_size: 100
+    max_order_notional: 100000
+    commission_bps: 2.0
+    min_commission: 5.0
+    transfer_fee_bps: 0.1
+    stamp_tax_sell_bps: 10.0
+    slippage_bps: 5.0
+    target_weight_buffer: 0.05
