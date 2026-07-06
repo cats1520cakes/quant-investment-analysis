@@ -34,11 +34,13 @@ class FreeRealBacktestConfig:
     slippage_bps: float = 5.0
     target_weight_buffer: float = 0.05
     min_symbols: int = 500
+    max_daily_amount_participation: float | None = None
 
 
 def load_backtest_config(raw: dict) -> FreeRealBacktestConfig:
     cfg = raw.get("target_backtest", {}) if isinstance(raw.get("target_backtest", {}), dict) else {}
     execution = cfg.get("execution", {}) if isinstance(cfg.get("execution", {}), dict) else {}
+    participation = execution.get("max_daily_amount_participation")
     return FreeRealBacktestConfig(
         monthly_deposit=float(cfg.get("monthly_deposit", 30_000.0)),
         target_month_12=float(cfg.get("target_month_12", 500_000.0)),
@@ -58,6 +60,9 @@ def load_backtest_config(raw: dict) -> FreeRealBacktestConfig:
         slippage_bps=float(execution.get("slippage_bps", 5.0)),
         target_weight_buffer=float(execution.get("target_weight_buffer", 0.05)),
         min_symbols=int(cfg.get("min_symbols", 500)),
+        max_daily_amount_participation=(
+            None if participation in {None, "", 0} else float(participation)
+        ),
     )
 
 
@@ -77,9 +82,7 @@ def _to_date(value: pd.Timestamp | date | str) -> date:
 
 
 def _snapshot(row: dict[str, object], trade_date: date, price_column: str) -> MarketSnapshot:
-    price = float(row.get(price_column, np.nan))
-    if not np.isfinite(price) or price <= 0.0:
-        price = float(row.get("close", np.nan))
+    price = _execution_price(row, price_column)
     return MarketSnapshot(
         symbol=str(row["ts_code"]),
         trade_date=trade_date,
@@ -103,6 +106,8 @@ def _prepare_daily_panel(panel: pd.DataFrame) -> dict[str, DailyRows]:
     frame["ts_code"] = frame["ts_code"].astype(str)
     for column in ["open", "close", "up_limit", "down_limit"]:
         frame[column] = pd.to_numeric(frame[column], errors="coerce")
+    if "amount" in frame.columns:
+        frame["amount"] = pd.to_numeric(frame["amount"], errors="coerce")
     frame["is_suspended"] = frame["is_suspended"].fillna(False).astype(bool)
     return {
         date_key: day.set_index("ts_code", drop=False).to_dict(orient="index")
@@ -152,6 +157,13 @@ def _market_prices(day: DailyRows, price_column: str) -> dict[str, float]:
     return prices
 
 
+def _execution_price(row: dict[str, object], price_column: str = "open") -> float:
+    price = float(row.get(price_column, np.nan))
+    if not np.isfinite(price) or price <= 0.0:
+        price = float(row.get("close", np.nan))
+    return price
+
+
 def _submit_order(
     engine: ExecutionEngine,
     account: Account,
@@ -162,6 +174,32 @@ def _submit_order(
 ) -> ExecutionReport:
     order = Order(symbol=symbol, side=side, quantity=int(quantity), submitted_at=snapshot.trade_date)
     return engine.execute(account=account, order=order, snapshot=snapshot)
+
+
+def _amount_cap_quantity(
+    row: dict[str, object],
+    quantity: int,
+    price: float,
+    cfg: FreeRealBacktestConfig,
+) -> tuple[int, float, bool, bool]:
+    if cfg.max_daily_amount_participation is None:
+        return quantity, 0.0, False, False
+    if cfg.max_daily_amount_participation <= 0.0 or quantity <= 0 or not np.isfinite(price) or price <= 0.0:
+        notional_price = price if np.isfinite(price) and price > 0.0 else 0.0
+        return 0, float(max(quantity, 0) * notional_price), False, True
+
+    amount = row.get("amount", np.nan)
+    if pd.isna(amount) or float(amount) <= 0.0:
+        return 0, float(quantity * price), False, True
+
+    max_notional = float(amount) * cfg.max_daily_amount_participation
+    max_quantity = _round_lot(max_notional / price, cfg.lot_size)
+    if max_quantity <= 0:
+        return 0, float(quantity * price), False, True
+    if quantity <= max_quantity:
+        return quantity, 0.0, False, False
+    clipped_quantity = min(quantity, max_quantity)
+    return clipped_quantity, float((quantity - clipped_quantity) * price), True, False
 
 
 def _count_report(report: ExecutionReport, counters: dict[str, float]) -> None:
@@ -198,6 +236,10 @@ def _execute_rebalance(
         "stamp_tax": 0.0,
         "clipped_orders": 0.0,
         "clipped_notional": 0.0,
+        "participation_clipped_orders": 0.0,
+        "participation_clipped_notional": 0.0,
+        "participation_blocked_orders": 0.0,
+        "participation_blocked_notional": 0.0,
         "blocked_missing_rows": 0.0,
     }
     open_prices = dict(valuation_prices or {})
@@ -214,8 +256,8 @@ def _execute_rebalance(
             if symbol not in desired:
                 counters["blocked_missing_rows"] += 1.0
             continue
-        price = float(row["open"]) if row is not None and pd.notna(row.get("open", np.nan)) else open_prices.get(symbol, 0.0)
-        if price <= 0.0:
+        price = _execution_price(row, "open")
+        if not np.isfinite(price) or price <= 0.0:
             continue
         target_qty = 0
         if symbol in desired and target_value > 0.0:
@@ -233,12 +275,25 @@ def _execute_rebalance(
             counters["rejected_orders"] += 1
             counters[f"reject_{RejectReason.SUSPENDED.value}"] = counters.get(f"reject_{RejectReason.SUSPENDED.value}", 0.0) + 1.0
             continue
+        capped_quantity, clipped_notional, clipped, blocked = _amount_cap_quantity(
+            day[symbol],
+            quantity,
+            _execution_price(day[symbol], "open"),
+            cfg,
+        )
+        if blocked:
+            counters["participation_blocked_orders"] += 1.0
+            counters["participation_blocked_notional"] += clipped_notional
+            continue
+        if clipped:
+            counters["participation_clipped_orders"] += 1.0
+            counters["participation_clipped_notional"] += clipped_notional
         report = _submit_order(
             engine=engine,
             account=account,
             symbol=symbol,
             side=OrderSide.SELL,
-            quantity=quantity,
+            quantity=capped_quantity,
             snapshot=_snapshot(day[symbol], trade_date, "open"),
         )
         _count_report(report, counters)
@@ -255,7 +310,7 @@ def _execute_rebalance(
         if symbol not in day:
             continue
         row = day[symbol]
-        price = float(row["open"]) if pd.notna(row.get("open", np.nan)) else float(row.get("close", np.nan))
+        price = _execution_price(row, "open")
         if not np.isfinite(price) or price <= 0.0:
             continue
         current_qty = account.portfolio.quantity(symbol)
@@ -267,12 +322,20 @@ def _execute_rebalance(
         buy_qty = _round_lot(cash_budget / (price * (1.0 + estimated_fee_rate)), cfg.lot_size)
         if buy_qty <= 0:
             continue
+        capped_quantity, clipped_notional, clipped, blocked = _amount_cap_quantity(row, buy_qty, price, cfg)
+        if blocked:
+            counters["participation_blocked_orders"] += 1.0
+            counters["participation_blocked_notional"] += clipped_notional
+            continue
+        if clipped:
+            counters["participation_clipped_orders"] += 1.0
+            counters["participation_clipped_notional"] += clipped_notional
         report = _submit_order(
             engine=engine,
             account=account,
             symbol=symbol,
             side=OrderSide.BUY,
-            quantity=buy_qty,
+            quantity=capped_quantity,
             snapshot=_snapshot(row, trade_date, "open"),
         )
         _count_report(report, counters)
@@ -318,6 +381,10 @@ def simulate_free_real_window(
         "stamp_tax": 0.0,
         "clipped_orders": 0.0,
         "clipped_notional": 0.0,
+        "participation_clipped_orders": 0.0,
+        "participation_clipped_notional": 0.0,
+        "participation_blocked_orders": 0.0,
+        "participation_blocked_notional": 0.0,
         "blocked_missing_rows": 0.0,
     }
     prev_equity = 0.0
@@ -379,6 +446,10 @@ def simulate_free_real_window(
     metrics["rejected_cash"] = float(counters.get(f"reject_{RejectReason.INSUFFICIENT_CASH.value}", 0.0))
     metrics["clipped_orders"] = float(counters.get("clipped_orders", 0.0))
     metrics["clipped_notional"] = float(counters.get("clipped_notional", 0.0))
+    metrics["participation_clipped_orders"] = float(counters.get("participation_clipped_orders", 0.0))
+    metrics["participation_clipped_notional"] = float(counters.get("participation_clipped_notional", 0.0))
+    metrics["participation_blocked_orders"] = float(counters.get("participation_blocked_orders", 0.0))
+    metrics["participation_blocked_notional"] = float(counters.get("participation_blocked_notional", 0.0))
     metrics["blocked_missing_rows"] = float(counters.get("blocked_missing_rows", 0.0))
     return equity_frame, metrics
 
@@ -472,6 +543,10 @@ def aggregate_free_real_windows(windows: pd.DataFrame, cfg: FreeRealBacktestConf
                 "avg_rejected_suspended": mean_col(group, "rejected_suspended"),
                 "avg_clipped_orders": mean_col(group, "clipped_orders"),
                 "avg_clipped_notional": mean_col(group, "clipped_notional"),
+                "avg_participation_clipped_orders": mean_col(group, "participation_clipped_orders"),
+                "avg_participation_clipped_notional": mean_col(group, "participation_clipped_notional"),
+                "avg_participation_blocked_orders": mean_col(group, "participation_blocked_orders"),
+                "avg_participation_blocked_notional": mean_col(group, "participation_blocked_notional"),
                 "avg_blocked_missing_rows": mean_col(group, "blocked_missing_rows"),
                 "avg_fees": mean_col(group, "fees"),
             }

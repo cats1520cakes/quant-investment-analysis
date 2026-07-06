@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 import sys
@@ -48,6 +49,20 @@ def _pick(items: dict, key: str, default: list) -> list:
     return value if isinstance(value, list) else default
 
 
+def _format_participation_label(value: float) -> str:
+    pct = value * 100.0
+    if abs(pct - round(pct)) < 1e-9:
+        return f"participation_{int(round(pct))}pct"
+    return f"participation_{pct:.2f}pct".replace(".", "p")
+
+
+def _output_path(path: Path, label: str) -> Path:
+    if not label:
+        return path
+    safe = "".join(ch if ch.isalnum() or ch in {"-", "_"} else "_" for ch in label)
+    return path.with_name(f"{path.stem}_{safe}{path.suffix}")
+
+
 def write_report(
     path: Path,
     leaderboard: pd.DataFrame,
@@ -55,8 +70,19 @@ def write_report(
     selected_base: pd.DataFrame,
     generated_at: datetime,
     index_close_path: Path,
+    target_leaderboard_path: Path,
+    base_run_label: str,
+    max_daily_amount_participation: float | None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    base_scope = (
+        "- Base stock paths come from the 505-stock `free_real` target backtest layer."
+        if max_daily_amount_participation is None
+        else (
+            "- Base stock paths come from the 505-stock `free_real` target backtest layer with "
+            f"a `{max_daily_amount_participation:.4f}` BaoStock daily-amount participation cap."
+        )
+    )
     lines = [
         "# Phase 2 Overlay Research",
         "",
@@ -66,13 +92,15 @@ def write_report(
         "",
         "- Data tier: `proxy_overlay_research`.",
         "- This report is not a strict-real futures/options leaderboard.",
-        "- Base stock paths come from the 505-stock `free_real` target backtest layer.",
+        base_scope,
         "- Futures overlays use index proxies, integer lots, daily mark-to-market, effective margin rates, and cash-buffer gates.",
         "- Option overlays are parametric call-budget tests: premiums are Black-Scholes approximations from realized-vol multiples, contracts are integer, and payoff is held to tenor expiry.",
         "- Real futures/options chains remain blocked until contract-level daily data, bid/ask, volume/open-interest, margin and adjustment fields exist.",
         "",
         "## Inputs",
         "",
+        f"- Base target leaderboard: `{target_leaderboard_path}`",
+        f"- Base run label: `{base_run_label or 'baseline'}`",
         f"- Index close proxy: `{index_close_path}`",
         f"- Selected base rows: `{len(selected_base)}`",
         f"- Window rows: `{len(windows)}`",
@@ -130,7 +158,7 @@ def write_report(
                 "",
                 f"- Best overlay score: `{best['overlay_name']}` on `{best['base_strategy']}`, success={_fmt_pct(best['p_success'])}, median_w24={_fmt_money(best['median_w24'])}, p95 drawdown={_fmt_pct(best['p95_max_drawdown'])}.",
                 f"- Highest success: `{highest_success['overlay_name']}` on `{highest_success['base_strategy']}`, success={_fmt_pct(highest_success['p_success'])}, median_w24={_fmt_money(highest_success['median_w24'])}.",
-                "- If this table does not materially beat the 6.29% base free-real result, derivatives should not be treated as a shortcut; the next honest step is either real contract data or a different base strategy family.",
+                "- If this table does not materially beat the selected base free-real rows under the same stock execution assumptions, derivatives should not be treated as a shortcut; the next honest step is either real contract data or a different base strategy family.",
             ]
         )
         if not best_futures.empty:
@@ -146,13 +174,29 @@ def main() -> None:
     parser.add_argument("--config", default="config/phase2_free_real_data.yaml")
     parser.add_argument("--top-base", type=int, default=0, help="Override overlay_research.top_base_rows.")
     parser.add_argument("--max-windows", type=int, default=0, help="Debug limit per selected base strategy; 0 means all windows.")
+    parser.add_argument("--base-output-label", default="", help="Suffix used by the base target leaderboard, e.g. participation_5pct.")
+    parser.add_argument("--target-leaderboard", default="", help="Explicit base target leaderboard path.")
+    parser.add_argument(
+        "--max-daily-amount-participation",
+        type=float,
+        default=None,
+        help="Use the same per-stock BaoStock amount participation cap when rebuilding base equity paths.",
+    )
+    parser.add_argument("--output-label", default="", help="Suffix for overlay output files.")
     parser.add_argument("--skip-futures", action="store_true")
     parser.add_argument("--skip-options", action="store_true")
     args = parser.parse_args()
 
     config = load_config(args.config)
     raw_cfg = _overlay_config(config.raw)
-    target_leaderboard_path = Path(config.raw["paths"]["target_leaderboard"])
+    base_output_label = args.base_output_label.strip()
+    if not base_output_label and args.max_daily_amount_participation is not None:
+        base_output_label = _format_participation_label(args.max_daily_amount_participation)
+    target_leaderboard_path = (
+        Path(args.target_leaderboard)
+        if args.target_leaderboard
+        else _output_path(Path(config.raw["paths"]["target_leaderboard"]), base_output_label)
+    )
     if not target_leaderboard_path.exists():
         print(f"missing target leaderboard: {target_leaderboard_path}; run scripts/run_phase2_free_real_target_backtest.py first", file=sys.stderr)
         raise SystemExit(2)
@@ -167,6 +211,8 @@ def main() -> None:
     panel = pd.read_parquet(panel_path)
     panel_by_date = _prepare_daily_panel(panel)
     cfg = load_backtest_config(config.raw)
+    if args.max_daily_amount_participation is not None:
+        cfg = replace(cfg, max_daily_amount_participation=args.max_daily_amount_participation)
     specs_by_name = {spec.name: spec for spec in build_real_stock_strategy_specs(config.raw)}
 
     index_close_path = Path(raw_cfg.get("index_close_path", config.data_root / "processed/phase1_daily_close.csv"))
@@ -243,9 +289,12 @@ def main() -> None:
 
     windows = pd.DataFrame(rows)
     leaderboard = aggregate_overlay_windows(windows, cfg)
-    windows_path = Path(config.raw["paths"]["overlay_windows"])
-    leaderboard_path = Path(config.raw["paths"]["overlay_leaderboard"])
-    report_path = Path(config.raw["paths"]["overlay_report"])
+    output_label = args.output_label.strip()
+    if not output_label and cfg.max_daily_amount_participation is not None:
+        output_label = _format_participation_label(cfg.max_daily_amount_participation)
+    windows_path = _output_path(Path(config.raw["paths"]["overlay_windows"]), output_label)
+    leaderboard_path = _output_path(Path(config.raw["paths"]["overlay_leaderboard"]), output_label)
+    report_path = _output_path(Path(config.raw["paths"]["overlay_report"]), output_label)
     windows_path.parent.mkdir(parents=True, exist_ok=True)
     windows.to_csv(windows_path, index=False, encoding="utf-8")
     leaderboard.to_csv(leaderboard_path, index=False, encoding="utf-8")
@@ -256,6 +305,9 @@ def main() -> None:
         selected_base=selected_base,
         generated_at=datetime.now(),
         index_close_path=index_close_path,
+        target_leaderboard_path=target_leaderboard_path,
+        base_run_label=base_output_label,
+        max_daily_amount_participation=cfg.max_daily_amount_participation,
     )
     print(f"selected_base={len(selected_base)}")
     print(f"futures_specs={len(futures_specs)}")

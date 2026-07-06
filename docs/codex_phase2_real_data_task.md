@@ -61,11 +61,24 @@ uv run python scripts/run_phase2_free_real_target_backtest.py \
 
 uv run python scripts/run_phase2_overlay_research.py \
   --config config/phase2_free_real_data.yaml
+
+uv run python scripts/run_phase2_free_real_target_backtest.py \
+  --config config/phase2_free_real_data.yaml \
+  --max-daily-amount-participation 0.05 \
+  --output-label participation_5pct
+
+uv run python scripts/run_phase2_overlay_research.py \
+  --config config/phase2_free_real_data.yaml \
+  --base-output-label participation_5pct \
+  --max-daily-amount-participation 0.05 \
+  --output-label participation_5pct
 ```
 
 `--max-codes 100` 只作为 smoke 示例。当前 canonical free-real panel 是 505 只 raw+qfq+上市普通股匹配股票、2,016,868 行、日期覆盖 `20100104` 到 `20260703`。更大 BaoStock 样本应使用低并发分片，例如 `--start-index 100 --end-index 200`，或用 `--codes-file` 重试缺失代码；高并发突发请求可能使 BaoStock 登录态失效。
 
-`run_phase2_overlay_research.py` 只生成 `proxy_overlay_research` 压力层：股指期货使用指数代理和整手/保证金/现金 buffer 约束，期权使用参数化 call-budget 近似；它不进入 strict-real 或 free-real leaderboard。
+`run_phase2_free_real_target_backtest.py` 的 `--max-daily-amount-participation` 只生成 BaoStock 日成交额 participation-cap stress；它比单笔成交金额上限更保守，但不是官方盘口深度或 strict-real 成交证明。
+
+`run_phase2_overlay_research.py` 只生成 `proxy_overlay_research` 压力层：股指期货使用指数代理和整手/保证金/现金 buffer 约束，期权使用参数化 call-budget 近似；它不进入 strict-real 或 free-real leaderboard。若 stock base 使用 participation-cap stress，overlay 必须传同一个 `--base-output-label` 和 `--max-daily-amount-participation`，否则不能和 post-cap stock 结果直接比较。
 
 ## 全量数据表
 
@@ -107,6 +120,7 @@ uv run python scripts/run_phase2_overlay_research.py \
 - 涨停买入不能默认成交。
 - 跌停卖出不能默认成交。
 - T+1 必须生效。
+- 成交额参与率 cap 必须可选且可报告；`free_real` 只能使用 BaoStock 日成交额做近似压力，strict-real 必须等待官方成交/盘口/合约级字段。
 - 退市样本必须保留。
 - ST / 名称变更状态必须按历史日期识别。
 

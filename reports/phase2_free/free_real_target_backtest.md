@@ -8,7 +8,8 @@ Generated at: 2026-07-05 23:08:36
 - Strict real leaderboard remains separate and blocked until official/paid-grade fields exist.
 - This target backtest uses BaoStock raw OHLC for execution, qfq prices for signals, derived limit prices, and BaoStock `tradestatus` as suspension proxy.
 - It models monthly deposits, 12/24-month hard targets, T+1, suspended/no-trade checks, limit-up buy rejection, limit-down sell rejection, A-share board-lot buying, fixed order-notional caps, commission, transfer fee, stamp tax, and slippage.
-- Known gaps: no participation-rate cap from daily amount yet, no dividend/corporate-action cash adjustment, and free-real suspension/limit evidence is proxy/derived rather than official.
+- Daily amount participation cap: disabled; this report is the pre-cap baseline.
+- Known gaps: no participation-rate cap from daily amount in this pre-cap baseline, no dividend/corporate-action cash adjustment, and free-real suspension/limit evidence is proxy/derived rather than official.
 
 ## Inputs
 

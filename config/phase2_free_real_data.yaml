@@ -62,6 +62,7 @@ free_real_gates:
 
 field_sources:
   daily: baostock_unadjusted
+  amount: baostock_daily_amount_for_participation_stress_only
   adj_close_for_signal: baostock_qfq_or_akshare_qfq
   is_suspended: baostock_tradestatus
   is_st: baostock_isST
@@ -109,6 +110,7 @@ target_backtest:
     stamp_tax_sell_bps: 10.0
     slippage_bps: 5.0
     target_weight_buffer: 0.05
+    max_daily_amount_participation:
 
 overlay_research:
   data_tier: proxy_overlay_research

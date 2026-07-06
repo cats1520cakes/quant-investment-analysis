@@ -62,13 +62,19 @@ def synthetic_panel() -> pd.DataFrame:
 
 
 def test_load_backtest_config_defaults_and_overrides() -> None:
+    assert load_backtest_config({}).max_daily_amount_participation is None
+
     cfg = load_backtest_config(
         {
             "target_backtest": {
                 "monthly_deposit": 1000,
                 "target_month_12": 12_000,
                 "target_month_24": 24_000,
-                "execution": {"lot_size": 100, "max_order_notional": 20_000},
+                "execution": {
+                    "lot_size": 100,
+                    "max_order_notional": 20_000,
+                    "max_daily_amount_participation": 0.01,
+                },
             }
         }
     )
@@ -78,6 +84,7 @@ def test_load_backtest_config_defaults_and_overrides() -> None:
     assert cfg.target_month_24 == 24_000
     assert cfg.lot_size == 100
     assert cfg.max_order_notional == 20_000
+    assert cfg.max_daily_amount_participation == 0.01
 
 
 def test_free_real_target_backtest_generates_goal_windows() -> None:
@@ -133,6 +140,10 @@ def test_free_real_window_aggregation_uses_hard_targets() -> None:
                 "rejected_limit_down": 0,
                 "rejected_suspended": 1,
                 "fees": 100,
+                "participation_clipped_orders": 2,
+                "participation_clipped_notional": 1000,
+                "participation_blocked_orders": 1,
+                "participation_blocked_notional": 500,
             },
             {
                 "strategy": "s",
@@ -150,6 +161,10 @@ def test_free_real_window_aggregation_uses_hard_targets() -> None:
                 "rejected_limit_down": 0,
                 "rejected_suspended": 0,
                 "fees": 120,
+                "participation_clipped_orders": 4,
+                "participation_clipped_notional": 2000,
+                "participation_blocked_orders": 3,
+                "participation_blocked_notional": 1500,
             },
         ]
     )
@@ -161,6 +176,95 @@ def test_free_real_window_aggregation_uses_hard_targets() -> None:
     assert row["p_w12"] == 0.5
     assert row["p_w24"] == 1.0
     assert row["avg_rejected_orders"] == 1.5
+    assert row["avg_participation_clipped_orders"] == 3.0
+    assert row["avg_participation_blocked_orders"] == 2.0
+
+
+def _execution_row(symbol: str, open_price: float, amount: float) -> dict[str, object]:
+    return {
+        "ts_code": symbol,
+        "open": open_price,
+        "close": open_price,
+        "amount": amount,
+        "is_suspended": False,
+        "up_limit": open_price * 1.1,
+        "down_limit": open_price * 0.9,
+    }
+
+
+def test_participation_cap_clips_buy_orders_before_engine_submission() -> None:
+    panel_by_date = {
+        "20200101": {"600001.SH": _execution_row("600001.SH", 10.0, 15_000.0)},
+        "20200102": {"600001.SH": _execution_row("600001.SH", 10.0, 15_000.0)},
+    }
+    cfg = FreeRealBacktestConfig(
+        monthly_deposit=20_000,
+        window_months=1,
+        min_trading_days=1,
+        lot_size=100,
+        max_order_notional=None,
+        commission_bps=0.0,
+        min_commission=0.0,
+        transfer_fee_bps=0.0,
+        stamp_tax_sell_bps=0.0,
+        slippage_bps=0.0,
+        max_daily_amount_participation=0.10,
+    )
+
+    _, metrics = simulate_free_real_window(
+        panel_by_date=panel_by_date,
+        trading_dates=list(panel_by_date),
+        top_by_signal_date={"20200101": ["600001.SH"]},
+        rebalance_dates=set(panel_by_date),
+        start=pd.Timestamp("2020-01-01"),
+        end=pd.Timestamp("2020-01-02"),
+        deposit_timing="beginning",
+        cfg=cfg,
+    )
+
+    assert metrics["filled_orders"] == 1.0
+    assert metrics["traded_notional"] == 1000.0
+    assert metrics["participation_clipped_orders"] == 1.0
+    assert metrics["participation_clipped_notional"] == 19_000.0
+    assert metrics["participation_blocked_orders"] == 0.0
+    assert metrics["rejected_orders"] == 0.0
+
+
+def test_participation_cap_blocks_order_when_cap_is_below_one_lot() -> None:
+    panel_by_date = {
+        "20200101": {"600001.SH": _execution_row("600001.SH", 10.0, 5_000.0)},
+        "20200102": {"600001.SH": _execution_row("600001.SH", 10.0, 5_000.0)},
+    }
+    cfg = FreeRealBacktestConfig(
+        monthly_deposit=20_000,
+        window_months=1,
+        min_trading_days=1,
+        lot_size=100,
+        max_order_notional=None,
+        commission_bps=0.0,
+        min_commission=0.0,
+        transfer_fee_bps=0.0,
+        stamp_tax_sell_bps=0.0,
+        slippage_bps=0.0,
+        max_daily_amount_participation=0.10,
+    )
+
+    _, metrics = simulate_free_real_window(
+        panel_by_date=panel_by_date,
+        trading_dates=list(panel_by_date),
+        top_by_signal_date={"20200101": ["600001.SH"]},
+        rebalance_dates=set(panel_by_date),
+        start=pd.Timestamp("2020-01-01"),
+        end=pd.Timestamp("2020-01-02"),
+        deposit_timing="beginning",
+        cfg=cfg,
+    )
+
+    assert metrics["filled_orders"] == 0.0
+    assert metrics["participation_blocked_orders"] == 1.0
+    assert metrics["participation_blocked_notional"] == 20_000.0
+    assert metrics["participation_clipped_orders"] == 0.0
+    assert metrics["rejected_orders"] == 0.0
 
 
 def test_target_window_counts_execution_constraints() -> None:

@@ -45,9 +45,9 @@
 
 已用 direct mode 完成 BaoStock 免费路线 505 只 raw+qfq+上市普通股匹配样本：raw 与 qfq 日线已落盘，`processed/phase2_free/stock_panel.parquet` 已生成 2,016,868 行、505 只股票，日期覆盖 `20100104` 到 `20260703`。完整 free-real 预榜已覆盖 42 个 S2/S3/S4 规格。当前仍是免费近似榜，不具备 strict-real 统计意义；后续若继续放大到全量股票，应使用低并发分片续跑。
 
-已完成目标约束回测：505 股样本上覆盖 42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口，月入金 30,000，硬目标为 `W_12 >= 500000` 且 `W_24 >= 1200000`。当前最优为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；S2/S3 family best 达标率仍为 0%。信号预榜不能替代目标约束回测。
+已完成目标约束回测：505 股样本上覆盖 42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口，月入金 30,000，硬目标为 `W_12 >= 500000` 且 `W_24 >= 1200000`。Pre-cap baseline 与 5% BaoStock 日成交额 participation-cap stress 的当前最优都为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；5% stress 平均每窗约 33.97 次 participation blocked，S2/S3 family best 达标率仍为 0%。信号预榜不能替代目标约束回测，且 5% cap 只是日成交额近似压力，不是 strict-real 盘口成交证明。
 
-已完成 `proxy_overlay_research` 衍生品压力层：选取 6 个 base 策略/入金组合，覆盖 32 个股指期货整手 proxy 规格、72 个参数化期权 call-budget 规格、109,200 个 overlay-window。最高成功率为 9.14%（沪深300参数化 call budget），但仍低且中位资产未达 120 万；最佳期货整手 proxy 仍为 6.29%，平均每窗 10.21 次买不起/不能开够一手，说明整手期货不是小资金阶段的捷径。
+已完成 `proxy_overlay_research` 衍生品压力层，并在 5% participation-cap base 上重跑：选取 6 个 base 策略/入金组合，覆盖 32 个股指期货整手 proxy 规格、72 个参数化期权 call-budget 规格、109,200 个 overlay-window。最高成功率为 9.14%（沪深300参数化 call budget），但仍低且中位资产未达 120 万；最佳期货整手 proxy 仍为 6.29%，平均每窗 10.21 次买不起/不能开够一手，说明整手期货不是小资金阶段的捷径。
 
 `free_real` 准入：
 
@@ -84,5 +84,6 @@ uv run python scripts/validate_phase2_real_data.py \
 - `scripts/build_phase2_realdata.py`：从真实 raw 表生成 `processed/phase2/*.parquet`；缺表时退出并拒绝 fallback。
 - `src/quant_proof/realdata/`：构造 `stock_panel`，保留 raw OHLC 执行价，`adj_close_for_signal` 仅用于信号。
 - `src/quant_proof/engine/`：T+1、停牌、涨跌停、费用、印花税、成交金额上限等撮合规则骨架。
+- `src/quant_proof/free_real_backtest.py`：free-real target layer 支持可选 BaoStock 日成交额 participation cap，并记录 participation clipped/blocked 指标；该约束不能升格为 strict-real 流动性证据。
 - `src/quant_proof/real_strategies.py`：S2/S3/S4 真实个股策略规格与信号打分入口。
-- `tests/`：覆盖 validation 缺表门禁、stock_panel 字段、月初/月末入金、12/24 月目标、回撤、T+1、停牌、涨跌停和费用规则。
+- `tests/`：覆盖 validation 缺表门禁、stock_panel 字段、月初/月末入金、12/24 月目标、回撤、T+1、停牌、涨跌停、participation cap 和费用规则。
