@@ -58,9 +58,14 @@ uv run python scripts/run_phase2_free_real_experiment.py \
 
 uv run python scripts/run_phase2_free_real_target_backtest.py \
   --config config/phase2_free_real_data.yaml
+
+uv run python scripts/run_phase2_overlay_research.py \
+  --config config/phase2_free_real_data.yaml
 ```
 
 `--max-codes 100` 只作为 smoke 示例。当前 canonical free-real panel 是 505 只 raw+qfq+上市普通股匹配股票、2,016,868 行、日期覆盖 `20100104` 到 `20260703`。更大 BaoStock 样本应使用低并发分片，例如 `--start-index 100 --end-index 200`，或用 `--codes-file` 重试缺失代码；高并发突发请求可能使 BaoStock 登录态失效。
+
+`run_phase2_overlay_research.py` 只生成 `proxy_overlay_research` 压力层：股指期货使用指数代理和整手/保证金/现金 buffer 约束，期权使用参数化 call-budget 近似；它不进入 strict-real 或 free-real leaderboard。
 
 ## 全量数据表
 

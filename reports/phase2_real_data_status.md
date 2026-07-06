@@ -47,6 +47,8 @@
 
 已完成目标约束回测：505 股样本上覆盖 42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口，月入金 30,000，硬目标为 `W_12 >= 500000` 且 `W_24 >= 1200000`。当前最优为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；S2/S3 family best 达标率仍为 0%。信号预榜不能替代目标约束回测。
 
+已完成 `proxy_overlay_research` 衍生品压力层：选取 6 个 base 策略/入金组合，覆盖 32 个股指期货整手 proxy 规格、72 个参数化期权 call-budget 规格、109,200 个 overlay-window。最高成功率为 9.14%（沪深300参数化 call budget），但仍低且中位资产未达 120 万；最佳期货整手 proxy 仍为 6.29%，平均每窗 10.21 次买不起/不能开够一手，说明整手期货不是小资金阶段的捷径。
+
 `free_real` 准入：
 
 - 允许：`S2_real_stock_momentum`, `S3_real_stock_breakout`, `S4_real_smallcap_factor`

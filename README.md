@@ -105,6 +105,8 @@ uv run python scripts/run_phase2_free_real_target_backtest.py \
 
 Target backtest 已在 505 只样本上覆盖 42 个 S2/S3/S4 规格、14,700 个 24 月滚动窗口、月入金 30,000、硬目标 `W_12 >= 500000` 且 `W_24 >= 1200000`。当前最优为 `S4_real_smallcap_factor_low_turnover_k10_weekly` / beginning，达标率 6.29%、24 月中位资产 940,474、p95 最大回撤 40.70%；S2/S3 family best 的达标率仍为 0%。这说明信号预榜不能替代目标约束回测，当前 S2/S3/S4 free-real 线仍未形成主方案证据。
 
+衍生品 overlay 已作为 `proxy_overlay_research` 压力层单独测试：6 个 base 策略/入金组合、32 个整手期货规格、72 个参数化期权 call-budget 规格、109,200 个 overlay-window。最高成功率为 9.14%（`option_IO_call_budget0.02_t30_d0.35_iv1.3` on `S4_real_smallcap_factor_low_turnover_k10_weekly`），仍未形成主方案证据；最佳期货整手 proxy 仍停在 6.29%，平均每窗 10.21 次买不起/不能开够一手，说明早期资金约束主导。
+
 `free_real` 字段边界：
 
 - raw `open/high/low/close/pre_close` 来自 BaoStock `adjustflag=3`，只用于撮合。

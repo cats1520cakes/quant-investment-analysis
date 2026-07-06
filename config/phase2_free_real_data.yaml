@@ -16,6 +16,9 @@ paths:
   target_windows: reports/phase2_free/free_real_target_windows.csv
   target_leaderboard: reports/phase2_free/free_real_target_leaderboard.csv
   target_report: reports/phase2_free/free_real_target_backtest.md
+  overlay_windows: reports/phase2_free/overlay_research_windows.csv
+  overlay_leaderboard: reports/phase2_free/overlay_research_leaderboard.csv
+  overlay_report: reports/phase2_free/overlay_research_report.md
 
 sources:
   baostock:
@@ -106,3 +109,19 @@ target_backtest:
     stamp_tax_sell_bps: 10.0
     slippage_bps: 5.0
     target_weight_buffer: 0.05
+
+overlay_research:
+  data_tier: proxy_overlay_research
+  index_close_path: /Volumes/PSSD1TB/量化数据/processed/phase1_daily_close.csv
+  top_base_rows: 4
+  futures:
+    contracts: [IF, IH, IC, IM]
+    target_beta: [0.3, 0.5]
+    effective_margin_rates: [0.15, 0.20]
+    cash_buffer_pct: [0.33, 0.50]
+  options:
+    contracts: [IO, HO, MO]
+    monthly_budget_pct_nav: [0.01, 0.02, 0.05]
+    tenors_days: [30, 60]
+    deltas: [0.35, 0.50]
+    iv_multipliers_to_realized_vol: [1.3, 1.6]
