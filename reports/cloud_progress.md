@@ -131,3 +131,10 @@
 - D: 18 specs, best worst W12/W24 318,332/647,455; base passes 0.
 - Together with B, 174/174 frozen U3 specifications are complete. Every specification has 124 cohorts and 6 non-overlap W24 blocks; strict candidates **0**.
 - No stress promotion was triggered because no base specification passed the dual target. Next work should expand executable economic convexity rather than retune this failed grid.
+
+## 2026-07-12 — high-elasticity ETF universe preregistration
+
+- E1={159915}, E2={159915,510500}, and E3={159915,510500,510300} were selected by inception, index mandate and liquidity rules without return screening. Each has a conservative lower bound of 6 non-overlapping W24 blocks through 2025.
+- Five new, non-U3-equivalent families were frozen before results: 204 total specifications. Maximum ETF exposure is 100%; borrowing and synthetic leverage are prohibited.
+- SZSE's official listing notice is accessible and proves identity/listing, but it does not prove full-history OHLCV or announcement completeness. An attempted announcement API query returned HTTP 500; no official structured historical chain has yet been verified.
+- Tencent raw/hfq each contain 3,539 rows from 2011-12-09 to 2026-07-10, but remain vendor cross-check only. Strict E1/E2/E3 evaluation is fail-closed. Strict candidates: **0**.
