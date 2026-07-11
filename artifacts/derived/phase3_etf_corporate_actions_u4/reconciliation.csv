@@ -1,0 +1,13 @@
+code,announcement_date,title,classification,event_id,ledger_effect,body_read
+510050,2024-01-09,净值计算小数位调整,non_economic,,none,true
+510050,2024-11-25,利润分配公告,cash_dividend,510050-20241129-cash,cash_receivable,true
+510050,2024-12-03,改聘会计师事务所,non_economic,,none,true
+510050,2025-12-10,利润分配公告,cash_dividend,510050-20251216-cash,cash_receivable,true
+510300,2024-01-11,分红公告,cash_dividend,510300-20240117-cash,cash_receivable,true
+510300,2024-11-02,改聘会计师事务所,non_economic,,none,true
+510300,2025-06-11,分红公告,cash_dividend,510300-20250617-cash,cash_receivable,true
+510500,2024-05-10,分红公告,cash_dividend,510500-20240516-cash,cash_receivable,true
+510500,2024-11-02,改聘会计师事务所,non_economic,,none,true
+510500,2025-01-09,分红公告,cash_dividend,510500-20250115-cash,cash_receivable,true
+512100,2024-11-02,改聘会计师事务所,non_economic,,none,true
+512100,2025-01-10,分红公告,cash_dividend,512100-20250114-cash,cash_receivable,true
