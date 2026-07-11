@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "valid_official_months": 54,
+  "target_months": 195,
+  "new_valid_months_this_checkpoint": 25,
+  "runtime_source_bytes": 6362526,
+  "known_failed_months": ["201209", "201210", "201211"],
+  "segments": [
+    {"range": "202001-202012", "months": 12, "rows": 66992, "panel_sha256": "0c42087371de2b165041f9220e6a7c3b1b5530e5e0f3141069020904f9832472", "source_set_sha256": "582abbe37957633e9015044d3ef2cbbc8b5f6fad77723c3f32646089788d13d2", "products": ["IC", "IF", "IH", "IO"]},
+    {"range": "202201-202207", "months": 7, "rows": 39216, "panel_sha256": "9a68640ac2941f27840a1c9197da210158130d6b3844394e39cc284db44abe05", "source_set_sha256": "3c3c9bcd5c47bb5f72443866c7008116fb5b81702646d4d137343eca6a026596", "products": ["IC", "IF", "IH", "IM", "IO", "MO"]},
+    {"range": "202601-202606", "months": 6, "rows": 83508, "panel_sha256": "a93ddf92dff3f064ddd40616b018a358f90c063cd06b77b6058b83cfe83e81f4", "source_set_sha256": "1e77da2c9283b391eb1047a17db6a9f20932081f0bc24dbec0fb59111c0c12af", "products": ["HO", "IC", "IF", "IH", "IM", "IO", "MO"]}
+  ],
+  "evidence_tier": "official_exchange_daily",
+  "canonical_panel_complete": false,
+  "strict_candidates": 0
+}
