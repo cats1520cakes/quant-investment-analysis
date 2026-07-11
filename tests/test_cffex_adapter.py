@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import errno
+import os
 import zipfile
 from io import BytesIO
 from pathlib import Path
@@ -17,6 +19,7 @@ from quant_proof.free_sources.cffex_adapter import (
     parse_cffex_daily_csv,
     validate_cffex_panel_manifest,
     validate_cffex_contract_master_manifest,
+    _publish_parquet_atomically,
 )
 from quant_proof.network_guard import DirectHttpResponse, DirectSocketRoute
 
@@ -118,6 +121,74 @@ def test_build_cffex_panel_is_manifest_bound(tmp_path: Path) -> None:
     manifest_path.write_text(json.dumps(tampered), encoding="utf-8")
     with pytest.raises(CffexDataError, match="hash"):
         validate_cffex_panel_manifest(output)
+
+
+def _valid_temp_parquet(path: Path) -> None:
+    archive = path.parent / "202401.zip"
+    archive.write_bytes(_month_zip_bytes())
+    frame = parse_cffex_daily_csv(_daily_csv(), "20240102", "fixture")
+    frame = pd.concat([frame, frame.assign(trade_date="20240103")], ignore_index=True)
+    frame.to_parquet(path, index=False)
+
+
+def test_atomic_parquet_publish_rejects_truncated_footer(tmp_path: Path) -> None:
+    temp = tmp_path / ".panel.tmp.parquet"
+    output = tmp_path / "panel.parquet"
+    _valid_temp_parquet(temp)
+    temp.write_bytes(temp.read_bytes()[:-4])
+    with pytest.raises(CffexDataError, match="footer"):
+        _publish_parquet_atomically(
+            temp, output, expected_rows=4,
+            expected_first_date="20240102", expected_last_date="20240103",
+        )
+    assert not output.exists()
+
+
+def test_atomic_parquet_publish_rejects_unclosed_partial_write(tmp_path: Path) -> None:
+    temp = tmp_path / ".panel.tmp.parquet"
+    output = tmp_path / "panel.parquet"
+    stream = temp.open("wb")
+    stream.write(b"PAR1partial-row-group")
+    stream.flush()
+    try:
+        with pytest.raises(CffexDataError, match="footer"):
+            _publish_parquet_atomically(
+                temp, output, expected_rows=4,
+                expected_first_date="20240102", expected_last_date="20240103",
+            )
+    finally:
+        stream.close()
+    assert not output.exists()
+
+
+def test_atomic_parquet_publish_rejects_cross_device_rename(tmp_path: Path, monkeypatch) -> None:
+    temp = tmp_path / ".panel.tmp.parquet"
+    output = tmp_path / "panel.parquet"
+    _valid_temp_parquet(temp)
+
+    def exdev(*_args):
+        raise OSError(errno.EXDEV, "cross-device link")
+
+    monkeypatch.setattr(os, "replace", exdev)
+    with pytest.raises(CffexDataError, match="cross-device"):
+        _publish_parquet_atomically(
+            temp, output, expected_rows=4,
+            expected_first_date="20240102", expected_last_date="20240103",
+        )
+    assert not output.exists()
+
+
+def test_atomic_parquet_publish_does_not_accept_stale_output(tmp_path: Path) -> None:
+    temp = tmp_path / ".panel.tmp.parquet"
+    output = tmp_path / "panel.parquet"
+    output.write_bytes(b"PAR1stale")
+    temp.write_bytes(b"PAR1new-but-unclosed")
+    with pytest.raises(CffexDataError, match="footer"):
+        _publish_parquet_atomically(
+            temp, output, expected_rows=4,
+            expected_first_date="20240102", expected_last_date="20240103",
+        )
+    assert output.read_bytes() == b"PAR1stale"
 
 
 def test_contract_master_is_bound_to_official_daily_panel(tmp_path: Path) -> None:
