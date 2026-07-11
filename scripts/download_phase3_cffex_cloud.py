@@ -76,6 +76,8 @@ def main() -> None:
                     partial_bytes = temporary.stat().st_size if temporary.exists() else 0
                     partial_hash = hashlib.sha256(temporary.read_bytes()).hexdigest() if partial_bytes else ""
                     attempt_details.append({"attempt": attempt, "http_code": "unknown", "bytes": partial_bytes, "partial_sha256": partial_hash, "error": error})
+                    if not isinstance(exc, subprocess.CalledProcessError) and temporary.exists():
+                        temporary.unlink()
                     if attempt < args.attempts:
                         time.sleep(args.backoff_seconds * (2 ** (attempt - 1)))
             else:
