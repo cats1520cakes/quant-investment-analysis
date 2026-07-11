@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import argparse, hashlib, json, subprocess, time
+import argparse, hashlib, json, subprocess
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -15,18 +15,19 @@ def fetch(code: str, start: str, end: str, page: int, size: int = 100) -> dict:
     return json.loads(done.stdout)
 
 def main() -> None:
-    ap=argparse.ArgumentParser(); ap.add_argument("--data-root",default="artifacts/runtime_data"); ap.add_argument("--output-root",default="artifacts/derived/phase3_etf_corporate_actions_u4"); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument("--data-root",default="artifacts/runtime_data"); ap.add_argument("--output-root",default="artifacts/derived/phase3_etf_corporate_actions_u4"); ap.add_argument("--start",default="2024-01-01"); ap.add_argument("--end",default="2025-12-31"); ap.add_argument("--codes",nargs="+",default=["510050","510300","510500","512100"]); args=ap.parse_args()
     raw=Path(args.data_root)/"raw/sse_etf_announcements"; out=Path(args.output_root); raw.mkdir(parents=True,exist_ok=True); out.mkdir(parents=True,exist_ok=True)
     all_rows=[]; coverage=[]
-    for code in ("510050","510300","510500","512100"):
-        first=fetch(code,"2024-01-01","2025-12-31",1); ph=first["pageHelp"]; pages=int(ph["pageCount"]); rows=list(first.get("result") or ph.get("data") or [])
-        for page in range(2,pages+1): rows.extend(fetch(code,"2024-01-01","2025-12-31",page).get("result") or [])
+    tag=f"{args.start[:4]}_{args.end[:4]}"
+    for code in args.codes:
+        first=fetch(code,args.start,args.end,1); ph=first["pageHelp"]; pages=int(ph["pageCount"]); rows=list(first.get("result") or ph.get("data") or [])
+        for page in range(2,pages+1): rows.extend(fetch(code,args.start,args.end,page).get("result") or [])
         dedup={r["URL"]:r for r in rows}; rows=sorted(dedup.values(),key=lambda r:(r.get("SSEDATE",""),r.get("URL","")))
-        body=json.dumps(rows,ensure_ascii=False,indent=2).encode(); path=raw/f"{code}_2024_2025.json"; path.write_bytes(body)
+        body=json.dumps(rows,ensure_ascii=False,indent=2).encode(); path=raw/f"{code}_{tag}.json"; path.write_bytes(body)
         candidates=[r for r in rows if any(k in (r.get("TITLE","")+r.get("ORG_BULLETIN_TYPE_DESC","")) for k in KEYWORDS)]
         for r in candidates: all_rows.append({"code":code,"fund_name":r.get("FUND_EXPANSION_ABBR"),"date":r.get("SSEDATE"),"title":r.get("TITLE"),"category":r.get("ORG_BULLETIN_TYPE_DESC"),"url":"https://www.sse.com.cn"+r["URL"],"index_evidence_tier":"official_sse_announcement_index","body_parsed":False})
-        coverage.append({"code":code,"start":"2024-01-01","end":"2025-12-31","total_records":len(rows),"pages":pages,"candidate_records":len(candidates),"index_sha256":hashlib.sha256(body).hexdigest(),"request_url":URL,"sql_id":"COMMON_PL_JJXX_JJGG_NEW_L","fetched_at":pd.Timestamp.utcnow().isoformat(),"evidence_tier":"official_sse_announcement_index"})
+        coverage.append({"code":code,"start":args.start,"end":args.end,"total_records":len(rows),"pages":pages,"last_page_reached":True,"candidate_records":len(candidates),"index_sha256":hashlib.sha256(body).hexdigest(),"request_url":URL,"sql_id":"COMMON_PL_JJXX_JJGG_NEW_L","fetched_at":pd.Timestamp.utcnow().isoformat(),"evidence_tier":"official_sse_announcement_index"})
     pd.DataFrame(all_rows).to_csv(out/"candidate_announcements.csv",index=False); pd.DataFrame(coverage).to_csv(out/"coverage.csv",index=False)
-    manifest={"schema_version":1,"codes":["510050","510300","510500","512100"],"start":"2024-01-01","end":"2025-12-31","coverage_complete":True,"candidate_count":len(all_rows),"body_gate_passed":False,"strict_candidates":0,"raw_committed":False}
+    manifest={"schema_version":1,"codes":args.codes,"start":args.start,"end":args.end,"coverage_complete":True,"candidate_count":len(all_rows),"body_gate_passed":False,"strict_candidates":0,"raw_committed":False}
     (out/"manifest.json").write_text(json.dumps(manifest,indent=2)+"\n"); print(json.dumps(manifest))
 if __name__=="__main__": main()
