@@ -1,0 +1,22 @@
+version: 1
+search_id: phase3_cffex_crowding_v1
+evidence_tier: official_exchange_daily_signal_date
+products: [IF, IH, IC, IM]
+base_rules:
+  - {kind: time_series_momentum, position_mode: long_flat, lookback_days: 20, neutral_band: 0.0}
+  - {kind: time_series_momentum, position_mode: long_short_flat, lookback_days: 60, neutral_band: 0.02}
+crowding_gates:
+  metrics: [lagged_oi_change, volume_oi, oi_concentration]
+  lookback_days: [5, 20]
+  modes: [avoid_high, avoid_extremes]
+  quantile_pairs:
+    - [0.2, 0.8]
+  expanding_min_periods: 60
+execution:
+  signal_at_close_execute_next_open: true
+  exact_signal_date_volume_capacity: true
+  whole_contracts: true
+  bid_ask_available: false
+claim_boundary:
+  development_exposed: true
+  formal_holdout: false
