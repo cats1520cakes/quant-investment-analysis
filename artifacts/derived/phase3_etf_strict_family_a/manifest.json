@@ -1,0 +1,9 @@
+{
+  "family": "A",
+  "specifications": 48,
+  "timing_rows": 96,
+  "panel_sha256": "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2",
+  "dividend_ledger_sha256": "7ae74a85be0be03fdb71138cc32ff67ff2e73431dad1cced0e4221cfa16f33e3",
+  "strict_candidates": 0,
+  "sample_size_gate_passed": false
+}
