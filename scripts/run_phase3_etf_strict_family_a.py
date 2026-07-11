@@ -4,7 +4,7 @@ from pathlib import Path
 import numpy as np,pandas as pd,yaml
 
 ROOT=Path('artifacts/runtime_data'); OUT=Path('artifacts/derived/phase3_etf_strict_family_a')
-def run(close,opn,trad,events,spec,timing):
+def run(close,opn,trad,events,spec,timing,precomputed_weights=None):
  idx=close.index; cash=0.; sh={c:0 for c in close}; recv={}; fees=turn=blocked=0; nav=[]; ext=[]
  ms=pd.Series(idx,index=idx).dt.to_period('M').ne(pd.Series(idx,index=idx).shift().dt.to_period('M')).values
  me=pd.Series(idx,index=idx).dt.to_period('M').ne(pd.Series(idx,index=idx).shift(-1).dt.to_period('M')).values
@@ -16,7 +16,9 @@ def run(close,opn,trad,events,spec,timing):
   for k,(pd_,amt) in list(recv.items()):
    if pd_==d: cash+=amt; del recv[k]
   if i>0 and i%spec[4]==0:
-   risk=max(0.,min(spec[2],1-spec[3])); active=sig.iloc[i-1].fillna(False); w=active.astype(float); w=w/w.sum()*risk if w.sum() else w
+   if precomputed_weights is None:
+    risk=max(0.,min(spec[2],1-spec[3])); active=sig.iloc[i-1].fillna(False); w=active.astype(float); w=w/w.sum()*risk if w.sum() else w
+   else: w=precomputed_weights.iloc[i-1].fillna(0.0)
    prices=opn.iloc[i]
    for c in close:
     if sh[c] and (not trad.loc[d,c] or not np.isfinite(prices[c])): blocked+=1; continue
