@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "scope": "2024-01-01/2024-05-31",
+  "official_cached_months": 5,
+  "raw_archives_redownloaded": 0,
+  "rows": 73846,
+  "first_date": "20240102",
+  "last_date": "20240531",
+  "products": ["HO", "IC", "IF", "IH", "IM", "IO", "MO"],
+  "panel_sha256": "4e39e2d17ba443d2b7d9911de324e0379941ffb60a31ee9504c7d6124cfa298a",
+  "publication_gate": "same_directory_tmp_close_flush_fsync_validate_atomic_rename_dir_fsync_reopen_validate",
+  "fault_injection_tests": 4,
+  "strict_candidates": 0,
+  "evidence_tier": "official_exchange_daily_settlement_no_quotes",
+  "raw_data_committed": false
+}
