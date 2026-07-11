@@ -18,6 +18,15 @@
 - Continuous 24-month strategy evidence: not yet available
 - Strict candidates: **0**
 
+## 2024 annual segment — complete
+
+- Official archives: 12/12 revalidated
+- Daily panel: 189,422 rows; contract master: 3,032 rows
+- Bounds: 2024-01-02 through 2024-12-31
+- Panel/master hashes: `b0eb01683556edcf193560d505e03d26fb8a4dfcfd690263e369ad6dbe4bd45e` / `d7d69ee483c7a97e5d1f174cc2888d0cf118761bb474d1d6327cda86e71ea88d`
+- Continuous 24-month gate: not met
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
