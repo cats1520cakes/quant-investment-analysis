@@ -1,0 +1,19 @@
+strategy,worst_w12,worst_w24,max_drawdown,unexecutable_rate,fees,turnover,sample_windows,p5_w24,passes_targets,sample_size_gate_passed,asset_identity_passed,passes_strict_gate,blocking_reason
+D000,381158.59130999993,849581.5169200001,0.07526283960546598,0.0,750.1598299999999,927958.1,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D001,383312.89211,806826.8833100001,0.08295219154790778,0.002061855670103093,2841.0717099999997,4017777.0000000005,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D002,380569.02096,838858.98798,0.0553977976871316,0.0,964.9234200000001,1253042.0999999999,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D003,383420.0054,801310.4580300001,0.0653269672127984,0.002061855670103093,2650.2347299999997,3742711.1,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D004,380353.62078,839525.71354,0.0553977976871316,0.0,1019.1652200000001,1335936.0,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D005,383274.08706999995,801937.3582899999,0.0653269672127984,0.002061855670103093,2641.83705,3725141.0,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D006,384305.70615,866105.8994400001,0.08234245715430355,0.006185567010309278,836.4323100000001,1085082.7999999998,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D007,382614.93516999995,817042.02298,0.09579903344130014,0.008247422680412371,3234.9646099999995,4592535.8,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D008,383938.95546,868068.0589000001,0.08234245715430355,0.006185567010309278,942.7624699999999,1242482.2999999996,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D009,382475.48211,819047.66419,0.09579903344130014,0.008247422680412371,3219.6792800000003,4567084.000000001,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D010,383924.45546,868063.53092,0.08234245715430355,0.006185567010309278,947.7624699999999,1242995.6999999995,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D011,382475.48211,819047.66419,0.09579903344130014,0.008247422680412371,3219.6792800000003,4567084.000000001,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D012,383504.50976,880953.69955,0.09755051516156377,0.012371134020618556,731.5489600000001,928659.2000000002,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D013,381979.26979999995,808128.1525000002,0.1111568011202233,0.016494845360824743,3134.668460000001,4456175.800000002,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D014,383176.37178000004,881722.5190600001,0.09755051516156377,0.012371134020618556,787.5810200000002,1003714.5,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D015,381678.90562,808393.85968,0.1111568011202233,0.016494845360824743,3114.529180000001,4427665.800000001,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D016,383176.37178000004,881722.5190600001,0.09755051516156377,0.012371134020618556,787.5810200000002,1003714.5,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+D017,381678.90562,808393.85968,0.1111568011202233,0.016494845360824743,3114.529180000001,4427665.800000001,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
