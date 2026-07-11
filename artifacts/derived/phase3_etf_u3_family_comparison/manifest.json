@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "universe": "U3",
+  "families": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "total_specifications": 174,
+  "monthly_cohorts_per_spec": 124,
+  "deposit_timings": 2,
+  "nonoverlap_w24_blocks": 6,
+  "base_target_passes": 0,
+  "strict_candidates": 0,
+  "coverage_judgment": "auditable elimination of the frozen U3 unlevered A/B/C/D search space; not proof that every possible ETF-only strategy is unreachable",
+  "next_search_priority": [
+    "higher_elasticity_ETFs_with_point_in_time_universe",
+    "long_only_options_free_real_approximation_non_strict",
+    "whole_contract_futures_overlay_only_after_NAV_feasible"
+  ],
+  "source_hashes": {
+    "A": "17f57a91e257e259096948519cc346f60f8ba0896c6929498b9fc39426459221",
+    "B": "4dee45aa0c51137f4072cf54ac74b0f13dd54e11582b3bb711168440f9ab4f24",
+    "C": "863c134960a45dbf5657e7934548eea6b9499bd0f7069d0afdc2b9ee8807b922",
+    "D": "d2c485515fa2effec6bf3a7be6efc8bab4a6f439e904f8665df59a2532ae7202"
+  }
+}
