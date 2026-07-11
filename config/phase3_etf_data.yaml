@@ -1,0 +1,13 @@
+version: 1
+data_root: artifacts/runtime_data
+universe:
+  sse_official_u4: [510050, 510300, 510500, 512100]
+  szse_research_u2: [159915, 159949]
+source:
+  sse_dayk_url: https://yunhq.sse.com.cn:32042/v1/sh1/dayk/{code}?begin=0&end={total}&period=day
+  sse_source_tier: official_exchange_daily
+  tencent_source_tier: free_vendor_crosscheck
+  execution_tier: daily_ohlcv_no_quotes
+limitations:
+  - current-only ETF master is survivor-biased
+  - corporate-action ledger is incomplete and blocks strict wealth accounting
