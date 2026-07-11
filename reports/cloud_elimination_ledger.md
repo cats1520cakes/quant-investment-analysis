@@ -31,6 +31,13 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 - A best worst/p5 W24: 685,525/694,449; B: 646,617/666,976; C: 709,790/713,216; D: 647,455/669,338.
 - Every family has zero specifications passing all 6 non-overlapping dual-target blocks. This eliminates only the frozen `U3 broad-index, unlevered A/B/C/D` space; it is not extrapolated to high-elasticity ETFs or all ETF strategies.
 
+## High-elasticity ETF free-real approximation — 2026-07-12
+
+- All 204 frozen E1/E2/E3 specifications completed in a separately labelled `free_real_approx` ranking. No result is eligible for strict promotion.
+- Best worst W12/W24 by family: single-159915 332,837/652,281; E2 relative/absolute 330,346/631,291; E3 rotation 332,852/659,483; volatility/drawdown 346,865/694,031; multiscale breakout 326,387/644,571.
+- Base dual-target passes: 0/204. All six-block dual-target pass counts are zero. This is negative economic evidence for the frozen high-elasticity, unlevered ETF approximation—not strict-real proof.
+- The family is far below 500,000/1,200,000 and therefore does not trigger stress promotion. Strict candidates: **0**.
+
 ## ETF U4 formal sample-size blocker — 2026-07-12
 
 - U4 common inception is 2016-11-04; after the preregistered 120-trading-day warmup, the first signal date is 2017-05-04.
