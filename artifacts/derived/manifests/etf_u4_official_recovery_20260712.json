@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "codes": ["510050", "510300", "510500", "512100"],
+  "rows": 14214,
+  "confirmed_suspension_rows": 3,
+  "first_date": "20050223",
+  "last_date": "20260710",
+  "panel_sha256": "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2",
+  "source_tier": "official_exchange_daily",
+  "volume_unit": "fund_shares",
+  "amount_unit": "CNY",
+  "tencent_u4_raw_hfq_complete": true,
+  "company_action_gate": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false
+}
