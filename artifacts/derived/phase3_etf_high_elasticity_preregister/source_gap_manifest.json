@@ -11,12 +11,16 @@
   },
   "official_announcement_attempt": {
     "url_template": "https://www.szse.cn/api/disc/announcement/annList",
-    "result": "HTTP_500_for_attempted_query",
-    "coverage_proven": false
+    "result": "closed_using_POST_JSON_discovered_from_official_fundAnnoun_script",
+    "coverage_proven": true,
+    "records": 460,
+    "pages": 10
   },
   "official_history_attempt": {
     "url_template": "https://www.szse.cn/api/report/ShowReport/data",
-    "result": "not_verified_before_platform_external_request_limit",
+    "result": "verified_archive_and_snapshot_catalogs; one_trading_date_per_response; partial_resumable_crawl",
+    "catalog_ids": ["1815_stock", "1815_stock_snapshot"],
+    "validated_cached_responses": 134,
     "coverage_proven": false
   },
   "minimum_strict_evidence_set": [
