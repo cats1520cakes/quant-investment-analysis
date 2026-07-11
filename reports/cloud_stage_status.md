@@ -117,6 +117,14 @@
 - CFFEX crawl: paused; futures family blocked
 - Strict candidates: **0**
 
+## ETF U4 restored
+
+- Official canonical rows: 14,214; codes: 4; suspension rows: 3
+- Panel SHA256: `f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2`
+- Whole-lot/raw-hfq execution code gate: closed
+- Official 2024-2025 company-action coverage: blocking
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
