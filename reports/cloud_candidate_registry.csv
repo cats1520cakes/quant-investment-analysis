@@ -10,3 +10,4 @@ phase3_small_capital_2026h1,derivative_feasibility,blocked,official_daily_plus_s
 phase3_etf_u4_sample_gate,etf_rotation,time_evidence_pending,official_sse_raw_plus_official_sse_event_pdfs,4 nonoverlap W24 blocks through 2025 versus 5 required; earliest maturity 2027-04; strict candidates 0
 phase3_etf_u3_b_history,etf_rotation,eliminated,official_sse_raw_plus_official_sse_event_pdfs,72 specs and 124 cohorts; 6 blocks evaluable; zero dual-target base passes; strict candidates 0
 phase3_etf_u3_acd_history,etf_state_risk,eliminated,official_sse_raw_plus_official_sse_event_pdfs,102 specs and 124 cohorts each; 6 blocks evaluable; zero dual-target base passes; strict candidates 0
+phase3_etf_high_elasticity_preregister,high_beta_etf,blocked,official_listing_plus_free_vendor_crosscheck,204 specs frozen and six W24 blocks time-feasible; 159915 official history/action lineage incomplete; strict candidates 0
