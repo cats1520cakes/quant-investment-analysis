@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "code": "159915",
+  "name": "创业板ETF易方达",
+  "period": [
+    "2011-12-09",
+    "2025-12-31"
+  ],
+  "announce_count": 460,
+  "pages": 10,
+  "terminal_page_reached": true,
+  "candidate_count": 10,
+  "body_gate_passed": true,
+  "index_source": "https://www.szse.cn/api/disc/announcement/annList",
+  "index_source_set_sha256": "6945a05fa1f7a1e013e471e09d60e0ba5b29a8bfed8add401161b261598adbaf",
+  "evidence_tier": "official_szse_announcement_index",
+  "strict_candidates": 0,
+  "raw_committed": false,
+  "bodies_read": 10,
+  "stable_events": 2,
+  "cash_dividends": 0,
+  "share_factor_events": 0,
+  "unresolved_candidates": 0,
+  "event_ledger_sha256": "b01f138202c83add00f3dc7ddc517ef530df41d1223550b205213dedfaa2d8ef"
+}
