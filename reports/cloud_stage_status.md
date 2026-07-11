@@ -27,6 +27,14 @@
 - Continuous 24-month gate: not met
 - Strict candidates: **0**
 
+## 2025H2 checkpoint
+
+- First-pass 2025 archive coverage: 10/12; gaps 2025-01 and 2025-03
+- Fully revalidated continuous H2: 6/6, 89,822 panel rows, 1,636 master rows
+- Expiry/trade-parameter gate: blocked; panel-last-record is rejected as expiry evidence
+- 24-month gate: not met
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
