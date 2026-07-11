@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "year": 2024,
+  "revalidated_months": ["202401", "202402", "202403", "202404", "202405", "202406", "202408", "202409", "202410", "202411"],
+  "gap_months": ["202407", "202412"],
+  "valid_month_count": 10,
+  "expected_month_count": 12,
+  "complete_segment_published": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false,
+  "resume_command": "PYTHONPATH=src python scripts/download_phase3_cffex_cloud.py --data-root artifacts/runtime_data --start-date 2024-07-01 --end-date 2024-07-31 --workers 1 --timeout 60 --attempts 4 --backoff-seconds 5 --max-consecutive-failures 1"
+}
