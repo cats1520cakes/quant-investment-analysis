@@ -110,3 +110,9 @@
 
 - Q1 completed: 90 natural dates, 55 valid official snapshots, 35 unavailable dates; 385 date-product rows; source-set SHA256 `5c53941e422e419aa7331d6a7240bea6707e08221f19cc4a6089436da2c7ca80`.
 - Further CFFEX crawl is paused. Futures remain fail-closed; work shifts to the independent ETF-only strict path. Strict candidates: **0**.
+
+## ETF U4 official recovery
+
+- Rebuilt SSE U4 canonical data from official endpoints: 14,214 rows, four codes, three confirmed suspension rows, panel SHA256 `f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2`.
+- Source units remain fund shares and CNY. Tencent raw/hfq cross-check is complete for U4 only; U2 was not promoted after one hfq failure.
+- Corporate-action announcement coverage for 2024-2025 is not yet proven complete, so strict ETF evaluation remains fail-closed. Strict candidates: **0**.
