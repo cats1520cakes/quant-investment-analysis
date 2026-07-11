@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "panel_sha256": "93bca95c0fb387502c6583b2b86e78a957d0e5ef58a88929036dbec786ba97c2",
+  "config_sha256": "feec2477c651c2e9b3d76a8ffee74fb8e35c110723215588843697484a1e11a2",
+  "gate_specs": 48,
+  "strict_candidates": 0,
+  "execution_lag": "signal close to next open",
+  "evidence_tier": "official_exchange_daily_signal_date"
+}
