@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "scope": "2024-04-01/2024-05-15",
+  "natural_dates_attempted": 45,
+  "official_valid_snapshots": 28,
+  "unavailable_dates": 17,
+  "source_tier": "official_cffex_trade_parameter_snapshot",
+  "quarter_complete": false,
+  "panel_calendar_bound": false,
+  "metadata_gate_passed": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false,
+  "resume_command": "PYTHONPATH=src python scripts/download_phase3_cffex_trade_parameters_cloud.py --data-root artifacts/runtime_data --calendar-crawl --start-date 2024-05-16 --end-date 2024-06-30 --timeout 12 --attempts 1 --backoff-seconds 1"
+}
