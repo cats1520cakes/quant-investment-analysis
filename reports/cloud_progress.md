@@ -138,3 +138,10 @@
 - Five new, non-U3-equivalent families were frozen before results: 204 total specifications. Maximum ETF exposure is 100%; borrowing and synthetic leverage are prohibited.
 - SZSE's official listing notice is accessible and proves identity/listing, but it does not prove full-history OHLCV or announcement completeness. An attempted announcement API query returned HTTP 500; no official structured historical chain has yet been verified.
 - Tencent raw/hfq each contain 3,539 rows from 2011-12-09 to 2026-07-10, but remain vendor cross-check only. Strict E1/E2/E3 evaluation is fail-closed. Strict candidates: **0**.
+
+## 2026-07-12 — SZSE discovery, action closure, and approximate screen
+
+- Discovered official interfaces from live SZSE page scripts: POST JSON announcement index; recent chart history; and report catalogs `1815_stock` (archive) / `1815_stock_snapshot` (recent), fund tab `tab2`.
+- Announcement coverage closed: 460 records, 10/10 pages, 10 candidate PDFs read, zero dividends, zero share-factor events, and two execution events (2021-02-08 full suspension; 2021-02-09 open suspended until 10:30).
+- Official history reports expose raw OHLC, volume in ten-thousand fund units, and amount in ten-thousand CNY. They return one requested trading date per response; 134 validated responses are cached and resumable. The full strict panel remains incomplete and fail-closed.
+- The isolated free-real approximation ran all 204 frozen specifications. Base target passes 0; strict candidates **0**. Best family worst W12/W24 was 346,865/694,031.
