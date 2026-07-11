@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "segment": "2025-01-01/2025-12-31",
+  "official_archives_valid": 12,
+  "official_archives_expected": 12,
+  "panel_rows": 176230,
+  "master_rows": 2630,
+  "first_date": "20250102",
+  "last_date": "20251231",
+  "panel_sha256": "1e6bb9f74d0302e75ec99988753ad7f8accffaad2f2676224f94fd583394db0f",
+  "master_sha256": "712226729b5a8d067423f4bf469073cdd5b280f14ac6e107e817b1c9b761e29e",
+  "source_set_sha256": "78378702d0113b3b6c1f0fab886602a31684486a6160b6562ab096e66df81f4c",
+  "expiry_evidence_accepted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false
+}
