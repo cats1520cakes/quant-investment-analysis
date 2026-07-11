@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "panel_sha256": "a93ddf92dff3f064ddd40616b018a358f90c063cd06b77b6058b83cfe83e81f4",
+  "rows": 26,
+  "monthly_deposit": 30000.0,
+  "margin_snapshot": "20260623",
+  "strict_candidates": 0,
+  "limitations": [
+    "margin rate uses one official snapshot rather than the complete historical effective-date schedule",
+    "option calculation is a lower-bound screen before DTE and exact target-delta selection",
+    "six-month segment cannot support W12/W24"
+  ]
+}
