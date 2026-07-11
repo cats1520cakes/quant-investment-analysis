@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "u4_common_raw_start": "2016-11-04",
+  "maximum_signal_warmup_trading_days": 120,
+  "first_common_signal_date": "2017-05-04",
+  "validation_end": "2025-12-31",
+  "available_months_from_first_signal": 104,
+  "maximum_global_nonoverlap_24m_blocks": 4,
+  "required_global_nonoverlap_24m_blocks": 5,
+  "sample_size_gate_reachable_through_2025": false,
+  "earliest_required_end_for_five_blocks": "2027-04-30",
+  "current_official_panel_last_date": "2026-07-10",
+  "interpretation": "Historical extension can estimate rolling cohort tails and reverse-time validation but cannot satisfy the preregistered five-global-block formal gate before sufficient future data exist.",
+  "minimum_company_action_extension": "2016-11-04 through 2023-12-31, plus reuse closed 2024-2025 ledger",
+  "strict_candidates": 0
+}
