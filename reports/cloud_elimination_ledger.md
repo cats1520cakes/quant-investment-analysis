@@ -26,6 +26,11 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 - A/C/D asset identities passed and negative-cash events were zero. Cause-decomposed execution evidence is retained in their registries; high unexecutability is never treated as a pass.
 - This is auditable elimination of the frozen, survivor-biased U3 unlevered A/B/C/D space, not a proof covering every possible ETF-only operation family.
 
+## U3 elimination boundary frozen — 2026-07-12
+
+- A best worst/p5 W24: 685,525/694,449; B: 646,617/666,976; C: 709,790/713,216; D: 647,455/669,338.
+- Every family has zero specifications passing all 6 non-overlapping dual-target blocks. This eliminates only the frozen `U3 broad-index, unlevered A/B/C/D` space; it is not extrapolated to high-elasticity ETFs or all ETF strategies.
+
 ## ETF U4 formal sample-size blocker — 2026-07-12
 
 - U4 common inception is 2016-11-04; after the preregistered 120-trading-day warmup, the first signal date is 2017-05-04.
