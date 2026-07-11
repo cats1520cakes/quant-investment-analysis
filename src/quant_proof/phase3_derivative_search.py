@@ -40,6 +40,8 @@ DERIVATIVE_COUNTER_COLUMNS = (
 
 
 def overlay_family(spec: OverlaySearchSpec) -> str:
+    if spec.composition == "futures_only" and spec.direction_rule is not None:
+        return "P35_cffex_dynamic_direction_overlay"
     return {
         "futures_only": "P32_cffex_whole_lot_futures_overlay",
         "long_option_only": "P33_cffex_long_option_convexity_budget",
@@ -59,8 +61,16 @@ def overlay_products(spec: OverlaySearchSpec) -> tuple[str, ...]:
 def overlay_lineage_key(spec: OverlaySearchSpec) -> str:
     """Return the categorical derivative kernel preserved across search stages."""
 
+    direction_rule = None
+    if spec.direction_rule is not None:
+        direction_rule = {
+            "kind": spec.direction_rule.kind,
+            "position_mode": spec.direction_rule.position_mode,
+            "trend_variant": spec.direction_rule.trend_variant,
+        }
     payload = {
         "composition": spec.composition,
+        "direction_rule": direction_rule,
         "futures": (
             None
             if spec.futures is None

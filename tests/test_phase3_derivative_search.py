@@ -19,11 +19,13 @@ from quant_proof.free_real_backtest import FreeRealBacktestConfig
 from quant_proof.phase3_derivative_search import (
     aggregate_overlay_windows,
     evaluate_overlay_spec,
+    overlay_family,
     overlay_lineage_key,
     select_inherited_overlay_specs,
     select_overlay_candidates,
     select_overlay_windows,
 )
+from quant_proof.phase3_derivative_signals import FuturesDirectionRule
 from quant_proof.phase3_overlay_coordinator import FuturesOverlaySpec
 from quant_proof.phase3_overlay_factory import (
     OverlaySearchSpec,
@@ -382,6 +384,85 @@ def test_neighborhood_specs_inherit_only_matching_parent_kernel() -> None:
             "parent_overlay_ids": [parent.overlay_id],
         }
     ]
+
+
+def test_dynamic_direction_family_and_lineage_preserve_signal_kernel() -> None:
+    def dynamic_spec(
+        *,
+        stage: str,
+        kind: str,
+        position_mode: str,
+        lookback_days: int,
+        neutral_band: float,
+        trend_variant: str | None = None,
+    ) -> OverlaySearchSpec:
+        rule_kwargs: dict[str, object] = {
+            "kind": kind,
+            "position_mode": position_mode,
+            "neutral_band": neutral_band,
+        }
+        if kind == "time_series_momentum":
+            rule_kwargs["lookback_days"] = lookback_days
+        else:
+            rule_kwargs.update(
+                trend_variant=trend_variant,
+                lookback_days=lookback_days,
+            )
+        return OverlaySearchSpec(
+            stage=stage,
+            composition="futures_only",
+            futures=FuturesOverlaySpec(
+                product="IF",
+                direction="flat",
+                fixed_contracts=1,
+                min_dte=5,
+                rebalance_frequency="daily",
+            ),
+            direction_rule=FuturesDirectionRule(**rule_kwargs),
+        )
+
+    parent = dynamic_spec(
+        stage="screen",
+        kind="time_series_momentum",
+        position_mode="long_short_flat",
+        lookback_days=60,
+        neutral_band=0.02,
+    )
+    numeric_neighbor = dynamic_spec(
+        stage="neighborhood",
+        kind="time_series_momentum",
+        position_mode="long_short_flat",
+        lookback_days=40,
+        neutral_band=0.01,
+    )
+    wrong_mode = dynamic_spec(
+        stage="neighborhood",
+        kind="time_series_momentum",
+        position_mode="long_flat",
+        lookback_days=40,
+        neutral_band=0.01,
+    )
+    wrong_variant = dynamic_spec(
+        stage="neighborhood",
+        kind="moving_average_or_breakout",
+        position_mode="long_short_flat",
+        lookback_days=40,
+        neutral_band=0.005,
+        trend_variant="breakout",
+    )
+
+    assert overlay_family(parent) == "P35_cffex_dynamic_direction_overlay"
+    assert overlay_lineage_key(parent) == overlay_lineage_key(numeric_neighbor)
+    assert overlay_lineage_key(parent) != overlay_lineage_key(wrong_mode)
+    assert overlay_lineage_key(parent) != overlay_lineage_key(wrong_variant)
+
+    selected, lineage = select_inherited_overlay_specs(
+        (numeric_neighbor, wrong_mode, wrong_variant),
+        (parent,),
+        (parent.overlay_id,),
+    )
+    assert selected == (numeric_neighbor,)
+    assert lineage == {numeric_neighbor.overlay_id: (parent.overlay_id,)}
 
 
 def test_execution_source_drift_invalidates_stage_manifest_and_run_cache(
