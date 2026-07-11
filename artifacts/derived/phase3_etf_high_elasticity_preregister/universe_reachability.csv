@@ -1,0 +1,4 @@
+universe,codes,selection_basis,common_inception,warmup_trading_days,conservative_first_signal_estimate,nonoverlap_w24_blocks_lower_bound,five_block_time_gate,strict_data_gate,strict_blocker
+E1,159915,predeclared high-beta/growth index exposure; 510300 defensive benchmark only,2011-12-09,120,2012-05-25,6,True,False,159915 official SZSE full-history raw/canonical and official announcement completeness not yet closed
+E2,"159915,510500",predeclared high-beta/growth index exposure; 510300 defensive benchmark only,2013-03-15,120,2013-08-30,6,True,False,159915 official SZSE full-history raw/canonical and official announcement completeness not yet closed
+E3,"159915,510500,510300",predeclared high-beta/growth index exposure; 510300 defensive benchmark only,2013-03-15,120,2013-08-30,6,True,False,159915 official SZSE full-history raw/canonical and official announcement completeness not yet closed
