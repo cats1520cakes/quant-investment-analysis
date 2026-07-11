@@ -82,6 +82,12 @@
 - Execution master: not permitted
 - Strict candidates: **0**
 
+## 2024Q3 batch 1
+
+- Scope: 2024-07-01..08-15; valid 33/46; unavailable 13
+- Next scope: 2024-08-16..09-30
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
