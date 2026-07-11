@@ -88,6 +88,15 @@
 - Next scope: 2024-08-16..09-30
 - Strict candidates: **0**
 
+## 2024Q3 and ETF execution checkpoint
+
+- Q3 official valid snapshots: 63/92 natural dates; unavailable 29
+- Q3 coverage matrix: 441 rows, seven products
+- ETF 100-share/raw-hfq/deposit/suspension gates: implemented and tested
+- Company actions without complete official ledger: fail-closed
+- Tests: 30 passed
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
