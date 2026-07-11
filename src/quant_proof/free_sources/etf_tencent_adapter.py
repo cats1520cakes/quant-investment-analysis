@@ -40,6 +40,13 @@ def parse_tencent_day(payload: Mapping[str, object], code: str, adjustment: str)
 
 
 def download_tencent_day(code: str, adjustment: str, path: str | Path, total: int = 2000, timeout: float = 60.0) -> Path:
+    output = Path(path)
+    if output.is_file():
+        try:
+            parse_tencent_day(json.loads(output.read_text(encoding="utf-8")), code, adjustment)
+            return output
+        except (OSError, json.JSONDecodeError, TencentEtfDataError):
+            pass
     market = "sh" if str(code).startswith("5") else "sz"
     key = "day" if adjustment == "raw" else f"{adjustment}day"
     page_size = total if adjustment == "raw" else min(total, 640)
@@ -67,7 +74,6 @@ def download_tencent_day(code: str, adjustment: str, path: str | Path, total: in
     payload = {"code": 0, "data": {f"{market}{code}": {key: [deduplicated[date] for date in sorted(deduplicated)]}}}
     parse_tencent_day(payload, code, adjustment)
     body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode()
-    output = Path(path)
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_suffix(output.suffix + ".tmp")
     temporary.write_bytes(body)
