@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "scope": "2024-07-01/2024-08-15",
+  "natural_dates_attempted": 46,
+  "official_valid_snapshots": 33,
+  "unavailable_dates": 13,
+  "source_tier": "official_cffex_trade_parameter_snapshot",
+  "quarter_complete": false,
+  "panel_calendar_bound": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false
+}
