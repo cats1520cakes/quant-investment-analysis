@@ -1,0 +1,4 @@
+universe,codes,common_inception,warmup_trading_days,first_signal_date,evaluation_end,nonoverlap_w24_blocks,five_block_gate
+U4,"510050,510300,510500,512100",2016-11-04,120,2017-05-04,2025-12-31,4,False
+U3,"510050,510300,510500",2013-03-15,120,2013-09-11,2025-12-31,6,True
+U2,"510050,510300",2012-05-28,120,2012-11-20,2025-12-31,6,True
