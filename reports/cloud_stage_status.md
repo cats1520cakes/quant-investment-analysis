@@ -110,6 +110,13 @@
 - Runtime 24-month raw/panel: pruned; exact hash restoration required
 - Strict candidates: **0**
 
+## 2025Q1 complete
+
+- Valid official snapshots: 55/90 natural dates; unavailable 35
+- Coverage matrix: 385 rows, seven products
+- CFFEX crawl: paused; futures family blocked
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
