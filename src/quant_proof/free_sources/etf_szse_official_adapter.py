@@ -17,7 +17,7 @@ def parse_history(payload: object, code: str) -> pd.DataFrame:
  if len(out):
   if set(out.code.astype(str))!={str(code)}: raise SzseOfficialDataError('code ambiguity')
   out.trade_date=pd.to_datetime(out.trade_date).dt.strftime('%Y%m%d')
-  for c in cols[3:]: out[c]=pd.to_numeric(out[c],errors='coerce')
+  for c in cols[3:]: out[c]=pd.to_numeric(out[c].astype(str).str.replace(',','',regex=False),errors='coerce')
   if out.duplicated(['trade_date','code']).any() or out[['open','high','low','close']].isna().any(axis=None): raise SzseOfficialDataError('invalid OHLC')
   out['volume']=out.volume_10k_shares*10000; out['amount']=out.amount_10k_cny*10000
  return out
