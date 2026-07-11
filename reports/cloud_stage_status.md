@@ -56,6 +56,15 @@
 
 - Resume checkpoint: 2024-01-01..18 attempted; 13 official valid, 5 unavailable; next date 2024-01-19.
 
+## 2024Q1 parameter coverage
+
+- Valid official snapshot dates: 58/91 natural dates; 33 weekend/holiday unavailable
+- Coverage matrix: 406 date-product rows, seven products
+- Official expiry/listing/limit-price/position-limit snapshot fields: complete within returned rows
+- Historical margin/multiplier/minimum tick rules: missing and blocking
+- Frozen panel binding: pending and blocking
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
