@@ -39,7 +39,7 @@ def parse_tencent_day(payload: Mapping[str, object], code: str, adjustment: str)
     return frame.sort_values("trade_date").reset_index(drop=True)
 
 
-def download_tencent_day(code: str, adjustment: str, path: str | Path, total: int = 2000, timeout: float = 60.0) -> Path:
+def download_tencent_day(code: str, adjustment: str, path: str | Path, total: int = 2000, timeout: float = 60.0, attempts: int = 3, backoff_seconds: float = 5.0) -> Path:
     output = Path(path)
     if output.is_file():
         try:
@@ -54,14 +54,21 @@ def download_tencent_day(code: str, adjustment: str, path: str | Path, total: in
     end = ""
     for _ in range(10):
         url = (TENCENT_RAW_URL if adjustment == "raw" else TENCENT_FQ_URL).format(market=market, code=code, end=end, total=page_size, adjustment=adjustment)
-        try:
-            completed = subprocess.run(
-                ["curl", "-fsSL", "--retry", "3", "--retry-delay", "1", "--max-time", str(int(timeout)), url],
-                check=True, capture_output=True,
-            )
-            payload = json.loads(completed.stdout)
-        except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
-            raise TencentEtfDataError(f"Tencent download failed for {code}/{adjustment}: {exc}") from exc
+        error: Exception | None = None
+        for attempt in range(1, max(1, attempts) + 1):
+            try:
+                completed = subprocess.run(
+                    ["curl", "-fsSL", "--max-time", str(int(timeout)), url], check=True, capture_output=True,
+                )
+                payload = json.loads(completed.stdout)
+                break
+            except (OSError, subprocess.CalledProcessError, json.JSONDecodeError) as exc:
+                error = exc
+                if attempt < attempts:
+                    import time
+                    time.sleep(backoff_seconds * (2 ** (attempt - 1)))
+        else:
+            raise TencentEtfDataError(f"Tencent download failed for {code}/{adjustment}: {error}") from error
         node = (payload.get("data") or {}).get(f"{market}{code}", {})
         rows = node.get(key, []) if isinstance(node, Mapping) else []
         if not rows:
