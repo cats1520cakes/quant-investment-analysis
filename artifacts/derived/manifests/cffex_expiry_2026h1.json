@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "segment": "20260101_20260630_6m",
+  "official_snapshots": 45,
+  "contracts": 1694,
+  "history_rows": 31803,
+  "complete_master_coverage": true,
+  "canonical_relative_to_segment": true,
+  "metadata_sha256": "0345ddb369e4e8da2d5b4b531ee4381f13b44a4fd45c8de174a84450bd44be26",
+  "history_sha256": "9fdcb32f2455a1cc01d248ad9137aa87ee0ca9080cc8951aa523e7dd4badbc2c",
+  "source_set_sha256": "f7e4fcc055ffe48cab2d28bd07c94dd1b29fe5cc7aac50635327a53c3ad9f62f",
+  "full_history_complete": false,
+  "strict_candidates": 0
+}
