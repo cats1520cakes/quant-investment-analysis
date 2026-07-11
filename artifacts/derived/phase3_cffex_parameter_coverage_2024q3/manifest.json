@@ -1,0 +1,66 @@
+{
+  "daily_fields": [
+    "upper_limit_percentage",
+    "lower_limit_percentage",
+    "upper_limit_price",
+    "lower_limit_price",
+    "position_limit_raw"
+  ],
+  "end_date": "20240930",
+  "execution_gate_passed": false,
+  "official_rule_fields_pending": [
+    "initial_margin_rate",
+    "maintenance_margin_rate",
+    "multiplier",
+    "minimum_price_tick"
+  ],
+  "panel_bound": false,
+  "products": [
+    "HO",
+    "IC",
+    "IF",
+    "IH",
+    "IM",
+    "IO",
+    "MO"
+  ],
+  "rows": 441,
+  "schema_columns_checked": [
+    "snapshot_date",
+    "contract",
+    "product",
+    "contract_month",
+    "basis_price",
+    "open_date",
+    "official_last_trade_date",
+    "upper_limit_percentage",
+    "lower_limit_percentage",
+    "upper_limit_price",
+    "lower_limit_price",
+    "position_limit_raw",
+    "position_limit",
+    "source_sha256",
+    "source_url",
+    "source_file",
+    "raw_contract",
+    "raw_contract_month",
+    "raw_basis_price",
+    "raw_open_date",
+    "raw_official_last_trade_date",
+    "raw_upper_limit_percentage",
+    "raw_lower_limit_percentage",
+    "raw_upper_limit_price",
+    "raw_lower_limit_price",
+    "raw_record_json"
+  ],
+  "schema_version": 1,
+  "source_set_sha256": "b330a320a3176c26537ead8432432ef0a025addf74a86d9f00e9fb6aee47c8a2",
+  "start_date": "20240701",
+  "static_fields": [
+    "contract_month",
+    "open_date",
+    "official_last_trade_date"
+  ],
+  "strict_candidates": 0,
+  "valid_snapshot_dates": 63
+}
