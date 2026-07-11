@@ -35,6 +35,16 @@
 - 24-month gate: not met
 - Strict candidates: **0**
 
+## Continuous 2024–2025 panel
+
+- 2025: 12/12 months, 176,230 rows
+- Combined: 24/24 months, 365,652 rows, 4,910 contracts, seven products
+- Bounds: 2024-01-02 through 2025-12-31
+- Data continuity gate: passed
+- Official effective-date expiry/margin/price-limit gate: blocked
+- W12/W24 derivative evaluation: not released
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
