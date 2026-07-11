@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable, Mapping
@@ -70,6 +71,36 @@ def parse_sse_dayk(payload: Mapping[str, object], code: str) -> pd.DataFrame:
     return frame.loc[:, SSE_ETF_COLUMNS].sort_values("trade_date").reset_index(drop=True)
 
 
+def download_sse_dayk(code: str, path: str | Path, total: int = 10000, timeout: float = 60.0) -> Path:
+    output = Path(path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    url = SSE_DAYK_URL.format(code=code, total=total)
+    request = urllib.request.Request(url, headers={"Referer": "https://www.sse.com.cn/", "User-Agent": "quant-proof/1.0"})
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            body = response.read()
+    except OSError as exc:
+        raise SseEtfDataError(f"SSE download failed for {code}: {exc}") from exc
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError as exc:
+        raise SseEtfDataError(f"SSE response is not JSON for {code}") from exc
+    if str(payload.get("code")) != str(code):
+        raise SseEtfDataError(f"SSE response code mismatch for {code}")
+    frame = parse_sse_dayk(payload, code)
+    declared_total = int(payload.get("total", -1))
+    if declared_total != len(frame):
+        raise SseEtfDataError(f"SSE response is truncated for {code}: total={declared_total} rows={len(frame)}")
+    temporary = output.with_suffix(output.suffix + ".tmp")
+    temporary.write_bytes(body)
+    temporary.replace(output)
+    return output
+
+
+def file_sha256(path: str | Path) -> str:
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
 def expand_official_calendar(
     quotes: pd.DataFrame,
     open_dates: Iterable[str],
@@ -102,7 +133,7 @@ def expand_official_calendar(
     return result.sort_values("trade_date").reset_index(drop=True)
 
 
-def write_panel_with_manifest(panel: pd.DataFrame, path: str | Path, source_urls: list[str], config_hash: str) -> Path:
+def write_panel_with_manifest(panel: pd.DataFrame, path: str | Path, source_urls: list[str], config_hash: str, source_files: list[dict[str, object]] | None = None) -> Path:
     output = Path(path)
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = output.with_suffix(output.suffix + ".tmp")
@@ -118,6 +149,7 @@ def write_panel_with_manifest(panel: pd.DataFrame, path: str | Path, source_urls
         "first_date": str(panel["trade_date"].min()),
         "last_date": str(panel["trade_date"].max()),
         "source_urls": source_urls,
+        "source_files": source_files or [],
         "source_tier": "official_exchange_daily",
         "execution_tier": "daily_ohlcv_no_quotes",
         "volume_unit": "fund_shares",
