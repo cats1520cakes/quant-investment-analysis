@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import errno
 import json
 import os
 import re
@@ -359,6 +360,81 @@ def cffex_panel_manifest_path(panel_path: str | Path) -> Path:
     return path.with_suffix(path.suffix + ".manifest.json")
 
 
+def _validate_parquet_artifact(
+    path: Path,
+    *,
+    expected_rows: int,
+    expected_first_date: str,
+    expected_last_date: str,
+) -> str:
+    """Fully reopen and validate a panel before or after atomic publication."""
+    try:
+        with path.open("rb") as stream:
+            if stream.read(4) != b"PAR1":
+                raise CffexDataError(f"CFFEX panel has no Parquet header: {path}")
+            stream.seek(-4, os.SEEK_END)
+            if stream.read(4) != b"PAR1":
+                raise CffexDataError(f"CFFEX panel has no Parquet footer: {path}")
+        parquet = pq.ParquetFile(path)
+        missing = sorted(set(CFFEX_PANEL_COLUMNS) - set(parquet.schema.names))
+        if missing:
+            raise CffexDataError(f"CFFEX panel missing columns: {','.join(missing)}")
+        if int(parquet.metadata.num_rows) != expected_rows:
+            raise CffexDataError("CFFEX panel post-write row count mismatch")
+        dates = pq.read_table(path, columns=["trade_date"])["trade_date"]
+        actual_first = str(pa.compute.min(dates).as_py())
+        actual_last = str(pa.compute.max(dates).as_py())
+        if (actual_first, actual_last) != (expected_first_date, expected_last_date):
+            raise CffexDataError("CFFEX panel post-write date bounds mismatch")
+    except CffexDataError:
+        raise
+    except (OSError, ValueError, pa.ArrowInvalid) as exc:
+        raise CffexDataError(f"CFFEX panel failed Parquet validation: {path}") from exc
+    return _sha256(path)
+
+
+def _publish_parquet_atomically(
+    tmp_path: Path,
+    output: Path,
+    *,
+    expected_rows: int,
+    expected_first_date: str,
+    expected_last_date: str,
+) -> str:
+    """Durably publish an already-closed same-directory Parquet or fail closed."""
+    if tmp_path.parent != output.parent:
+        raise CffexDataError("CFFEX Parquet temporary file must share the output directory")
+    with tmp_path.open("rb+") as stream:
+        stream.flush()
+        os.fsync(stream.fileno())
+    expected_hash = _validate_parquet_artifact(
+        tmp_path,
+        expected_rows=expected_rows,
+        expected_first_date=expected_first_date,
+        expected_last_date=expected_last_date,
+    )
+    try:
+        os.replace(tmp_path, output)
+    except OSError as exc:
+        if exc.errno == errno.EXDEV:
+            raise CffexDataError("cross-device CFFEX Parquet publication is forbidden") from exc
+        raise
+    directory_fd = os.open(output.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory_fd)
+    finally:
+        os.close(directory_fd)
+    actual_hash = _validate_parquet_artifact(
+        output,
+        expected_rows=expected_rows,
+        expected_first_date=expected_first_date,
+        expected_last_date=expected_last_date,
+    )
+    if actual_hash != expected_hash:
+        raise CffexDataError("CFFEX panel hash changed during atomic publication")
+    return actual_hash
+
+
 def build_cffex_contract_panel(
     archive_paths: Iterable[str | Path],
     panel_path: str | Path,
@@ -368,8 +444,8 @@ def build_cffex_contract_panel(
         raise CffexDataError("no CFFEX monthly archives were supplied")
     output = Path(panel_path)
     output.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = output.with_name(f".{output.name}.{os.getpid()}.{time.time_ns()}.tmp")
-    writer: pq.ParquetWriter | None = None
+    tmp_path = output.with_name(f".{output.name}.{os.getpid()}.{time.time_ns()}.tmp.parquet")
+    tables: list[pa.Table] = []
     rows = 0
     first_date = ""
     last_date = ""
@@ -381,11 +457,9 @@ def build_cffex_contract_panel(
             validate_cffex_month_zip(archive_path, month)
             frame = parse_cffex_month_zip(archive_path)
             table = pa.Table.from_pandas(frame, preserve_index=False)
-            if writer is None:
-                writer = pq.ParquetWriter(tmp_path, table.schema, compression="zstd")
-            else:
-                table = table.cast(writer.schema)
-            writer.write_table(table)
+            if tables:
+                table = table.cast(tables[0].schema)
+            tables.append(table)
             rows += int(len(frame))
             frame_first = str(frame["trade_date"].min())
             frame_last = str(frame["trade_date"].max())
@@ -400,23 +474,22 @@ def build_cffex_contract_panel(
                     "sha256": _sha256(archive_path),
                 }
             )
-        if writer is None or rows == 0:
+        if not tables or rows == 0:
             raise CffexDataError("CFFEX panel build produced no rows")
-        writer.close()
-        writer = None
-        tmp_path.replace(output)
+        combined = pa.concat_tables(tables)
+        with pa.OSFile(str(tmp_path), "wb") as sink:
+            pq.write_table(combined, sink, compression="zstd")
+            sink.flush()
+        panel_sha256 = _publish_parquet_atomically(
+            tmp_path,
+            output,
+            expected_rows=rows,
+            expected_first_date=first_date,
+            expected_last_date=last_date,
+        )
     finally:
-        if writer is not None:
-            writer.close()
         if tmp_path.exists():
             tmp_path.unlink()
-
-    try:
-        parquet = pq.ParquetFile(output)
-    except (OSError, ValueError, pa.ArrowInvalid) as exc:
-        raise CffexDataError(f"CFFEX panel failed post-write Parquet validation: {output}") from exc
-    if int(parquet.metadata.num_rows) != rows:
-        raise CffexDataError("CFFEX panel post-write row count mismatch")
 
     source_set_sha256 = hashlib.sha256(
         json.dumps(source_archives, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -424,7 +497,7 @@ def build_cffex_contract_panel(
     manifest = {
         "schema_version": 1,
         "panel_path": str(output),
-        "panel_sha256": _sha256(output),
+        "panel_sha256": panel_sha256,
         "rows": rows,
         "months": len(source_archives),
         "first_date": first_date,
