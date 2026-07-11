@@ -32,3 +32,9 @@
 - Fault injection: truncated footer, unclosed partial writer, cross-device rename, and stale output all fail closed; focused adapter tests 8/8 passed.
 - Cached official 2024-01..05 archives were reused without download. Valid panel hash: `4e39e2d17ba443d2b7d9911de324e0379941ffb60a31ee9504c7d6124cfa298a`.
 - Strategy promotion: none. Strict candidates: **0**.
+
+## 2024 continuation after repair
+
+- Newly acquired and revalidated: 2024-06, 08, 09, 10, 11 (5 months). 2024-07 initially reported downloaded but failed the subsequent full-year content revalidation and is now a declared gap; 2024-12 remained incomplete after three bounded resume attempts.
+- Current publishable 2024 coverage: 10/12 months. Missing/rejected: 2024-07 and 2024-12. No annual segment manifest was published.
+- This checkpoint deliberately counts only revalidated archives, not download-success messages. Continuous 24-month evidence remains unavailable; strict candidates: **0**.
