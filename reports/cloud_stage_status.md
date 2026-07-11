@@ -54,6 +54,8 @@
 - Panel-calendar reconciliation: pending and blocking
 - Strict candidates: **0**
 
+- Resume checkpoint: 2024-01-01..18 attempted; 13 official valid, 5 unavailable; next date 2024-01-19.
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
