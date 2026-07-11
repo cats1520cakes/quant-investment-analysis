@@ -11,3 +11,5 @@
 - Cloud CFFEX reconstruction checkpoint: 29/195 monthly archives are atomically cached and validated (2010-04 through 2012-08). Four-way download triggered exchange-route timeouts, so the resumable default is deliberately one worker.
 - Exact resume: `PYTHONPATH=src uv run python scripts/download_phase3_cffex_cloud.py --data-root artifacts/runtime_data --workers 1`.
 - Tencent resume: `PYTHONPATH=src uv run python scripts/download_phase3_etf_tencent_data.py --data-root artifacts/runtime_data --timeout 20` (3/12 layers currently cached; no partial panel promoted).
+- 2026-07-11 continuation: CFFEX remains 29/195 after a bounded retry of 2012-09 returned zero bytes. The attempt is recorded in the runtime attempt ledger; no incomplete panel is promoted.
+- Causal crowding implementation now covers lagged total-OI change, volume/OI and cross-contract OI concentration with expanding thresholds shifted by one observation. A partial 29-month IF smoke run resolved 12 gates over 580 dates (6,960 gate-date rows); IH/IC/IM are correctly marked absent in this early horizon. This is implementation evidence only; strict candidates remain 0.
