@@ -25,3 +25,10 @@
 - Sparse recovery continued into 2023: 10/12 months validated; 2023-07 and 2023-12 remain in the gap ledger. Total official monthly archives are 64/195, 10,377,039 bytes. No incomplete 2023 segment panel was promoted.
 - 2023-07 and 2023-12 were subsequently recovered, completing the 2023 12/12 segment. 2024-01..05 raw archives also validated, taking raw coverage to 71/195.
 - The 2024 five-month panel failed post-write Parquet footer validation. It was not promoted; a new immediate post-write Parquet/row-count gate now fails before manifest publication. Strict candidates remain 0.
+# 2026-07-11 — 2024 Parquet publication gate repaired
+
+- Root cause reproduced: the former multi-row-group `ParquetWriter.close()` path returned normally but left the 2024 temporary artifact without the terminal `PAR1` footer. Publication previously renamed before durable validation.
+- Replacement path writes one schema-unified Arrow table through an explicitly closed `OSFile`, fsyncs the same-directory temporary file, validates header/footer/schema/73,846 rows/2024-01-02..2024-05-31/hash, atomically renames, fsyncs the directory, then reopens and validates again before manifest publication.
+- Fault injection: truncated footer, unclosed partial writer, cross-device rename, and stale output all fail closed; focused adapter tests 8/8 passed.
+- Cached official 2024-01..05 archives were reused without download. Valid panel hash: `4e39e2d17ba443d2b7d9911de324e0379941ffb60a31ee9504c7d6124cfa298a`.
+- Strategy promotion: none. Strict candidates: **0**.
