@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "selection_rule": "minimize max((500000-worst_w12)/500000,(1200000-worst_w24)/1200000); tie break worst_w24 desc",
+  "seed_count": 10,
+  "neighborhood_count": 72,
+  "domain": "original preregistered legal values only",
+  "results_seen": "discovery_2024_2025_only",
+  "historical_results_seen_before_freeze": false,
+  "target_w12": 500000,
+  "target_w24": 1200000,
+  "strict_candidates": 0,
+  "source_registry_sha256": "b4a8d55075729e2c61b0763a42abb28495b06d0891501e200f44f3d0ac6a1733"
+}
