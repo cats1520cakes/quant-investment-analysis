@@ -1,0 +1,11 @@
+strategy,worst_w12,worst_w24,max_drawdown,unexecutable_rate,fees,turnover,sample_windows,p5_w24,passes_targets,sample_size_gate_passed,asset_identity_passed,passes_strict_gate,blocking_reason
+C023,370538.76383999997,830173.4606799999,0.04460922749229146,0.012371134020618556,3244.17383,3111006.9000000004,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C029,375795.61789999995,823613.7498799998,0.056808232727325936,0.026804123711340205,4596.16522,5195676.199999997,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C026,376577.24274,823110.4002100001,0.05680343443882374,0.049484536082474224,6957.653270000003,8813301.3,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C014,370254.77218,819857.9084300001,0.04801946210077501,0.04329896907216495,6790.5549999999985,8444069.600000003,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C020,367455.15768,819072.0980900002,0.04461841696825386,0.032989690721649485,5860.198449999999,7068556.600000001,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C032,371206.67058999994,816870.67976,0.04812172634527179,0.04536082474226804,6852.283279999998,8611624.699999997,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C017,365306.78331999993,813939.54773,0.046582594103382835,0.01443298969072165,3911.0517399999994,4164175.9999999986,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C035,365306.78331999993,811711.6654000002,0.046582594103382835,0.020618556701030927,4559.54403,5128393.600000002,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C002,370050.17306,805442.6094600002,0.044619533512859966,0.0288659793814433,3517.3750600000008,3552727.300000001,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
+C005,369666.38714000006,804732.2126500001,0.04459606366376401,0.01443298969072165,2754.102070000001,2415311.8000000007,1,,False,False,True,False,sample_size_gate: one 24-month window; five nonoverlap blocks required
