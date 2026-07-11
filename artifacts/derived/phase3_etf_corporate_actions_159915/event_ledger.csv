@@ -1,0 +1,3 @@
+event_id,code,event_type,event_date,tradable_at_open,tradable_all_day,source_pdf_sha256,evidence_tier
+159915-20210208-suspension,159915,full_day_suspension,2021-02-08,False,False,ccceedcf5ad6ff456c9526af82b11b68fb418ff4e503ebfd57a03a88282214cc,official_szse_pdf
+159915-20210209-open-suspended-until-1030,159915,partial_day_resumption,2021-02-09,False,True,0681a551501d2939eca3cf6e688782912b7bedcd45e88d0894a7ebd4d25aa8ab,official_szse_pdf
