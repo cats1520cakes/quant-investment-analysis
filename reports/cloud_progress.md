@@ -69,3 +69,10 @@
 - Tests: 24/24 passed across the trade-parameter adapter and new calendar/atomic-ledger regressions. Metadata and strategy gates remain blocked. Strict candidates: **0**.
 
 - Full-year crawl was started and durably checkpointed through 2024-01-18: 18 natural dates, 13 valid official snapshots (7 cache-validated, 6 newly downloaded), 5 unavailable dates. Raw snapshots remain runtime-only.
+
+## 2024Q1 official parameter coverage
+
+- Calendar crawl completed through 2024-03-31: 91 natural dates, 58 valid official snapshots, 33 unavailable weekend/holiday dates. Q1 coverage matrix has 406 date-product rows across all seven products.
+- Official last-trading-day, listing date, contract month, limit prices and position-limit raw fields have 100% within-snapshot coverage. Futures limit percentages are complete; IO/HO/MO percentage cells are absent although official limit prices are present, so percentage-based execution remains blocked for options.
+- This endpoint does not supply historical initial/maintenance margin, multiplier or minimum tick. Those four official rule fields remain 0% and require versioned rule sources with effective dates.
+- Panel/calendar binding is unavailable after runtime pruning, so Q1 remains evidence collection rather than an execution master. Strict candidates: **0**.
