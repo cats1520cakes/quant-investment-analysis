@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "preregistered": true,
+  "results_seen_before_freeze": false,
+  "selection_rule": "inception, official-history availability, existing liquidity gate, and ex-ante index mandate only; never historical returns",
+  "fund_contract_and_listing_evidence": {
+    "159915": {
+      "index_type": "ChiNext/创业板 broad growth index ETF",
+      "listing_date": "2011-12-09",
+      "official_listing_url": "https://www.szse.cn/disclosure/notice/fund/t20111207_516231.html"
+    }
+  },
+  "universes": {
+    "E1": [
+      "159915"
+    ],
+    "E2": [
+      "159915",
+      "510500"
+    ],
+    "E3": [
+      "159915",
+      "510500",
+      "510300"
+    ]
+  },
+  "specifications": 204,
+  "family_counts": {
+    "e2_relative_absolute": 36,
+    "e3_concentrated_rotation": 72,
+    "multiscale_breakout": 24,
+    "single_159915_trend_cash": 36,
+    "vol_drawdown_cash": 36
+  },
+  "targets": {
+    "w12": 500000,
+    "w24": 1200000
+  },
+  "minimum_nonoverlap_w24_blocks": 5,
+  "strict_source_status": "fail_closed_pending_SZSE_official_history_and_actions",
+  "free_vendor_crosscheck": {
+    "raw_sha256": "dfcdfa5ae9030fecf926d3fb28eae72568ae93c12d80de98d4f69080c0f64171",
+    "hfq_sha256": "0f9dd201b053adf4a936e59078a5cd25d3c0b5fd4a9c8c98a33e643ff0e87436",
+    "tier": "free_real_approximation_only",
+    "strict_promotion_allowed": false
+  },
+  "strict_candidates": 0
+}
