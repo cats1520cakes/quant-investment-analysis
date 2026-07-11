@@ -17,3 +17,11 @@
 - Regression tests: 8 passed, including 4 failure injections
 - Continuous 24-month strategy evidence: not yet available
 - Strict candidates: **0**
+
+## 2024 archive recovery status
+
+- Revalidated official months: 10/12
+- Declared gaps: 2024-07 (failed second-pass content validation), 2024-12 (bounded resume incomplete)
+- Full-year panel/manifest: blocked, not published
+- W12/W24 run: blocked by continuity and historical parameter gates
+- Strict candidates: **0**
