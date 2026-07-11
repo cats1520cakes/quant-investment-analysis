@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "segment": "2024-01-01/2024-12-31",
+  "official_archives_valid": 12,
+  "official_archives_expected": 12,
+  "panel_rows": 189422,
+  "master_rows": 3032,
+  "first_date": "20240102",
+  "last_date": "20241231",
+  "products": ["HO", "IC", "IF", "IH", "IM", "IO", "MO"],
+  "panel_sha256": "b0eb01683556edcf193560d505e03d26fb8a4dfcfd690263e369ad6dbe4bd45e",
+  "master_sha256": "d7d69ee483c7a97e5d1f174cc2888d0cf118761bb474d1d6327cda86e71ea88d",
+  "publication_validation": "footer_schema_rows_date_bounds_hash_pre_and_post_atomic_rename",
+  "continuous_24_month_gate": false,
+  "historical_trade_parameter_gate": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false,
+  "next_resume_command": "PYTHONPATH=src python scripts/download_phase3_cffex_cloud.py --data-root artifacts/runtime_data --start-date 2025-01-01 --end-date 2025-12-31 --workers 1 --timeout 60 --attempts 4 --backoff-seconds 5 --max-consecutive-failures 3"
+}
