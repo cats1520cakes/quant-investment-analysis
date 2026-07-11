@@ -18,6 +18,14 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 - Best worst-timing W12: 321,724 (`U3-B064`). Best worst-timing W24: 646,617 (`U3-B005`). Best p5 W24: 666,976 (`U3-B040`). Six-block dual-target passes: 0 for every specification.
 - Maximum observed cohort dual-target rate was 0.806%; worst-case unexecutable-order rates ranged from 27.08% to 65.00%. The family is eliminated economically under the frozen rules; no stress test can rescue the failed base target gate.
 
+## ETF U3 frozen A/B/C/D completion — 2026-07-12
+
+- All 174 preregistered specifications completed with 124 monthly cohorts, both deposit timings, and 6 non-overlapping W24 blocks per specification.
+- Base dual-target passes: 0/174. Non-overlap dual-target block passes: 0 for every specification. Strict candidates: **0**.
+- Best family worst W12/W24: A 346,209/685,525; B 321,724/646,617; C 354,414/709,790; D 318,332/647,455. These are far below 500,000/1,200,000.
+- A/C/D asset identities passed and negative-cash events were zero. Cause-decomposed execution evidence is retained in their registries; high unexecutability is never treated as a pass.
+- This is auditable elimination of the frozen, survivor-biased U3 unlevered A/B/C/D space, not a proof covering every possible ETF-only operation family.
+
 ## ETF U4 formal sample-size blocker — 2026-07-12
 
 - U4 common inception is 2016-11-04; after the preregistered 120-trading-day warmup, the first signal date is 2017-05-04.
