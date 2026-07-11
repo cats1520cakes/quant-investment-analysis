@@ -38,3 +38,9 @@
 - Newly acquired and revalidated: 2024-06, 08, 09, 10, 11 (5 months). 2024-07 initially reported downloaded but failed the subsequent full-year content revalidation and is now a declared gap; 2024-12 remained incomplete after three bounded resume attempts.
 - Current publishable 2024 coverage: 10/12 months. Missing/rejected: 2024-07 and 2024-12. No annual segment manifest was published.
 - This checkpoint deliberately counts only revalidated archives, not download-success messages. Continuous 24-month evidence remains unavailable; strict candidates: **0**.
+
+## 2024 full-year segment completed
+
+- 2024-07 and 2024-12 were recovered with bounded 60-second single-worker resumes; all 12/12 archives then passed a fresh cache-content validation pass.
+- Durable official panel: 189,422 rows, 3,032-contract master, 2024-01-02..2024-12-31, all seven IF/IH/IC/IM/IO/HO/MO products. Panel hash `b0eb01683556edcf193560d505e03d26fb8a4dfcfd690263e369ad6dbe4bd45e`.
+- This is one complete year, not a 24-month evaluation interval. W12/W24 promotion remains blocked pending adjacent continuous official coverage and historical effective-date trade parameters. Strict candidates: **0**.
