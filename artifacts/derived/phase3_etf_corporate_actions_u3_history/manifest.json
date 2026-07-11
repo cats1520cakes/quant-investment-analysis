@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "codes": [
+    510050,
+    510300,
+    510500
+  ],
+  "period": [
+    "2013-03-15",
+    "2023-12-31"
+  ],
+  "index_records": 710,
+  "index_pages": 9,
+  "candidate_bodies": 42,
+  "bodies_read": 42,
+  "stable_events": 22,
+  "cash_dividends": 20,
+  "share_factor_events": 2,
+  "unresolved_candidates": 0,
+  "coverage_complete": true,
+  "body_gate_passed": true,
+  "event_ledger_sha256": "0878ad61abddc3c221580d08331069d73aa26a9cbdcb89a93bed3b7bd623bede",
+  "raw_committed": false,
+  "strict_candidates": 0
+}
