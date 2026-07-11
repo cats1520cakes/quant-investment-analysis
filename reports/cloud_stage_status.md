@@ -73,6 +73,15 @@
 - Quarter complete: no; next date 2024-05-16
 - Strict candidates: **0**
 
+## 2024Q2 complete
+
+- Official valid snapshots: 59/91 natural dates
+- Unavailable weekend/holiday dates: 32
+- Coverage matrix: 413 date-product rows, seven products
+- Rule-version layer: margin/multiplier/minimum tick still blocking
+- Execution master: not permitted
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
