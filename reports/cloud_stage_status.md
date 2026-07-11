@@ -45,6 +45,15 @@
 - W12/W24 derivative evaluation: not released
 - Strict candidates: **0**
 
+## Trade-parameter recovery smoke checkpoint
+
+- Natural dates attempted: 10
+- Official valid snapshots: 7
+- Unavailable holiday/weekend dates: 3
+- Source evidence: official CFFEX snapshot, URL/date/bytes/hash bound
+- Panel-calendar reconciliation: pending and blocking
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
