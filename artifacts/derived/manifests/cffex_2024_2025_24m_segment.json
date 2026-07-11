@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "segment": "2024-01-01/2025-12-31",
+  "official_archives_valid": 24,
+  "official_archives_expected": 24,
+  "panel_rows": 365652,
+  "master_rows": 4910,
+  "first_date": "20240102",
+  "last_date": "20251231",
+  "products": ["HO", "IC", "IF", "IH", "IM", "IO", "MO"],
+  "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "master_sha256": "c405a1a3c09e5a3e6793b41286226ef43ab896e54d45bed9e7e682d8e025b6de",
+  "source_set_sha256": "9c00d2abf8112e73cee866653b30481f5617b584d97f717a3c34eac2155b1796",
+  "data_continuity_gate": true,
+  "expiry_evidence_accepted": false,
+  "trade_parameter_history_gate": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false
+}
