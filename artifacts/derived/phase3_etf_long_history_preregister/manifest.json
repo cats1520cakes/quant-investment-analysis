@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "preregistered": true,
+  "selection_rule": "purely ex-ante: current official U4 members listed by common inception, tradable over the frozen panel, and passing the existing liquidity gate; remove only later inception; never select on returns",
+  "priority": [
+    "U3",
+    "U2_if_U3_fails_five_blocks"
+  ],
+  "inception": {
+    "510050": "2005-02-23",
+    "510300": "2012-05-28",
+    "510500": "2013-03-15",
+    "512100": "2016-11-04"
+  },
+  "excluded_512100_reason": "later inception only; no return information used",
+  "liquidity_gate": "existing strict prior-signal-day amount/capacity gate; must be rerun point-in-time before evaluation",
+  "survivorship_bias": "current-only U4 parent universe; strict ranking is conditional on this frozen survivor-biased parent and is not an unbiased historical ETF universe",
+  "panel_sha256": "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2",
+  "target_w12": 500000,
+  "target_w24": 1200000,
+  "minimum_nonoverlap_w24_blocks": 5,
+  "spec_count_by_universe": {
+    "U2": 174,
+    "U3": 174
+  },
+  "results_seen_before_freeze": false,
+  "strict_candidates": 0
+}
