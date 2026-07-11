@@ -8,3 +8,4 @@
 | ETF low-cost screen | complete, eliminated | development only | best 2.564%; strict candidates 0 |
 | CFFEX overlay audit | complete; sparse rebuild 54/195 | official daily settlement | finish sparse recovery and expiry metadata |
 | CFFEX crowding family | implemented, partial smoke only | official signal-date daily | full 195-month futures/option grid |
+| 2026H1 official expiry metadata | complete | official exact-contract snapshots | extend across recovered history |
