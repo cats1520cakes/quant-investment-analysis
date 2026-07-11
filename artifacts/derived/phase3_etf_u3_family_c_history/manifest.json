@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "universe": "U3",
+  "family": "C",
+  "specifications": 36,
+  "monthly_cohorts": 124,
+  "cohort_timing_rows": 8928,
+  "nonoverlap_blocks": 6,
+  "panel_sha256": "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2",
+  "event_source_sha256": "0878ad61abddc3c221580d08331069d73aa26a9cbdcb89a93bed3b7bd623bede",
+  "cash_dividends": 20,
+  "share_factor_events": 2,
+  "strict_candidates": 0,
+  "base_target_passes": 0,
+  "best_worst_w12": 354414.49999999994,
+  "best_worst_w24": 709789.7039999999,
+  "best_p5_w24": 713216.2499999999,
+  "asset_identity_passed": true,
+  "negative_cash_events": 0,
+  "stress_status": "trigger only if base target passes",
+  "evidence_tier": "official_sse_raw_plus_official_sse_event_pdfs"
+}
