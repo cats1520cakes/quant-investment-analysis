@@ -10,7 +10,9 @@
   "end": "2025-12-31",
   "coverage_complete": true,
   "candidate_count": 12,
-  "body_gate_passed": false,
+  "unique_economic_events": 7,
+  "non_economic_candidates": 5,
+  "body_gate_passed": true,
   "strict_candidates": 0,
   "raw_committed": false
 }
