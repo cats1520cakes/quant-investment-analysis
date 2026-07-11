@@ -123,3 +123,11 @@
 - U3 was selected without return information by removing only later-inception 512100. Common inception is 2013-03-15; first post-warmup signal is 2013-09-11; 6 W24 blocks are available.
 - Historical official event evidence closed for the SSE index chain: 710 announcements, 42 candidate bodies, 22 stable account events, unresolved candidates 0.
 - Frozen B rotation completed 72 specifications over 124 monthly cohorts and both deposit timings. Dual-target passes 0; strict candidates **0**. Best worst W12/W24 were 321,724/646,617 (different specifications).
+
+## 2026-07-12 — U3 A/C/D and unified comparison
+
+- A: 48 specs, best worst W12/W24 346,209/685,525; base passes 0.
+- C: 36 specs, best worst W12/W24 354,414/709,790; base passes 0.
+- D: 18 specs, best worst W12/W24 318,332/647,455; base passes 0.
+- Together with B, 174/174 frozen U3 specifications are complete. Every specification has 124 cohorts and 6 non-overlap W24 blocks; strict candidates **0**.
+- No stress promotion was triggered because no base specification passed the dual target. Next work should expand executable economic convexity rather than retune this failed grid.
