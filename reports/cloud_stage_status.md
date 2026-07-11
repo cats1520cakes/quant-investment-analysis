@@ -65,6 +65,14 @@
 - Frozen panel binding: pending and blocking
 - Strict candidates: **0**
 
+## 2024Q2 batch 1
+
+- Scope: 2024-04-01..05-15
+- Official valid snapshots: 28/45 natural dates
+- Unavailable weekend/holiday dates: 17
+- Quarter complete: no; next date 2024-05-16
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
