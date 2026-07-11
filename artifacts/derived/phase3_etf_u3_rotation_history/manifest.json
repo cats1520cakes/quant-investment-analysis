@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "universe": "U3",
+  "family": "B_rotation",
+  "specifications": 72,
+  "cohort_timing_rows": 17856,
+  "panel_sha256": "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2",
+  "event_source_sha256": "0878ad61abddc3c221580d08331069d73aa26a9cbdcb89a93bed3b7bd623bede",
+  "minimum_nonoverlap_blocks": 5,
+  "strict_candidates": 0,
+  "evidence_tier": "official_sse_raw_plus_official_sse_event_pdfs",
+  "survivorship_bias": "conditional_current_U4_parent",
+  "monthly_cohorts": 124,
+  "deposit_timings": [
+    "beginning",
+    "ending"
+  ],
+  "nonoverlap_blocks": 6,
+  "all_specs_nonoverlap_dual_passes": 0,
+  "best_worst_w12": 321723.97869,
+  "best_worst_w24": 646616.978618,
+  "best_p5_w24": 666976.280874,
+  "frozen_b_neighborhood_mapping": "identical to the 72 legal B grid on U3; no additional unique specifications",
+  "stress_status": "not triggered: zero specifications approach or pass the base dual-target gate",
+  "asset_identity_passed": true
+}
