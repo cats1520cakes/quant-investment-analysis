@@ -471,6 +471,7 @@ def test_execution_source_drift_invalidates_stage_manifest_and_run_cache(
     source_hashes = _execution_source_hashes()
     required_sources = {
         "src/quant_proof/phase3_derivative_search.py",
+        "src/quant_proof/phase3_derivative_signals.py",
         "src/quant_proof/phase3_overlay_factory.py",
         "src/quant_proof/phase3_overlay_coordinator.py",
         "src/quant_proof/derivative_event_loop.py",
@@ -480,14 +481,28 @@ def test_execution_source_drift_invalidates_stage_manifest_and_run_cache(
         "src/quant_proof/engine/cost.py",
         "src/quant_proof/engine/exchange_rules.py",
         "src/quant_proof/engine/execution.py",
+        "src/quant_proof/engine/orders.py",
         "src/quant_proof/engine/risk.py",
         "src/quant_proof/cffex_catalog.py",
         "src/quant_proof/cffex_execution_parameters.py",
+        "src/quant_proof/free_sources/baostock_adapter.py",
         "src/quant_proof/free_sources/cffex_adapter.py",
         "src/quant_proof/free_sources/cffex_settlement_params.py",
+        "src/quant_proof/free_sources/cffex_trade_parameters.py",
+        "src/quant_proof/free_sources/code_map.py",
+        "src/quant_proof/free_sources/daily_integrity.py",
         "src/quant_proof/free_real_backtest.py",
+        "src/quant_proof/metrics.py",
+        "src/quant_proof/network_guard.py",
+        "src/quant_proof/real_strategies.py",
+        "src/quant_proof/realdata/schema.py",
+        "src/quant_proof/search_manager.py",
+        "src/quant_proof/simulator.py",
+        "src/quant_proof/strategies.py",
+        "scripts/run_phase3_derivative_search.py",
     }
-    assert required_sources.issubset(DERIVATIVE_EXECUTION_SOURCE_PATHS)
+    assert required_sources == set(DERIVATIVE_EXECUTION_SOURCE_PATHS)
+    assert len(DERIVATIVE_EXECUTION_SOURCE_PATHS) == len(required_sources)
     assert set(DERIVATIVE_EXECUTION_SOURCE_PATHS) == set(source_hashes)
     assert all(len(value) == 64 for value in source_hashes.values())
 
