@@ -1,0 +1,37 @@
+schema_version: 1
+preregistered: true
+panel_sha256: f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2
+period: [2024-01-01, 2025-12-31]
+monthly_deposit: 30000
+targets: {w12: 500000, w24: 1200000}
+deposit_timings: [beginning, ending]
+execution: {lot_size: 100, commission_bps: 2.0, min_commission: 5.0, slippage_bps: 5.0, price: official_raw_next_open}
+families:
+  cash_trend_volatility:
+    trend_window: [20, 60]
+    volatility_window: [20, 60]
+    risk_fraction: [0.4, 0.7, 1.0]
+    cash_fraction: [0.0, 0.3]
+    rebalance_days: [5, 20]
+    combinations: 48
+  u4_rotation:
+    top_k: [1, 2]
+    momentum_window: [20, 60, 120]
+    absolute_trend_window: [20, 60, 120]
+    defensive_fallback: [cash, 510050]
+    holding_days: [5, 20]
+    combinations: 72
+  drawdown_reentry:
+    drawdown_threshold: [0.05, 0.10, 0.15]
+    cooldown_days: [5, 20]
+    reentry_confirmation_days: [3, 10]
+    risk_budget: [0.3, 0.6, 1.0]
+    combinations: 36
+  downside_budget:
+    volatility_target: [0.10, 0.15, 0.20]
+    cash_cap: [0.3, 0.6, 1.0]
+    weighting: [inverse_volatility, minimum_variance]
+    combinations: 18
+total_combinations: 174
+stress: {cost_multipliers: [1, 2], execution_delay_days: [1, 2], suspension_shock: true}
+formal_gates: {minimum_global_nonoverlap_blocks: 5, unseen_outer_period_required: true, neighborhood_required: true, strict_candidates_before_outer_holdout: 0}
