@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-07-12",
+  "instrument": "159915",
+  "strict_status": "fail_closed",
+  "official_listing_page": {
+    "url": "https://www.szse.cn/disclosure/notice/fund/t20111207_516231.html",
+    "http_result": "accessible",
+    "supports": ["fund_identity", "listing_date", "listing_and_subscription_notice"],
+    "does_not_support": ["full_history_ohlcv", "announcement_index_completeness", "corporate_action_ledger"]
+  },
+  "official_announcement_attempt": {
+    "url_template": "https://www.szse.cn/api/disc/announcement/annList",
+    "result": "HTTP_500_for_attempted_query",
+    "coverage_proven": false
+  },
+  "official_history_attempt": {
+    "url_template": "https://www.szse.cn/api/report/ShowReport/data",
+    "result": "not_verified_before_platform_external_request_limit",
+    "coverage_proven": false
+  },
+  "minimum_strict_evidence_set": [
+    "official SZSE raw OHLCV for 159915 from 2011-12-09 through evaluation end with units and terminal pagination",
+    "official trading calendar expansion with confirmed suspension gaps",
+    "official SZSE or fund-manager announcement index paged to completion",
+    "parsed point-in-time dividend, split, merge, suspension and other account-impact event ledger",
+    "canonical panel and event ledger hashes bound to the execution manifest"
+  ],
+  "vendor_crosscheck": {
+    "source": "Tencent",
+    "rows_raw": 3539,
+    "rows_hfq": 3539,
+    "date_start": "2011-12-09",
+    "date_end": "2026-07-10",
+    "raw_sha256": "dfcdfa5ae9030fecf926d3fb28eae72568ae93c12d80de98d4f69080c0f64171",
+    "hfq_sha256": "0f9dd201b053adf4a936e59078a5cd25d3c0b5fd4a9c8c98a33e643ff0e87436",
+    "tier": "free_vendor_crosscheck",
+    "strict_promotion_allowed": false,
+    "known_blockers": ["undocumented volume units", "not official exchange history", "corporate action ledger incomplete"]
+  },
+  "strict_candidates": 0
+}
