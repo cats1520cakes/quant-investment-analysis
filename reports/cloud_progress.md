@@ -90,3 +90,9 @@
 ## 2024Q3 batch 1
 
 - 2024-07-01..08-15 completed: 46 natural dates, 33 valid official snapshots and 13 unavailable dates. Raw remains runtime-only; quarter coverage is not yet promoted. Strict candidates: **0**.
+
+## 2024Q3 complete and ETF execution gate
+
+- Q3 completed: 92 natural dates, 63 valid official snapshots, 29 unavailable dates; 441 date-product coverage rows; source-set SHA256 `b330a320a3176c26537ead8432432ef0a025addf74a86d9f00e9fb6aee47c8a2`.
+- Added strict ETF execution module: 100-share board lots, explicit beginning/ending deposit ordering, raw-open fills with hfq signal-only values, suspension/missing-price rejection, and incomplete company-action-ledger rejection.
+- Focused parameter plus ETF tests: 30/30 passed. No old ETF screen rerun. Strict candidates: **0**.
