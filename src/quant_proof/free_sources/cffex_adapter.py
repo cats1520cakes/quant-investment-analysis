@@ -411,6 +411,13 @@ def build_cffex_contract_panel(
         if tmp_path.exists():
             tmp_path.unlink()
 
+    try:
+        parquet = pq.ParquetFile(output)
+    except (OSError, ValueError, pa.ArrowInvalid) as exc:
+        raise CffexDataError(f"CFFEX panel failed post-write Parquet validation: {output}") from exc
+    if int(parquet.metadata.num_rows) != rows:
+        raise CffexDataError("CFFEX panel post-write row count mismatch")
+
     source_set_sha256 = hashlib.sha256(
         json.dumps(source_archives, ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode("utf-8")
     ).hexdigest()
