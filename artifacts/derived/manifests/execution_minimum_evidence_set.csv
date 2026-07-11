@@ -1,0 +1,10 @@
+strategy_family,blocking_field,current_coverage,evidence_required,evidence_tier_required,status
+futures_overlay,exchange_margin_effective_interval,0,official daily parameter or versioned CFFEX notice,strict_real,blocking
+futures_overlay,multiplier_effective_interval,0,CFFEX contract specification baseline plus revision chain,strict_real,blocking
+futures_overlay,minimum_price_tick_effective_interval,0,CFFEX contract specification baseline plus revision chain,strict_real,blocking
+futures_overlay,panel_calendar_binding,0,frozen panel/calendar/master restored and hash-bound,strict_real,blocking
+long_option_overlay,official_contract_upper_lower_prices,1,official daily snapshot,strict_real,closed_in_snapshot
+long_option_overlay,bid_ask_quotes,0,real executable quote archive,strict_real,blocking
+etf_core,whole_100_share_cash_accounting,1,tested execution module,free_real,closed_code_gate
+etf_core,raw_execution_hfq_signal_separation,1,tested execution module,free_real,closed_code_gate
+etf_core,official_company_action_ledger,0,official event ledger per ETF,strict_real,blocking
