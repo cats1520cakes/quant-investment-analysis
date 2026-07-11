@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "panel_manifest_sha256": "c9d4730d2d0f5aaca2aeb6941a7e70a1f88333dfe42a52a7de796721db331895",
+  "config_sha256": "df702eb7d5652e11323d77ecee85e3b3a74922d1e6f2605694433c887364a1a0",
+  "strategies": 77,
+  "windows": 36036,
+  "strict_candidates": 0,
+  "development_only": true,
+  "blocking_gates": [
+    "corporate_action_ledger",
+    "whole_100_share_lots",
+    "raw_unadjusted_signal_discontinuities"
+  ]
+}
