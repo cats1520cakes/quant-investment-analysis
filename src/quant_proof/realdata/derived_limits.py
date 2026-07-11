@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import math
 from decimal import Decimal, ROUND_HALF_UP
 
+import numpy as np
 import pandas as pd
 
 
@@ -23,7 +23,7 @@ def infer_free_board(ts_code: object, listed_board: object | None = None) -> str
     symbol = text.split(".")[0]
     if symbol.startswith("688"):
         return "科创板"
-    if symbol.startswith("300"):
+    if symbol.startswith(("300", "301")):
         return "创业板"
     if symbol.startswith(("43", "83", "87", "92")):
         return "北交所"
@@ -69,21 +69,35 @@ def derive_limit_prices(pre_close: float, limit_pct: float) -> tuple[float, floa
 
 def add_derived_limit_prices(frame: pd.DataFrame) -> pd.DataFrame:
     out = frame.copy()
-    limit_pct = []
-    up_limit = []
-    down_limit = []
-    for row in out.itertuples(index=False):
-        pct = limit_pct_for_row(
-            ts_code=getattr(row, "ts_code"),
-            trade_date=getattr(row, "trade_date"),
-            listing_days=getattr(row, "listing_days"),
-            is_st=getattr(row, "is_st", False),
-            board=getattr(row, "board", None),
-        )
-        up, down = derive_limit_prices(getattr(row, "pre_close", math.nan), pct)
-        limit_pct.append(pct)
-        up_limit.append(up)
-        down_limit.append(down)
+    board = out["board"].astype("string")
+    trade_date = out["trade_date"].astype(str)
+    listing_age_column = "listing_trading_days" if "listing_trading_days" in out.columns else "listing_days"
+    listing_days = pd.to_numeric(out[listing_age_column], errors="coerce").fillna(10**9)
+    is_st = out.get("is_st", False)
+    if not isinstance(is_st, pd.Series):
+        is_st = pd.Series(bool(is_st), index=out.index)
+    is_st = is_st.fillna(False).astype(bool)
+
+    limit_pct = pd.Series(0.10, index=out.index, dtype=float)
+    star = board.eq("科创板")
+    chinext = board.eq("创业板")
+    bse = board.eq("北交所")
+    main = board.eq("主板")
+    limit_pct.loc[star] = 0.20
+    limit_pct.loc[chinext & trade_date.ge("20200824")] = 0.20
+    limit_pct.loc[chinext & trade_date.lt("20200824")] = 0.10
+    limit_pct.loc[bse] = 0.30
+    limit_pct.loc[is_st & main & trade_date.lt(ST_MAIN_BOARD_10PCT_EFFECTIVE_DATE)] = 0.05
+    limit_pct.loc[is_st & main & trade_date.ge(ST_MAIN_BOARD_10PCT_EFFECTIVE_DATE)] = 0.10
+    limit_pct.loc[is_st & ~(star | chinext | bse | main)] = 0.05
+    limit_pct.loc[(star | chinext) & listing_days.lt(5)] = np.nan
+
+    pre_close = pd.to_numeric(out["pre_close"], errors="coerce")
+    valid = pre_close.notna() & limit_pct.notna()
+    up_limit = pd.Series(np.nan, index=out.index, dtype=float)
+    down_limit = pd.Series(np.nan, index=out.index, dtype=float)
+    up_limit.loc[valid] = np.floor(pre_close.loc[valid] * (1.0 + limit_pct.loc[valid]) * 100.0 + 0.5) / 100.0
+    down_limit.loc[valid] = np.floor(pre_close.loc[valid] * (1.0 - limit_pct.loc[valid]) * 100.0 + 0.5) / 100.0
     out["limit_pct"] = limit_pct
     out["up_limit"] = up_limit
     out["down_limit"] = down_limit

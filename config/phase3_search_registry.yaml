@@ -1,0 +1,440 @@
+version: 1
+registry_id: phase3_machine_auditable_search_registry_v1
+search_config_glob: config/phase3_*search.yaml
+derivative_config_glob: config/phase3_derivative_*_grid.yaml
+
+relation_group_audit:
+  equity_stateful_trend_v1:
+    relation_type: identical_signal_kernel_neighborhood
+    members:
+      - S20_real_stateful_trend
+      - S22_real_concentrated_trend
+    rationale: S22 changes concentration and nearby exit ranges while retaining the S20 causal trend kernel.
+  equity_volatility_contraction_v1:
+    relation_type: identical_signal_kernel_neighborhood
+    members:
+      - S21_real_volatility_contraction
+      - S23_real_concentrated_contraction
+    rationale: S23 changes concentration and nearby risk controls while retaining the S21 causal contraction kernel.
+
+families:
+  - family_id: S2_real_stock_momentum
+    instrument_class: a_share_equity
+    signal_kernel: stock_momentum
+    position_family: cross_sectional_long_only
+    sizing_family: configurable_risk_weighting
+    sizing_modes: [equal, inverse_volatility, atr_risk, rank]
+    data_tier: free_real
+    config_path: config/phase3_risk_weighting_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_stock_momentum_risk_weighting_v1
+    relation_note: Includes causal ATR and inverse-volatility weighting; the new grid has not been run.
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: critical
+    estimated_config_budget: 48
+
+  - family_id: S3_real_stock_breakout
+    instrument_class: a_share_equity
+    signal_kernel: stock_breakout
+    position_family: stateful_long_only
+    sizing_family: configurable_risk_weighting
+    sizing_modes: [equal, inverse_volatility, atr_risk, rank]
+    data_tier: free_real
+    config_path: config/phase3_risk_weighting_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_stock_breakout_risk_weighting_v1
+    relation_note: Includes causal ATR and inverse-volatility weighting; the new grid has not been run.
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: critical
+    estimated_config_budget: 48
+
+  - family_id: S4_real_smallcap_factor
+    instrument_class: a_share_equity
+    signal_kernel: smallcap_factor
+    position_family: cross_sectional_long_only
+    sizing_family: configurable_risk_weighting
+    sizing_modes: [equal, inverse_volatility, atr_risk, rank]
+    data_tier: free_real
+    config_path: config/phase3_risk_weighting_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_smallcap_factor_risk_weighting_v1
+    relation_note: Includes causal ATR and inverse-volatility weighting; the new grid has not been run.
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: critical
+    estimated_config_budget: 48
+
+  - family_id: S10_real_regime_selector
+    instrument_class: a_share_equity
+    signal_kernel: regime_selector
+    position_family: regime_gated_long_only
+    sizing_family: equal_weight_with_cash_gate
+    data_tier: proxy_research
+    config_path: config/phase3_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_regime_selector_v1
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel and rebuilt breadth state
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 24
+
+  - family_id: S11_real_short_term_reversal
+    instrument_class: a_share_equity
+    signal_kernel: short_term_reversal
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_short_term_reversal_v1
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel with flow-adjusted costs and liquidity
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 20
+
+  - family_id: S12_real_low_volatility
+    instrument_class: a_share_equity
+    signal_kernel: low_volatility
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_low_volatility_v1
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel with flow-adjusted risk metrics
+    next_gate: corrected_panel_rerun
+    priority: medium
+    estimated_config_budget: 20
+
+  - family_id: S13_real_residual_momentum
+    instrument_class: a_share_equity
+    signal_kernel: residual_momentum
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_residual_momentum_v1
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel and persistent skip-recent construction
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 20
+
+  - family_id: S14_real_volume_price_shock
+    instrument_class: a_share_equity
+    signal_kernel: volume_price_shock
+    position_family: event_driven_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_volume_price_shock_v1
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel with validated liquidity evidence
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 20
+
+  - family_id: S16_real_value_composite
+    instrument_class: a_share_equity
+    signal_kernel: value_composite
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: proxy_research
+    config_path: config/phase3_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_value_composite_v1
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: announcement-timed fundamentals and point-in-time membership
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 12
+
+  - family_id: S20_real_stateful_trend
+    instrument_class: a_share_equity
+    signal_kernel: stateful_trend
+    position_family: stateful_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_stateful_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_stateful_trend_v1
+    relation_note: Kernel anchor; S22 is the concentrated near-neighbor.
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel and corrected accounting rerun
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 36
+
+  - family_id: S21_real_volatility_contraction
+    instrument_class: a_share_equity
+    signal_kernel: volatility_contraction
+    position_family: stateful_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_stateful_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_volatility_contraction_v1
+    relation_note: Kernel anchor; S23 is the concentrated near-neighbor.
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel and corrected accounting rerun
+    next_gate: corrected_panel_rerun
+    priority: medium
+    estimated_config_budget: 36
+
+  - family_id: S22_real_concentrated_trend
+    instrument_class: a_share_equity
+    signal_kernel: stateful_trend
+    position_family: stateful_long_only
+    sizing_family: concentrated_equal_weight
+    data_tier: free_real
+    config_path: config/phase3_concentration_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_stateful_trend_v1
+    relation_note: Same causal scorer as S20 with concentrated holdings and nearby exits.
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel and a materially different payoff hypothesis
+    next_gate: corrected_panel_rerun
+    priority: low
+    estimated_config_budget: 40
+
+  - family_id: S23_real_concentrated_contraction
+    instrument_class: a_share_equity
+    signal_kernel: volatility_contraction
+    position_family: stateful_long_only
+    sizing_family: concentrated_equal_weight
+    data_tier: free_real
+    config_path: config/phase3_concentration_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_volatility_contraction_v1
+    relation_note: Same causal scorer as S21 with concentrated holdings and nearby risk controls.
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: corrected point-in-time panel and an explicitly labeled convexity test
+    next_gate: corrected_panel_rerun
+    priority: medium
+    estimated_config_budget: 40
+
+  - family_id: S24_real_regime_contraction
+    instrument_class: a_share_equity
+    signal_kernel: regime_contraction
+    position_family: regime_gated_long_only
+    sizing_family: concentrated_equal_weight_with_cash_gate
+    data_tier: proxy_research
+    config_path: config/phase3_state_selector_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_regime_contraction_wrapper_v1
+    relation_note: Regime wrapper over the contraction kernel; separate because the state gate changes causal positions.
+    implementation_status: implemented
+    evidence_status: tested_superseded
+    readiness_status: blocked
+    blocking_dependency: full point-in-time universe and rebuilt non-proxy breadth state
+    next_gate: corrected_panel_rerun
+    priority: medium
+    estimated_config_budget: 48
+
+  - family_id: S26_real_gap_intraday
+    instrument_class: a_share_equity
+    signal_kernel: gap_intraday
+    position_family: event_driven_long_only
+    sizing_family: concentrated_equal_weight
+    data_tier: free_real
+    config_path: config/phase3_gap_intraday_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_gap_intraday_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: high
+    estimated_config_budget: 72
+
+  - family_id: S27_real_momentum_acceleration
+    instrument_class: a_share_equity
+    signal_kernel: momentum_acceleration
+    position_family: stateful_long_only
+    sizing_family: concentrated_equal_weight
+    data_tier: free_real
+    config_path: config/phase3_momentum_acceleration_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_momentum_acceleration_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: high
+    estimated_config_budget: 48
+
+  - family_id: S28_real_signed_flow_accumulation
+    instrument_class: a_share_equity
+    signal_kernel: signed_flow_accumulation
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_signed_flow_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_signed_flow_accumulation_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: high
+    estimated_config_budget: 36
+
+  - family_id: S29_real_beta_residual_shock_reversal
+    instrument_class: a_share_equity
+    signal_kernel: beta_residual_shock_reversal
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_beta_residual_reversal_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_beta_residual_reversal_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: high
+    estimated_config_budget: 48
+
+  - family_id: S30_real_idiosyncratic_strength
+    instrument_class: a_share_equity
+    signal_kernel: idiosyncratic_strength
+    position_family: cross_sectional_long_only
+    sizing_family: equal_weight
+    data_tier: free_real
+    config_path: config/phase3_idiosyncratic_strength_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_idiosyncratic_strength_v1
+    relation_note: Positive lagged rolling-beta residual strength; economically opposite to S29 shock reversal and distinct from S13 fixed-beta residual momentum.
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel
+    next_gate: corrected_panel_development_funnel
+    priority: high
+    estimated_config_budget: 24
+
+  - family_id: S31_real_post_limit_release
+    instrument_class: a_share_equity
+    signal_kernel: post_limit_release
+    position_family: stateful_long_only
+    sizing_family: equal_weight
+    data_tier: free_real_derived_limits
+    config_path: config/phase3_post_limit_release_search.yaml
+    config_binding: strategy_space
+    relation_group: equity_post_limit_release_v1
+    relation_note: Daily OHLC establishes only a derived-limit touch and released close; no intraday seal timing, count, or queue state is inferred.
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: blocked
+    blocking_dependency: corrected canonical point-in-time panel and derived-limit proxy validation
+    next_gate: corrected_panel_development_funnel
+    priority: high
+    estimated_config_budget: 12
+
+  - family_id: P32_cffex_whole_lot_futures_overlay
+    instrument_class: cffex_index_futures
+    instrument_roots: [IF, IH, IC, IM]
+    signal_kernel: cffex_index_overlay
+    position_family: whole_contract_overlay
+    sizing_family: whole_contract_budget
+    data_tier: official_exchange_daily
+    config_path: config/phase3_derivative_overlay_grid.yaml
+    config_binding: derivative_grid
+    relation_group: cffex_whole_lot_overlay_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: runnable
+    next_gate: derivative_screen
+    priority: critical
+    estimated_config_budget: 48
+
+  - family_id: P33_cffex_long_option_convexity_budget
+    instrument_class: cffex_index_options
+    instrument_roots: [IO, HO, MO]
+    signal_kernel: cffex_long_convexity
+    position_family: long_option_overlay
+    sizing_family: premium_budget
+    data_tier: official_exchange_daily
+    config_path: config/phase3_derivative_overlay_grid.yaml
+    config_binding: derivative_grid
+    relation_group: cffex_long_option_convexity_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: runnable
+    next_gate: derivative_screen
+    priority: critical
+    estimated_config_budget: 20
+
+  - family_id: P34_cffex_combined_derivative_overlay
+    instrument_class: cffex_index_derivatives
+    instrument_roots: [IF, IH, IC, IM, IO, HO, MO]
+    signal_kernel: cffex_combined_derivative_overlay
+    position_family: futures_plus_long_option_overlay
+    sizing_family: whole_contract_plus_premium_budget
+    data_tier: official_exchange_daily
+    config_path: config/phase3_derivative_overlay_grid.yaml
+    config_binding: derivative_grid
+    relation_group: cffex_combined_derivative_overlay_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: runnable
+    next_gate: combined_overlay_screen
+    priority: critical
+    estimated_config_budget: 11
+
+  - family_id: P35_cffex_dynamic_direction_overlay
+    instrument_class: cffex_index_futures
+    instrument_roots: [IF, IH, IC, IM]
+    signal_kernel: cffex_dynamic_direction_overlay
+    position_family: whole_contract_overlay
+    sizing_family: whole_contract_budget
+    data_tier: official_exchange_daily
+    config_path: config/phase3_derivative_timing_grid.yaml
+    config_binding: derivative_grid
+    relation_group: cffex_dynamic_direction_overlay_v1
+    implementation_status: implemented
+    evidence_status: not_tested
+    readiness_status: runnable
+    next_gate: derivative_timing_screen
+    priority: critical
+    estimated_config_budget: 36

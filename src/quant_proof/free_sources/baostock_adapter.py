@@ -4,15 +4,45 @@ import hashlib
 import os
 import sys
 import time
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Literal
 
 import pandas as pd
 import yaml
 
 from .code_map import baostock_to_ts_code
+from .daily_integrity import (
+    inspect_daily_pairs,
+    invalidate_daily_integrity_cache,
+    require_valid_daily_pair_frames,
+)
+
+
+UniverseScope = Literal["current", "point_in_time", "all_type1"]
+UNIVERSE_SCOPES: tuple[UniverseScope, ...] = ("current", "point_in_time", "all_type1")
+
+
+@contextmanager
+def baostock_login_lock(data_root: Path):
+    """Serialize BaoStock logins because a second session invalidates the first."""
+
+    import fcntl
+
+    lock_path = Path(data_root) / "00_meta" / "locks" / "baostock_login.lock"
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+", encoding="utf-8") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        lock.seek(0)
+        lock.truncate()
+        lock.write(f"pid={os.getpid()} acquired_at={datetime.now().isoformat()}\n")
+        lock.flush()
+        try:
+            yield
+        finally:
+            fcntl.flock(lock, fcntl.LOCK_UN)
 
 
 def checksum(path: Path) -> str:
@@ -157,7 +187,16 @@ def normalize_daily(frame: pd.DataFrame, signal: bool) -> pd.DataFrame:
                 "close": "adj_close_for_signal",
             }
         )
-        keep = ["trade_date", "ts_code", "source_code", "adj_open_for_signal", "adj_high_for_signal", "adj_low_for_signal", "adj_close_for_signal"]
+        keep = [
+            "trade_date",
+            "ts_code",
+            "source_code",
+            "adj_open_for_signal",
+            "adj_high_for_signal",
+            "adj_low_for_signal",
+            "adj_close_for_signal",
+            "trade_status",
+        ]
     else:
         keep = [
             "trade_date",
@@ -190,6 +229,30 @@ def write_frame(path: Path, frame: pd.DataFrame) -> Path:
     tmp_path = path.with_name(f".{path.name}.{os.getpid()}.tmp")
     try:
         frame.to_parquet(tmp_path, index=False)
+        tmp_path.replace(path)
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+    return path
+
+
+def _write_csv(path: Path, frame: pd.DataFrame) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        frame.to_csv(tmp_path, index=False, encoding="utf-8")
+        tmp_path.replace(path)
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+    return path
+
+
+def _write_lines(path: Path, values: Iterable[str]) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        tmp_path.write_text("".join(f"{value}\n" for value in values), encoding="utf-8")
         tmp_path.replace(path)
     finally:
         if tmp_path.exists():
@@ -311,20 +374,85 @@ def select_codes(
     max_codes: int | None,
     start_index: int = 0,
     end_index: int | None = None,
+    universe_scope: UniverseScope = "current",
+    universe_start_date: str = "19000101",
+    universe_end_date: str = "29991231",
 ) -> list[str]:
-    frame = stock_basic.copy()
-    if "type" in frame.columns:
-        frame = frame.loc[frame["type"].astype(str) == "1"]
-    if "list_status" in frame.columns:
-        frame = frame.loc[frame["list_status"].astype(str) == "1"]
+    frame = select_stock_universe(
+        stock_basic,
+        universe_scope=universe_scope,
+        universe_start_date=universe_start_date,
+        universe_end_date=universe_end_date,
+    )
     codes = frame["source_code"].dropna().astype(str).sort_values().tolist()
-    if max_codes:
-        codes = codes[:max_codes]
     if start_index < 0:
         raise ValueError("start_index must be non-negative")
     if end_index is not None and end_index < start_index:
         raise ValueError("end_index must be greater than or equal to start_index")
-    return codes[start_index:end_index]
+    codes = codes[start_index:end_index]
+    return codes[:max_codes] if max_codes else codes
+
+
+def select_stock_universe(
+    stock_basic: pd.DataFrame,
+    universe_scope: UniverseScope = "current",
+    universe_start_date: str = "19000101",
+    universe_end_date: str = "29991231",
+) -> pd.DataFrame:
+    if universe_scope not in UNIVERSE_SCOPES:
+        raise ValueError(f"unsupported universe_scope={universe_scope}; expected one of {UNIVERSE_SCOPES}")
+    frame = stock_basic.copy()
+    if "type" in frame.columns:
+        frame = frame.loc[frame["type"].astype(str) == "1"]
+    if universe_scope == "current" and "list_status" in frame.columns:
+        frame = frame.loc[frame["list_status"].astype(str) == "1"]
+    if universe_scope == "point_in_time":
+        list_date = frame["list_date"].astype("string").str.replace("-", "", regex=False).str.slice(0, 8)
+        delist_date = frame["delist_date"].astype("string").str.replace("-", "", regex=False).str.slice(0, 8)
+        listed_by_end = list_date.notna() & list_date.ne("") & list_date.le(str(universe_end_date))
+        alive_after_start = delist_date.isna() | delist_date.eq("") | delist_date.ge(str(universe_start_date))
+        frame = frame.loc[listed_by_end & alive_after_start]
+    return frame.sort_values("source_code").reset_index(drop=True)
+
+
+def freeze_universe(
+    config: FreeRealConfig,
+    stock_basic: pd.DataFrame,
+    universe_scope: UniverseScope,
+    codes: list[str],
+) -> tuple[Path, Path]:
+    selected = stock_basic.loc[stock_basic["source_code"].astype(str).isin(codes)].copy()
+    selected = selected.sort_values("source_code").reset_index(drop=True)
+    selected.insert(0, "universe_scope", universe_scope)
+    selected.insert(1, "universe_start_date", config.start_date)
+    selected.insert(2, "universe_end_date", config.end_date)
+    stem = f"phase2_free_{universe_scope}_{config.start_date}_{config.end_date}"
+    csv_path = _write_csv(config.data_root / "00_meta" / "universes" / f"{stem}.csv", selected)
+    codes_path = _write_lines(config.data_root / "00_meta" / "universes" / f"{stem}.txt", codes)
+    return csv_path, codes_path
+
+
+def _load_or_download_metadata(
+    config: FreeRealConfig,
+    client: BaoStockClient,
+    refresh_metadata: bool,
+) -> tuple[pd.DataFrame, pd.DataFrame, list[dict]]:
+    stock_basic_path = config.data_root / "raw/baostock/stock_basic.parquet"
+    trade_calendar_path = config.data_root / "raw/baostock/trade_calendar.parquet"
+    records: list[dict] = []
+    if stock_basic_path.exists() and not refresh_metadata:
+        stock_basic = pd.read_parquet(stock_basic_path)
+    else:
+        stock_basic = client.stock_basic()
+        write_frame(stock_basic_path, stock_basic)
+        records.append(manifest_record("baostock", "stock_basic", "all", stock_basic_path, stock_basic))
+    if trade_calendar_path.exists() and not refresh_metadata:
+        trade_calendar = pd.read_parquet(trade_calendar_path)
+    else:
+        trade_calendar = client.trade_calendar()
+        write_frame(trade_calendar_path, trade_calendar)
+        records.append(manifest_record("baostock", "trade_calendar", "all", trade_calendar_path, trade_calendar))
+    return stock_basic, trade_calendar, records
 
 
 def download_baostock_free_real(
@@ -334,42 +462,90 @@ def download_baostock_free_real(
     start_index: int = 0,
     end_index: int | None = None,
     codes_override: list[str] | None = None,
+    universe_scope: UniverseScope = "current",
+    refresh_metadata: bool = False,
+    metadata_only: bool = False,
+    manifest_batch_size: int = 50,
 ) -> Path:
     ensure_dirs(config)
-    with BaoStockClient(config) as client:
-        stock_basic = client.stock_basic()
-        stock_basic_path = write_frame(config.data_root / "raw/baostock/stock_basic.parquet", stock_basic)
-        write_manifest(config, [manifest_record("baostock", "stock_basic", "all", stock_basic_path, stock_basic)])
+    if manifest_batch_size <= 0:
+        raise ValueError("manifest_batch_size must be positive")
+    failures: list[tuple[str, str]] = []
+    with baostock_login_lock(config.data_root), BaoStockClient(config) as client:
+        stock_basic, _trade_calendar, metadata_records = _load_or_download_metadata(
+            config,
+            client,
+            refresh_metadata=refresh_metadata,
+        )
+        write_manifest(config, metadata_records)
 
-        trade_calendar = client.trade_calendar()
-        trade_calendar_path = write_frame(config.data_root / "raw/baostock/trade_calendar.parquet", trade_calendar)
-        write_manifest(config, [manifest_record("baostock", "trade_calendar", "all", trade_calendar_path, trade_calendar)])
+        selected_codes = select_codes(
+            stock_basic,
+            max_codes=max_codes,
+            start_index=start_index,
+            end_index=end_index,
+            universe_scope=universe_scope,
+            universe_start_date=config.start_date,
+            universe_end_date=config.end_date,
+        )
+        if codes_override is None:
+            codes = selected_codes
+            universe_csv, universe_codes = freeze_universe(config, stock_basic, universe_scope, codes)
+            print(f"[universe] scope={universe_scope} codes={len(codes)} csv={universe_csv} codes_file={universe_codes}", flush=True)
+        else:
+            valid_codes = set(stock_basic["source_code"].dropna().astype(str))
+            codes = list(dict.fromkeys(map(str, codes_override)))
+            unknown = sorted(set(codes) - valid_codes)
+            if unknown:
+                preview = ", ".join(unknown[:10])
+                raise ValueError(f"codes_override contains {len(unknown)} codes absent from stock_basic: {preview}")
+            if max_codes:
+                codes = codes[:max_codes]
+        if metadata_only:
+            return config.manifest_path
 
-        codes = codes_override if codes_override is not None else select_codes(stock_basic, max_codes=max_codes, start_index=start_index, end_index=end_index)
+        existing_integrity = {} if force else inspect_daily_pairs(config.data_root, codes)
+        pending_manifest: list[dict] = []
         for i, source_code in enumerate(codes, start=1):
             print(f"[download] {i}/{len(codes)} {source_code}", flush=True)
             raw_path = config.data_root / "raw" / "baostock" / "daily_raw" / f"{source_code.replace('.', '_')}.parquet"
             qfq_path = config.data_root / "raw" / "baostock" / "daily_qfq" / f"{source_code.replace('.', '_')}.parquet"
             try:
-                if raw_path.exists() and qfq_path.exists() and not force:
-                    raw = pd.read_parquet(raw_path)
-                    qfq = pd.read_parquet(qfq_path)
-                else:
-                    raw = client.daily(source_code, adjustflag=str(config.baostock.get("adjustflag_raw", "3")), signal=False)
-                    qfq = client.daily(source_code, adjustflag=str(config.baostock.get("adjustflag_signal", "2")), signal=True)
-                    write_frame(raw_path, raw)
-                    write_frame(qfq_path, qfq)
-                write_manifest(
-                    config,
-                    [
+                if not force and existing_integrity[source_code].complete:
+                    print(f"[skip] {source_code} existing daily pair passed integrity checks", flush=True)
+                    continue
+                if not force and (raw_path.exists() or qfq_path.exists()):
+                    print(
+                        f"[repair] {source_code} {existing_integrity[source_code].error_summary}",
+                        flush=True,
+                    )
+                raw = client.daily(source_code, adjustflag=str(config.baostock.get("adjustflag_raw", "3")), signal=False)
+                qfq = client.daily(source_code, adjustflag=str(config.baostock.get("adjustflag_signal", "2")), signal=True)
+                require_valid_daily_pair_frames(raw, qfq, source_code)
+                invalidate_daily_integrity_cache(config.data_root, [source_code])
+                write_frame(raw_path, raw)
+                write_frame(qfq_path, qfq)
+                pending_manifest.extend(
+                    (
                         manifest_record("baostock", "daily_raw", source_code, raw_path, raw),
                         manifest_record("baostock", "daily_qfq", source_code, qfq_path, qfq),
-                    ],
+                    )
                 )
+                if i % manifest_batch_size == 0:
+                    write_manifest(config, pending_manifest)
+                    pending_manifest.clear()
             except Exception as exc:  # noqa: BLE001 - free source can be flaky; keep batch resumable.
                 message = f"{source_code}: {type(exc).__name__}: {exc}"
                 print(f"[fail] {message}", flush=True)
                 append_error(config, "daily", message)
+                failures.append((source_code, f"{type(exc).__name__}: {exc}"))
+        write_manifest(config, pending_manifest)
+    if failures:
+        preview = " | ".join(f"{code}: {message}" for code, message in failures[:10])
+        if len(failures) > 10:
+            preview += f" | ... {len(failures) - 10} more"
+        print(f"[summary] daily_failures={len(failures)}/{len(codes)} {preview}", file=sys.stderr, flush=True)
+        raise RuntimeError(f"BaoStock daily download failed for {len(failures)} of {len(codes)} codes: {preview}")
     return config.manifest_path
 
 

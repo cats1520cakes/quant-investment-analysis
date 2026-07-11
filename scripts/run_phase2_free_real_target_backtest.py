@@ -22,7 +22,12 @@ from quant_proof.free_real_backtest import (
 )
 from quant_proof.free_sources.baostock_adapter import load_config
 from quant_proof.free_sources.validators import strategy_allowed_in_tier
-from quant_proof.real_strategies import build_real_stock_strategy_specs
+from quant_proof.real_strategies import (
+    build_real_stock_strategy_specs,
+    load_free_real_analysis_panel,
+    prepare_real_stock_features,
+)
+from quant_proof.realdata.free_panel_builder import validate_panel_manifest
 
 
 def _fmt_pct(value: float) -> str:
@@ -31,6 +36,10 @@ def _fmt_pct(value: float) -> str:
 
 def _fmt_money(value: float) -> str:
     return f"{value:,.0f}"
+
+
+def _fmt_pvalue(value: float) -> str:
+    return f"{float(value):.4g}"
 
 
 def _format_participation_label(value: float) -> str:
@@ -55,6 +64,9 @@ def inspect_panel(panel: pd.DataFrame, min_symbols: int, require_amount: bool = 
         "data_tier",
         "open",
         "close",
+        "pre_close",
+        "corporate_action_share_factor",
+        "delisting_exit_required",
         "is_suspended",
         "up_limit",
         "down_limit",
@@ -120,13 +132,13 @@ def write_report(
         if max_daily_amount_participation is None
         else (
             "- Daily amount participation cap: "
-            f"`{max_daily_amount_participation:.4f}` of BaoStock full-day `amount` per stock per rebalance order."
+            f"`{max_daily_amount_participation:.4f}` of the prior signal-day BaoStock `amount` per stock per rebalance order."
         )
     )
     gap_line = (
-        "- Known gaps: no participation-rate cap from daily amount in this pre-cap baseline, no dividend/corporate-action cash adjustment, and free-real suspension/limit evidence is proxy/derived rather than official."
+        "- Known gaps: no participation-rate cap from daily amount in this pre-cap baseline; corporate actions use a free-real total-return share-factor approximation; suspension/limit evidence remains proxy/derived rather than official."
         if max_daily_amount_participation is None
-        else "- Known gaps: the participation cap uses BaoStock full-day `amount` as an approximate liquidity stress, not official intraday order-book depth or guaranteed fill capacity; dividend/corporate-action cash adjustment and official suspension/limit evidence are still absent."
+        else "- Known gaps: the participation cap uses prior signal-day BaoStock `amount` as an approximate liquidity stress, not official intraday order-book depth or guaranteed fill capacity; corporate actions use a free-real total-return share-factor approximation and official suspension/limit evidence is still absent."
     )
     lines = [
         "# Phase 2 Free Real Target Backtest",
@@ -138,7 +150,8 @@ def write_report(
         "- Data tier: `free_real`.",
         "- Strict real leaderboard remains separate and blocked until official/paid-grade fields exist.",
         "- This target backtest uses BaoStock raw OHLC for execution, qfq prices for signals, derived limit prices, and BaoStock `tradestatus` as suspension proxy.",
-        "- It models monthly deposits, 12/24-month hard targets, T+1, suspended/no-trade checks, limit-up buy rejection, limit-down sell rejection, A-share board-lot buying, fixed order-notional caps, commission, transfer fee, stamp tax, and slippage.",
+        "- It models monthly deposits, 12/24-month hard targets, corporate-action share factors, T+1, suspended/no-trade checks, limit-up buy rejection, limit-down sell rejection, A-share board-lot buying, fixed order-notional caps, commission, transfer fee, stamp tax, and slippage.",
+        "- W12/W24 use actual contributed wealth; drawdown, ulcer, recovery, and daily tail losses use flow-adjusted NAV so deposits cannot hide investment losses.",
         participation_line,
         gap_line,
         "",
@@ -155,8 +168,8 @@ def write_report(
         "## Execution Semantics",
         "",
         "- Strategy rankings and filters come from S2/S3/S4 specs, then the target layer converts selected names into equal-weight rebalances under execution constraints.",
-        "- S2/S3 stop-loss, trailing-stop, ATR stop, `risk_per_trade`, and `max_holding_days` parameters are not implemented as separate intra-window exits in this free-real target layer; they remain candidate-spec metadata until a stricter order-policy layer is added.",
-        "- Participation-cap clipping is applied before submitting orders to the execution engine, so these rows are a more conservative free-real daily-amount stress rather than strict-real fill proof.",
+        "- S2 is an explicit periodic rank-rotation baseline without hidden stop parameters. S3 is a stateful breakout with causal Donchian/time exits; ATR risk-unit sizing and pyramiding are excluded until the target-weight execution interface is implemented.",
+        "- Participation-cap clipping uses only the prior signal-day amount and is applied before submitting orders to the execution engine, so it avoids execution-day full-volume lookahead while remaining a free-real stress rather than strict-real fill proof.",
         "- `avg_turnover` is reported as traded notional divided by summed daily wealth across the window, not annualized portfolio turnover.",
         "",
         "## Leaderboard",
@@ -166,11 +179,27 @@ def write_report(
         lines.append("No target-backtest rows were generated.")
     else:
         table = leaderboard.head(20).copy()
-        for column in ["p_success", "p_w12", "p_w24", "p95_max_drawdown", "p_w24_below_deposit", "p_drawdown_gt_35"]:
+        for column in [
+            "p_success",
+            "nonoverlap_hit_share",
+            "nonoverlap_hit_share_lower95",
+            "p_w12",
+            "p_w24",
+            "p95_max_drawdown",
+            "nonoverlap_p95_max_drawdown",
+            "nonoverlap_max_drawdown",
+            "p_w24_below_deposit",
+            "p_drawdown_gt_35",
+        ]:
             if column in table.columns:
                 table[column] = table[column].map(_fmt_pct)
         for column in [
             "median_w24",
+            "nonoverlap_median_w12",
+            "nonoverlap_median_w24",
+            "nonoverlap_min_w24",
+            "p05_w24",
+            "nonoverlap_p05_w24",
             "p10_w24",
             "p90_w24",
             "avg_fees",
@@ -179,16 +208,27 @@ def write_report(
         ]:
             if column in table.columns:
                 table[column] = table[column].map(_fmt_money)
+        if "nonoverlap_binomial_pvalue" in table.columns:
+            table["nonoverlap_binomial_pvalue"] = table["nonoverlap_binomial_pvalue"].map(_fmt_pvalue)
         keep = [
             "strategy",
             "family",
             "deposit_timing",
             "n_windows",
+            "n_nonoverlap_windows",
+            "n_nonoverlap_successes",
             "p_success",
+            "nonoverlap_hit_share",
+            "nonoverlap_hit_share_lower95",
+            "nonoverlap_binomial_pvalue",
             "p_w12",
             "p_w24",
-            "median_w24",
-            "p95_max_drawdown",
+            "nonoverlap_median_w12",
+            "nonoverlap_median_w24",
+            "nonoverlap_min_w24",
+            "nonoverlap_p05_w24",
+            "nonoverlap_p95_max_drawdown",
+            "nonoverlap_max_drawdown",
             "p_w24_below_deposit",
             "avg_rejected_orders",
             "avg_clipped_orders",
@@ -199,15 +239,18 @@ def write_report(
         lines.append(table[[col for col in keep if col in table.columns]].to_markdown(index=False))
 
         best = leaderboard.iloc[0]
-        highest_success = leaderboard.sort_values(["p_success", "median_w24"], ascending=False).iloc[0]
+        highest_success = leaderboard.sort_values(
+            ["nonoverlap_binomial_pvalue", "nonoverlap_hit_share", "p_success"],
+            ascending=[True, False, False],
+        ).iloc[0]
         lines.extend(
             [
                 "",
                 "## Readout",
                 "",
-                f"- Best score: `{best['strategy']}` / `{best['deposit_timing']}`, success={_fmt_pct(best['p_success'])}, median_w24={_fmt_money(best['median_w24'])}.",
-                f"- Highest success: `{highest_success['strategy']}` / `{highest_success['deposit_timing']}`, success={_fmt_pct(highest_success['p_success'])}, median_w24={_fmt_money(highest_success['median_w24'])}.",
-                "- A positive signal leaderboard is not enough; target proof requires these rolling-window success and drawdown fields.",
+                f"- Best score: `{best['strategy']}` / `{best['deposit_timing']}`, rolling-start hit share={_fmt_pct(best['p_success'])}; descriptive non-overlap Wilson lower bound={_fmt_pct(best['nonoverlap_hit_share_lower95'])}.",
+                f"- Strongest exact block evidence in this table: `{highest_success['strategy']}` / `{highest_success['deposit_timing']}`, successes={int(highest_success['n_nonoverlap_successes'])}/{int(highest_success['n_nonoverlap_windows'])}, one-sided exact p={_fmt_pvalue(highest_success['nonoverlap_binomial_pvalue'])}, minimum W24={_fmt_money(highest_success['nonoverlap_min_w24'])}.",
+                "- Overlapping rolling starts and Wilson intervals are diagnostics. Formal Phase 3 promotion additionally requires Holm correction across every tested row, worst-block wealth/drawdown, both deposit timings, regime, liquidity, lineage, and a registered unseen outer period.",
             ]
         )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -222,7 +265,7 @@ def main() -> None:
         "--max-daily-amount-participation",
         type=float,
         default=None,
-        help="Optional per-stock order cap as a fraction of same-day BaoStock amount, e.g. 0.05.",
+        help="Optional per-stock order cap as a fraction of prior signal-day BaoStock amount, e.g. 0.05.",
     )
     parser.add_argument(
         "--output-label",
@@ -236,13 +279,21 @@ def main() -> None:
     if not panel_path.exists():
         print(f"missing free-real stock panel: {panel_path}; run scripts/build_phase2_free_stock_panel.py first", file=sys.stderr)
         raise SystemExit(2)
-    panel = pd.read_parquet(panel_path)
+    validate_panel_manifest(
+        panel_path,
+        expected_symbols=int(config.raw.get("panel_build", {}).get("expected_symbols", 0)),
+        config_path=config.path,
+    )
+    panel = prepare_real_stock_features(load_free_real_analysis_panel(panel_path))
     cfg = load_backtest_config(config.raw)
     if args.max_daily_amount_participation is not None:
         cfg = replace(cfg, max_daily_amount_participation=args.max_daily_amount_participation)
     output_label = args.output_label.strip()
     if not output_label and cfg.max_daily_amount_participation is not None:
         output_label = _format_participation_label(cfg.max_daily_amount_participation)
+    if args.max_strategies > 0 or args.max_windows > 0:
+        debug_label = f"debug_s{args.max_strategies or 'all'}_w{args.max_windows or 'all'}"
+        output_label = f"{output_label}_{debug_label}" if output_label else debug_label
     panel_snapshot = inspect_panel(
         panel,
         min_symbols=cfg.min_symbols,

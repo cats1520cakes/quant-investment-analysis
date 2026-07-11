@@ -15,6 +15,7 @@ from quant_proof.simulator import (
     aggregate_windows,
     first_trading_day_mask,
     last_trading_day_mask,
+    rolling_windows,
     simulate_path,
 )
 
@@ -160,6 +161,51 @@ def test_month_beginning_and_ending_deposits_are_counted() -> None:
     assert ending["w24"] == 720_000.0
     assert first_trading_day_mask(index).sum() == 24
     assert last_trading_day_mask(index).sum() == 24
+
+
+def test_rolling_window_uses_exact_calendar_months_when_month_starts_late() -> None:
+    index = pd.bdate_range("2015-05-01", "2017-06-30")
+    index = index[index != pd.Timestamp("2015-05-01")]
+    windows = rolling_windows(index, window_months=24, min_trading_days=400)
+    start, end = windows[0]
+    window_index = index[(index >= start) & (index <= end)]
+    returns = pd.DataFrame({"cash": np.zeros(len(window_index))}, index=window_index)
+    target_weights = pd.DataFrame(
+        {"cash": np.zeros(len(window_index))},
+        index=window_index,
+    )
+    zero_cost = ExecutionCost(
+        commission_bps=0.0,
+        min_commission=0.0,
+        transfer_fee_bps_each_side=0.0,
+        stamp_tax_sell_bps=0.0,
+        slippage_bps=0.0,
+    )
+
+    _, beginning = simulate_path(
+        returns,
+        target_weights,
+        monthly_deposit=30_000.0,
+        deposit_timing="beginning",
+        execution=zero_cost,
+    )
+    _, ending = simulate_path(
+        returns,
+        target_weights,
+        monthly_deposit=30_000.0,
+        deposit_timing="ending",
+        execution=zero_cost,
+    )
+
+    assert start == pd.Timestamp("2015-05-04")
+    assert end == pd.Timestamp("2017-04-28")
+    assert window_index.to_period("M").nunique() == 24
+    assert beginning["w12"] == 360_000.0
+    assert ending["w12"] == 360_000.0
+    assert beginning["w24"] == 720_000.0
+    assert ending["w24"] == 720_000.0
+    assert beginning["total_deposit"] == 720_000.0
+    assert ending["total_deposit"] == 720_000.0
 
 
 def test_12_and_24_month_target_judgment() -> None:

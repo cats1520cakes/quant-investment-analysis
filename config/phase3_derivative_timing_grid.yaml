@@ -1,0 +1,131 @@
+version: 1
+search_id: phase3_derivative_timing_v1
+
+policy:
+  catalog_expiry_mode: official_asof_history
+  execution_parameters: official_required
+  short_options: forbidden
+  stock_strategy_binding: none
+  automatic_stock_strategy_product: false
+
+limits:
+  max_total_combinations: 36
+
+stages:
+  screen:
+    max_combinations: 24
+    budget:
+      max_windows: 12
+      max_window_evaluations: 288
+      max_promotions: 6
+      futures_slippage_bps: 1.0
+      option_slippage_bps: 2.0
+      prior_day_volume_participation: 0.10
+    overlay_only:
+      enabled: true
+      futures:
+        max_combinations: 24
+        products: [IF, IH, IC, IM]
+        direction_rules:
+          - kind: time_series_momentum
+            position_mode: long_flat
+            lookback_days: 20
+            neutral_band: 0.0
+          - kind: time_series_momentum
+            position_mode: long_short_flat
+            lookback_days: 60
+            neutral_band: 0.02
+          - kind: moving_average_or_breakout
+            position_mode: long_flat
+            trend_variant: moving_average
+            fast_window: 10
+            slow_window: 40
+            neutral_band: 0.0
+          - kind: moving_average_or_breakout
+            position_mode: long_short_flat
+            trend_variant: breakout
+            lookback_days: 20
+            neutral_band: 0.005
+          - kind: front_next_carry
+            position_mode: long_flat
+            neutral_band: 0.0
+          - kind: front_next_carry
+            position_mode: long_short_flat
+            neutral_band: 0.02
+        sizing:
+          fixed_contracts: [1]
+        cash_buffer_pct: [0.25]
+        min_dte: [5]
+        rebalance_frequency: [daily]
+        max_contracts: [1]
+    futures_plus_long_option:
+      enabled: false
+
+  neighborhood:
+    max_combinations: 8
+    budget:
+      max_windows: 24
+      max_window_evaluations: 192
+      max_promotions: 2
+      futures_slippage_bps: 1.0
+      option_slippage_bps: 2.0
+      prior_day_volume_participation: 0.10
+    overlay_only:
+      enabled: true
+      futures:
+        max_combinations: 8
+        products: [IF, IM]
+        direction_rules:
+          - kind: time_series_momentum
+            position_mode: long_short_flat
+            lookback_days: 40
+            neutral_band: 0.01
+          - kind: moving_average_or_breakout
+            position_mode: long_short_flat
+            trend_variant: moving_average
+            fast_window: 15
+            slow_window: 60
+            neutral_band: 0.005
+          - kind: moving_average_or_breakout
+            position_mode: long_short_flat
+            trend_variant: breakout
+            lookback_days: 40
+            neutral_band: 0.005
+          - kind: front_next_carry
+            position_mode: long_short_flat
+            neutral_band: 0.02
+        sizing:
+          fixed_contracts: [1]
+        cash_buffer_pct: [0.30]
+        min_dte: [5]
+        rebalance_frequency: [daily]
+        max_contracts: [1]
+    futures_plus_long_option:
+      enabled: false
+
+  stress:
+    max_combinations: 4
+    budget:
+      max_windows: 48
+      max_window_evaluations: 192
+      max_promotions: 0
+      futures_slippage_bps: 3.0
+      option_slippage_bps: 6.0
+      prior_day_volume_participation: 0.05
+    overlay_only:
+      enabled: true
+      futures:
+        max_combinations: 4
+        products: [IF, IH, IC, IM]
+        direction_rules:
+          - kind: front_next_carry
+            position_mode: long_short_flat
+            neutral_band: 0.04
+        sizing:
+          fixed_contracts: [1]
+        cash_buffer_pct: [0.35]
+        min_dte: [10]
+        rebalance_frequency: [weekly]
+        max_contracts: [1]
+    futures_plus_long_option:
+      enabled: false

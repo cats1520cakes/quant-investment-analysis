@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
+import pytest
+
 from quant_proof.engine import (
     Account,
     Broker,
@@ -129,7 +131,155 @@ def test_limit_down_sell_rejects_and_keeps_position() -> None:
     assert account.portfolio.quantity("510300") == 100
 
 
-def test_sell_cost_includes_stamp_tax() -> None:
+def test_stamp_tax_uses_pre_halving_baseline_on_2023_08_25() -> None:
+    model = CostModel(stamp_tax_sell_bps=10.0)
+
+    cost = model.calculate(
+        OrderSide.SELL,
+        1000.0,
+        trade_date=date(2023, 8, 25),
+    )
+
+    assert cost.stamp_tax == 1.0
+
+
+def test_stamp_tax_halves_on_2023_08_28() -> None:
+    model = CostModel(stamp_tax_sell_bps=10.0)
+
+    cost = model.calculate(
+        OrderSide.SELL,
+        1000.0,
+        trade_date=date(2023, 8, 28),
+    )
+
+    assert cost.stamp_tax == 0.5
+
+
+def test_buy_does_not_pay_stamp_tax() -> None:
+    model = CostModel(stamp_tax_sell_bps=10.0)
+
+    cost = model.calculate(
+        OrderSide.BUY,
+        1000.0,
+        trade_date=date(2023, 8, 28),
+    )
+
+    assert cost.stamp_tax == 0.0
+
+
+def test_stamp_tax_without_trade_date_keeps_static_baseline() -> None:
+    model = CostModel(stamp_tax_sell_bps=10.0)
+
+    cost = model.calculate(OrderSide.SELL, 1000.0)
+
+    assert cost.stamp_tax == 1.0
+
+
+def test_stamp_tax_halving_can_be_disabled_or_rescheduled() -> None:
+    disabled_model = CostModel(
+        stamp_tax_sell_bps=10.0,
+        stamp_tax_halving_date=None,
+    )
+    rescheduled_model = CostModel(
+        stamp_tax_sell_bps=10.0,
+        stamp_tax_halving_date=date(2023, 8, 29),
+    )
+
+    assert (
+        disabled_model.calculate(
+            OrderSide.SELL,
+            1000.0,
+            trade_date=date(2026, 7, 1),
+        ).stamp_tax
+        == 1.0
+    )
+    assert (
+        rescheduled_model.calculate(
+            OrderSide.SELL,
+            1000.0,
+            trade_date=date(2023, 8, 28),
+        ).stamp_tax
+        == 1.0
+    )
+    assert (
+        rescheduled_model.calculate(
+            OrderSide.SELL,
+            1000.0,
+            trade_date=date(2023, 8, 29),
+        ).stamp_tax
+        == 0.5
+    )
+
+
+@pytest.mark.parametrize(
+    ("trade_date", "symbol", "quantity", "expected"),
+    [
+        (date(2012, 5, 31), "600001.SH", 10_000, 10.0),
+        (date(2012, 6, 1), "600001.SH", 10_000, 7.5),
+        (date(2012, 9, 1), "600001.SH", 10_000, 6.0),
+        (date(2015, 7, 31), "000001.SZ", 1_000, 0.255),
+        (date(2015, 8, 1), "000001.SZ", 1_000, 0.2),
+        (date(2022, 4, 28), "000001.SZ", 1_000, 0.2),
+        (date(2022, 4, 29), "000001.SZ", 1_000, 0.1),
+    ],
+)
+def test_a_share_transfer_fee_uses_historical_schedule(
+    trade_date: date,
+    symbol: str,
+    quantity: int,
+    expected: float,
+) -> None:
+    model = CostModel(
+        commission_bps=0.0,
+        min_commission=0.0,
+        transfer_fee_bps=0.1,
+        stamp_tax_sell_bps=0.0,
+        slippage_bps=0.0,
+    )
+
+    cost = model.calculate(
+        OrderSide.BUY,
+        10_000.0,
+        trade_date=trade_date,
+        symbol=symbol,
+        quantity=quantity,
+    )
+
+    assert cost.transfer_fee == pytest.approx(expected)
+
+
+def test_transfer_fee_without_date_or_with_history_disabled_keeps_config_rate() -> None:
+    current = CostModel(transfer_fee_bps=0.1)
+    static = CostModel(
+        transfer_fee_bps=0.1,
+        historical_a_share_transfer_fees=False,
+    )
+
+    assert current.calculate(OrderSide.BUY, 10_000.0).transfer_fee == pytest.approx(0.1)
+    assert static.calculate(
+        OrderSide.BUY,
+        10_000.0,
+        trade_date=date(2012, 1, 1),
+        symbol="600001.SH",
+        quantity=1_000,
+    ).transfer_fee == pytest.approx(0.1)
+
+
+def test_pre_2015_sse_transfer_fee_has_one_yuan_floor() -> None:
+    model = CostModel(transfer_fee_bps=0.1)
+
+    cost = model.calculate(
+        OrderSide.BUY,
+        10_000.0,
+        trade_date=date(2014, 1, 2),
+        symbol="600001.SH",
+        quantity=100,
+    )
+
+    assert cost.transfer_fee == pytest.approx(1.0)
+
+
+def test_sell_cost_uses_snapshot_date_for_stamp_tax_halving() -> None:
     broker = Broker(
         exchange_rules=ExchangeRules(t_plus_one=False),
         cost_model=CostModel(
@@ -160,9 +310,9 @@ def test_sell_cost_includes_stamp_tax() -> None:
 
     assert report.status == OrderStatus.FILLED
     assert report.gross_notional == 1000.0
-    assert report.stamp_tax == 1.0
-    assert report.fees == 1.0
-    assert report.net_cash_flow == 999.0
+    assert report.stamp_tax == 0.5
+    assert report.fees == 0.5
+    assert report.net_cash_flow == 999.5
 
 
 def test_max_order_notional_caps_filled_amount() -> None:

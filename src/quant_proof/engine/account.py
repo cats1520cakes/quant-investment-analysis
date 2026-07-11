@@ -47,5 +47,28 @@ class Account:
         self.portfolio.remove_sell(symbol=symbol, quantity=quantity, trade_date=trade_date)
         self.cash += gross_notional - fees
 
+    def apply_share_factor(
+        self,
+        symbol: str,
+        share_factor: float,
+        settlement_price: float,
+    ) -> tuple[int, int, float]:
+        old_quantity, new_quantity, cash_in_lieu = self.portfolio.apply_share_factor(
+            symbol=symbol,
+            share_factor=share_factor,
+            settlement_price=settlement_price,
+        )
+        self.cash += cash_in_lieu
+        return old_quantity, new_quantity, cash_in_lieu
+
     def total_equity(self, prices: Dict[str, float]) -> float:
         return self.cash + self.portfolio.market_value(prices)
+
+    def apply_terminal_value(self, symbol: str, price: float) -> tuple[int, float]:
+        quantity = self.portfolio.quantity(symbol)
+        if quantity <= 0:
+            return 0, 0.0
+        recovery = quantity * max(float(price), 0.0)
+        self.portfolio.lots.pop(symbol, None)
+        self.cash += recovery
+        return quantity, recovery

@@ -8,6 +8,20 @@ date_range:
   start_date: "20100101"
   end_date: "20260704"
 
+download:
+  universe_scope: point_in_time
+  frozen_universe_path: 00_meta/universes/phase2_free_point_in_time_20100101_20260704.csv
+  shard_size: 50
+  manifest_batch_size: 50
+  physical_interface: en0
+  refresh_metadata: false
+
+panel_build:
+  batch_codes: 100
+  allow_partial: false
+  expected_symbols: 5472
+  delisting_terminal_value_fraction: 0.0
+
 paths:
   manifest: 00_meta/manifests/phase2_free_real_manifest.csv
   validation_report: reports/phase2_free/free_real_data_validation.md
@@ -62,7 +76,7 @@ free_real_gates:
 
 field_sources:
   daily: baostock_unadjusted
-  amount: baostock_daily_amount_for_participation_stress_only
+  amount: baostock_prior_signal_day_amount_for_participation_stress_only
   adj_close_for_signal: baostock_qfq_or_akshare_qfq
   is_suspended: baostock_tradestatus
   is_st: baostock_isST
@@ -77,13 +91,10 @@ phase2_real_stock_strategies:
     min_avg_amount_20d: 20000000
     holding_k: [1, 2, 3, 5, 8, 10]
     rebalance: [daily, 2d, weekly]
-    stop_loss: 0.12
-    trailing_stop: 0.18
   S3_real_stock_breakout:
     donchian: [20, 55]
     exit_donchian: 20
-    risk_per_trade: [0.005, 0.01, 0.015, 0.02]
-    atr_stop: 2.0
+    holding_k: [1, 2, 3, 5]
     max_holding_days: 60
     min_volume_breakout: 1.2
   S4_real_smallcap_factor:
@@ -100,7 +111,18 @@ target_backtest:
   target_month_24: 1200000
   window_months: 24
   min_trading_days: 420
-  min_symbols: 500
+  min_symbols: 5472
+  candidate_gates:
+    min_nonoverlap_hit_share_lower95: 0.50
+    min_p05_w24: 720000
+    max_p95_drawdown: 0.35
+    joint_success_alpha: 0.05
+    min_nonoverlap_blocks: 5
+    min_nonoverlap_w24: 720000
+    max_nonoverlap_drawdown: 0.35
+    max_unfilled_sell_share: 0.10
+    max_margin_call_window_share: 0.0
+    max_default_window_share: 0.0
   execution:
     lot_size: 100
     max_order_notional: 100000
@@ -118,12 +140,12 @@ overlay_research:
   top_base_rows: 4
   futures:
     contracts: [IF, IH, IC, IM]
-    target_beta: [0.3, 0.5]
+    target_beta: [0.5, 1.0, 2.0]
     effective_margin_rates: [0.15, 0.20]
-    cash_buffer_pct: [0.33, 0.50]
+    cash_buffer_pct: [0.33, 0.50, 0.80]
   options:
     contracts: [IO, HO, MO]
-    monthly_budget_pct_nav: [0.01, 0.02, 0.05]
+    monthly_budget_pct_nav: [0.01, 0.02, 0.05, 0.10]
     tenors_days: [30, 60]
     deltas: [0.35, 0.50]
     iv_multipliers_to_realized_vol: [1.3, 1.6]

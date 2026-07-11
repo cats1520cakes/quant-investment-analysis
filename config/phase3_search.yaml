@@ -1,0 +1,160 @@
+version: 1
+search_id: phase3_free_real_orthogonal_v1
+base_config: config/phase2_free_real_data.yaml
+holdout_registry: config/phase3_holdout_registry.yaml
+output_root: /Volumes/PSSD1TB/量化数据/reports/phase3_search
+repo_status_report: reports/phase3_search_status.md
+
+compute:
+  max_peak_rss_gib: 10.0
+
+sampling:
+  method: latin_hypercube
+  seed: 20260710
+  budget_per_family: 20
+  development_min_target_ratio: 0.75
+  development_max_drawdown: 0.60
+  neighborhood_min_dimensions: 2
+
+stages:
+  screen:
+    max_windows: 18
+    window_sampling: even
+    window_start_min: 2011-07-01
+    window_start_max: 2012-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 1.0
+    promote_per_family: 2
+    promote_global: 12
+    allow_ungated_shortlist: true
+    expand_parameter_neighbors: false
+    require_neighborhood_gate: false
+    promotion_gate: exploratory
+    evidence_role: development_exposed
+    holdout_signature: dev_screen_2011_2012_exposed
+    min_regime_blocks: 2
+  confirm:
+    max_windows: 0
+    window_sampling: even
+    window_start_min: 2015-01-01
+    window_start_max: 2015-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 1.0
+    promote_per_family: 0
+    promote_global: 0
+    allow_ungated_shortlist: false
+    expand_parameter_neighbors: true
+    require_neighborhood_gate: true
+    promotion_gate: development
+    evidence_role: development_exposed
+    holdout_signature: dev_confirm_2015_exposed
+    min_regime_blocks: 2
+  stress:
+    max_windows: 0
+    window_sampling: even
+    window_start_min: 2018-01-01
+    window_start_max: 2024-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 3.0
+    promote_per_family: 0
+    promote_global: 0
+    allow_ungated_shortlist: false
+    expand_parameter_neighbors: false
+    require_neighborhood_gate: true
+    promotion_gate: formal
+    evidence_role: development_exposed
+    holdout_signature: dev_stress_2018_2024_exposed
+    min_regime_blocks: 2
+
+strategy_spaces:
+  S10_real_regime_selector:
+    kind: real_regime_selector
+    budget: 24
+    fixed:
+      data_tier: proxy_research
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+      rebalance: weekly
+    parameters:
+      holding_k: [10, 20]
+      market_ma: [60, 120, 200]
+      breadth_ma: [20, 60]
+      breadth_threshold: [0.45, 0.55]
+      ranking_mode: [smallcap_momentum, low_vol_momentum]
+
+  S11_real_short_term_reversal:
+    kind: real_short_term_reversal
+    budget: 20
+    fixed:
+      data_tier: free_real
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+      min_return: -0.25
+    parameters:
+      holding_k: [10, 20]
+      rebalance: [2d, weekly]
+      reversal_days: [3, 5, 10]
+      trend_days: [60, 120]
+
+  S12_real_low_volatility:
+    kind: real_low_volatility
+    budget: 20
+    fixed:
+      data_tier: free_real
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+    parameters:
+      holding_k: [10, 20, 30]
+      rebalance: [weekly, monthly]
+      volatility_days: [20, 60]
+      momentum_days: [60, 120]
+      min_momentum: [0.0, 0.05]
+
+  S13_real_residual_momentum:
+    kind: real_residual_momentum
+    budget: 20
+    fixed:
+      data_tier: free_real
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+    parameters:
+      holding_k: [10, 20, 30]
+      rebalance: [weekly, monthly]
+      lookback: [60, 120, 240]
+      skip_days: [5, 20]
+
+  S14_real_volume_price_shock:
+    kind: real_volume_price_shock
+    budget: 20
+    fixed:
+      data_tier: free_real
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+    parameters:
+      holding_k: [10, 20]
+      rebalance: [2d, weekly]
+      mode: [continuation, reversal]
+      lookback: [1, 3, 5]
+      min_amount_ratio: [1.5, 2.0, 3.0]
+
+  S16_real_value_composite:
+    kind: real_value_composite
+    budget: 12
+    fixed:
+      data_tier: proxy_research
+      valuation_lag_days: 5
+      min_listing_days: 250
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+    parameters:
+      holding_k: [10, 20, 30]
+      rebalance: [weekly, monthly]
+      mode: [deep_value, value_momentum]

@@ -15,7 +15,13 @@ import yaml
 from tenacity import retry, stop_after_attempt, wait_exponential
 from tqdm import tqdm
 
-from quant_proof.network_guard import ProxyDetectedError, direct_network_message, require_direct_network
+from quant_proof.network_guard import (
+    DirectRouteError,
+    ProxyDetectedError,
+    direct_network_message,
+    require_direct_network,
+    require_non_tunnel_host_route,
+)
 
 
 @dataclass(frozen=True)
@@ -355,6 +361,17 @@ def main() -> None:
         print(str(exc), file=sys.stderr)
         print(f"Set it with: export {config.token_env}=\"...\"", file=sys.stderr)
         raise SystemExit(2) from exc
+    if not args.allow_proxy:
+        try:
+            if visible:
+                raise DirectRouteError(
+                    "Tushare HTTP download is blocked while macOS proxy settings are active; no target socket binding is available"
+                )
+            ip, interface = require_non_tunnel_host_route("api.tushare.pro")
+            print(f"[network] verified api.tushare.pro -> {ip} via {interface}", flush=True)
+        except DirectRouteError as exc:
+            print(str(exc), file=sys.stderr)
+            raise SystemExit(2) from exc
 
     requested = parse_tables(args.tables)
     if not requested:

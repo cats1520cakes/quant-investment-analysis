@@ -1,0 +1,112 @@
+version: 1
+search_id: phase3_concentration_v1
+base_config: config/phase2_free_real_data.yaml
+holdout_registry: config/phase3_holdout_registry.yaml
+output_root: /Volumes/PSSD1TB/量化数据/reports/phase3_search
+repo_status_report: reports/phase3_concentration_search_status.md
+
+compute:
+  max_peak_rss_gib: 10.0
+
+sampling:
+  method: latin_hypercube
+  seed: 20260712
+  budget_per_family: 40
+  development_min_target_ratio: 0.75
+  development_max_drawdown: 0.60
+  neighborhood_min_dimensions: 2
+
+stages:
+  screen:
+    max_windows: 24
+    window_sampling: even
+    window_start_min: 2011-07-01
+    window_start_max: 2012-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 1.0
+    promote_per_family: 2
+    promote_global: 12
+    allow_ungated_shortlist: true
+    expand_parameter_neighbors: false
+    require_neighborhood_gate: false
+    promotion_gate: exploratory
+    evidence_role: development_exposed
+    holdout_signature: dev_screen_2011_2012_exposed
+    min_regime_blocks: 2
+  confirm:
+    max_windows: 0
+    window_sampling: even
+    window_start_min: 2015-01-01
+    window_start_max: 2015-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 1.0
+    promote_per_family: 0
+    promote_global: 0
+    allow_ungated_shortlist: false
+    expand_parameter_neighbors: true
+    require_neighborhood_gate: true
+    promotion_gate: development
+    evidence_role: development_exposed
+    holdout_signature: dev_confirm_2015_exposed
+    min_regime_blocks: 2
+  stress:
+    max_windows: 0
+    window_sampling: even
+    window_start_min: 2018-01-01
+    window_start_max: 2024-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 3.0
+    promote_per_family: 0
+    promote_global: 0
+    allow_ungated_shortlist: false
+    expand_parameter_neighbors: false
+    require_neighborhood_gate: true
+    promotion_gate: formal
+    evidence_role: development_exposed
+    holdout_signature: dev_stress_2018_2024_exposed
+    min_regime_blocks: 2
+
+strategy_spaces:
+  S22_real_concentrated_trend:
+    kind: real_stateful_trend
+    budget: 40
+    fixed:
+      data_tier: free_real
+      rebalance: daily
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+    parameters:
+      holding_k: [1, 2, 3, 5]
+      entry_rebalance: [2d, weekly]
+      entry_window: [20, 55, 120]
+      exit_window: [5, 10, 20, 55]
+      trend_window: [60, 120, 200]
+      momentum_window: [20, 60, 120]
+      min_momentum: [0.0, 0.05, 0.10]
+      trailing_stop: [0.08, 0.12, 0.18, 0.25]
+      max_holding_days: [40, 80, 160, 240]
+
+  S23_real_concentrated_contraction:
+    kind: real_volatility_contraction
+    budget: 40
+    fixed:
+      data_tier: free_real
+      rebalance: daily
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+    parameters:
+      holding_k: [1, 2, 3, 5]
+      entry_rebalance: [2d, weekly]
+      breakout_window: [20, 55]
+      short_vol_window: [5, 10, 20]
+      long_vol_window: [40, 60, 120]
+      max_contraction_ratio: [0.40, 0.60, 0.80]
+      min_amount_ratio: [0.8, 1.0, 1.5]
+      exit_window: [5, 10, 20]
+      trailing_stop: [0.08, 0.12, 0.18]
+      max_holding_days: [40, 80, 160]

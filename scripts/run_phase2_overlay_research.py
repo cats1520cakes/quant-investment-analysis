@@ -25,10 +25,17 @@ from quant_proof.overlay_research import (
     build_futures_specs,
     build_option_specs,
     equity_windows_for_strategy,
+    highest_success_row,
     load_index_close,
     select_base_rows,
 )
-from quant_proof.real_strategies import build_real_stock_strategy_specs
+from quant_proof.real_strategies import (
+    build_real_stock_strategy_specs,
+    load_free_real_analysis_panel,
+    prepare_real_stock_features,
+)
+from quant_proof.search_manager import build_search_strategy_specs, load_search_config
+from quant_proof.realdata.free_panel_builder import validate_panel_manifest
 
 
 def _fmt_pct(value: float) -> str:
@@ -73,6 +80,8 @@ def write_report(
     target_leaderboard_path: Path,
     base_run_label: str,
     max_daily_amount_participation: float | None,
+    slippage_multiplier: float,
+    effective_slippage_bps: float,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     base_scope = (
@@ -101,6 +110,7 @@ def write_report(
         "",
         f"- Base target leaderboard: `{target_leaderboard_path}`",
         f"- Base run label: `{base_run_label or 'baseline'}`",
+        f"- Stock slippage: `{effective_slippage_bps:.2f}` bps (`{slippage_multiplier:.2f}x` base).",
         f"- Index close proxy: `{index_close_path}`",
         f"- Selected base rows: `{len(selected_base)}`",
         f"- Window rows: `{len(windows)}`",
@@ -149,8 +159,8 @@ def write_report(
         ]
         lines.append(table[[col for col in keep if col in table.columns]].to_markdown(index=False))
         best = leaderboard.iloc[0]
-        highest_success = leaderboard.sort_values(["p_success", "median_w24"], ascending=False).iloc[0]
-        best_futures = leaderboard.loc[leaderboard["overlay_type"] == "futures_integer_lot_proxy"].head(1)
+        highest_success = highest_success_row(leaderboard)
+        highest_success_futures = highest_success_row(leaderboard, "futures_integer_lot_proxy")
         lines.extend(
             [
                 "",
@@ -161,10 +171,10 @@ def write_report(
                 "- If this table does not materially beat the selected base free-real rows under the same stock execution assumptions, derivatives should not be treated as a shortcut; the next honest step is either real contract data or a different base strategy family.",
             ]
         )
-        if not best_futures.empty:
-            futures = best_futures.iloc[0]
+        if highest_success_futures is not None:
+            futures = highest_success_futures
             lines.append(
-                f"- Best futures proxy keeps success at {_fmt_pct(futures['p_success'])}; average cannot-afford events per window are {float(futures['avg_futures_cannot_afford']):.2f}, showing integer-lot and cash-buffer constraints dominate."
+                f"- Highest-success futures proxy reaches {_fmt_pct(futures['p_success'])}; average cannot-afford events are {float(futures['avg_futures_cannot_afford']):.2f} and forced liquidations are {float(futures['avg_futures_forced_liquidations']):.2f} per window."
             )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -176,16 +186,37 @@ def main() -> None:
     parser.add_argument("--max-windows", type=int, default=0, help="Debug limit per selected base strategy; 0 means all windows.")
     parser.add_argument("--base-output-label", default="", help="Suffix used by the base target leaderboard, e.g. participation_5pct.")
     parser.add_argument("--target-leaderboard", default="", help="Explicit base target leaderboard path.")
+    parser.add_argument("--search-config", default="", help="Optional Phase 3 search config used to reconstruct named base strategies.")
+    parser.add_argument("--base-strategy", action="append", default=[], help="Explicit base strategy name; repeat to include several.")
+    parser.add_argument("--deposit-timing", choices=["all", "beginning", "ending"], default="all")
     parser.add_argument(
         "--max-daily-amount-participation",
         type=float,
         default=None,
         help="Use the same per-stock BaoStock amount participation cap when rebuilding base equity paths.",
     )
+    parser.add_argument(
+        "--slippage-multiplier",
+        type=float,
+        default=1.0,
+        help="Multiply the base stock execution slippage; use the source search stage value for like-for-like overlays.",
+    )
     parser.add_argument("--output-label", default="", help="Suffix for overlay output files.")
+    parser.add_argument("--output-root", default="", help="Optional directory for bulky overlay windows, leaderboard, and report outputs.")
     parser.add_argument("--skip-futures", action="store_true")
     parser.add_argument("--skip-options", action="store_true")
+    parser.add_argument(
+        "--allow-superseded-diagnostic",
+        action="store_true",
+        help="Explicitly run the invalidated post-hoc overlay only for regression diagnostics.",
+    )
     args = parser.parse_args()
+
+    if not args.allow_superseded_diagnostic:
+        raise SystemExit(
+            "legacy overlay is superseded_accounting and blocked by default; use the unified CombinedAccount "
+            "pipeline for evidence, or pass --allow-superseded-diagnostic for regression-only output"
+        )
 
     config = load_config(args.config)
     raw_cfg = _overlay_config(config.raw)
@@ -202,18 +233,36 @@ def main() -> None:
         raise SystemExit(2)
     base_leaderboard = pd.read_csv(target_leaderboard_path)
     top_base = args.top_base or int(raw_cfg.get("top_base_rows", 4))
-    selected_base = select_base_rows(base_leaderboard, top_n=top_base)
+    if args.deposit_timing != "all":
+        base_leaderboard = base_leaderboard.loc[base_leaderboard["deposit_timing"].astype(str) == args.deposit_timing]
+    if args.base_strategy:
+        selected_base = base_leaderboard.loc[base_leaderboard["strategy"].astype(str).isin(args.base_strategy)].copy()
+        selected_base = selected_base.sort_values(["p_success", "score", "median_w24"], ascending=False)
+    else:
+        selected_base = select_base_rows(base_leaderboard, top_n=top_base)
 
     panel_path = config.data_root / "processed/phase2_free/stock_panel.parquet"
     if not panel_path.exists():
         print(f"missing free-real stock panel: {panel_path}; run scripts/build_phase2_free_stock_panel.py first", file=sys.stderr)
         raise SystemExit(2)
-    panel = pd.read_parquet(panel_path)
+    validate_panel_manifest(
+        panel_path,
+        expected_symbols=int(config.raw.get("panel_build", {}).get("expected_symbols", 0)),
+        config_path=config.path,
+    )
+    panel = prepare_real_stock_features(load_free_real_analysis_panel(panel_path))
     panel_by_date = _prepare_daily_panel(panel)
     cfg = load_backtest_config(config.raw)
+    if args.slippage_multiplier <= 0.0:
+        parser.error("--slippage-multiplier must be positive")
+    cfg = replace(cfg, slippage_bps=cfg.slippage_bps * args.slippage_multiplier)
     if args.max_daily_amount_participation is not None:
         cfg = replace(cfg, max_daily_amount_participation=args.max_daily_amount_participation)
-    specs_by_name = {spec.name: spec for spec in build_real_stock_strategy_specs(config.raw)}
+    if args.search_config:
+        search_raw = load_search_config(args.search_config)
+        specs_by_name = {spec.name: spec for spec in build_search_strategy_specs(search_raw)}
+    else:
+        specs_by_name = {spec.name: spec for spec in build_real_stock_strategy_specs(config.raw)}
 
     index_close_path = Path(raw_cfg.get("index_close_path", config.data_root / "processed/phase1_daily_close.csv"))
     index_close = load_index_close(index_close_path)
@@ -235,14 +284,14 @@ def main() -> None:
     )
 
     rows = []
-    for base_index, base in selected_base.iterrows():
+    for base_number, (_, base) in enumerate(selected_base.iterrows(), start=1):
         strategy = str(base["strategy"])
         deposit_timing = str(base["deposit_timing"])
         spec = specs_by_name.get(strategy)
         if spec is None:
             print(f"[overlay] skip unknown base strategy {strategy}", file=sys.stderr)
             continue
-        print(f"[overlay] base {base_index + 1}/{len(selected_base)} {strategy} / {deposit_timing}", flush=True)
+        print(f"[overlay] base {base_number}/{len(selected_base)} {strategy} / {deposit_timing}", flush=True)
         equity_windows = equity_windows_for_strategy(
             panel=panel,
             spec=spec,
@@ -292,9 +341,15 @@ def main() -> None:
     output_label = args.output_label.strip()
     if not output_label and cfg.max_daily_amount_participation is not None:
         output_label = _format_participation_label(cfg.max_daily_amount_participation)
-    windows_path = _output_path(Path(config.raw["paths"]["overlay_windows"]), output_label)
-    leaderboard_path = _output_path(Path(config.raw["paths"]["overlay_leaderboard"]), output_label)
-    report_path = _output_path(Path(config.raw["paths"]["overlay_report"]), output_label)
+    if args.output_root:
+        output_root = Path(args.output_root).expanduser()
+        windows_path = _output_path(output_root / "overlay_windows.csv", output_label)
+        leaderboard_path = _output_path(output_root / "overlay_leaderboard.csv", output_label)
+        report_path = _output_path(output_root / "overlay_report.md", output_label)
+    else:
+        windows_path = _output_path(Path(config.raw["paths"]["overlay_windows"]), output_label)
+        leaderboard_path = _output_path(Path(config.raw["paths"]["overlay_leaderboard"]), output_label)
+        report_path = _output_path(Path(config.raw["paths"]["overlay_report"]), output_label)
     windows_path.parent.mkdir(parents=True, exist_ok=True)
     windows.to_csv(windows_path, index=False, encoding="utf-8")
     leaderboard.to_csv(leaderboard_path, index=False, encoding="utf-8")
@@ -308,6 +363,8 @@ def main() -> None:
         target_leaderboard_path=target_leaderboard_path,
         base_run_label=base_output_label,
         max_daily_amount_participation=cfg.max_daily_amount_participation,
+        slippage_multiplier=args.slippage_multiplier,
+        effective_slippage_bps=cfg.slippage_bps,
     )
     print(f"selected_base={len(selected_base)}")
     print(f"futures_specs={len(futures_specs)}")

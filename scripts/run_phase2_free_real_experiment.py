@@ -14,7 +14,13 @@ if str(SRC) not in sys.path:
 
 from quant_proof.free_sources.baostock_adapter import load_config
 from quant_proof.free_sources.validators import strategy_allowed_in_tier
-from quant_proof.real_strategies import build_real_stock_strategy_specs, compute_real_stock_scores
+from quant_proof.real_strategies import (
+    build_real_stock_strategy_specs,
+    compute_real_stock_scores,
+    load_free_real_analysis_panel,
+    prepare_real_stock_features,
+)
+from quant_proof.realdata.free_panel_builder import validate_panel_manifest
 
 
 def summarize_scores(scores: pd.DataFrame, strategy: str, family: str, holding_k: int) -> dict:
@@ -76,7 +82,12 @@ def main() -> None:
     if not panel_path.exists():
         print(f"missing free-real stock panel: {panel_path}; run scripts/build_phase2_free_stock_panel.py first", file=sys.stderr)
         raise SystemExit(2)
-    panel = pd.read_parquet(panel_path)
+    validate_panel_manifest(
+        panel_path,
+        expected_symbols=int(config.raw.get("panel_build", {}).get("expected_symbols", 0)),
+        config_path=config.path,
+    )
+    panel = prepare_real_stock_features(load_free_real_analysis_panel(panel_path))
     snapshot = panel_snapshot(panel)
     specs = build_real_stock_strategy_specs(config.raw)
     if args.max_strategies:

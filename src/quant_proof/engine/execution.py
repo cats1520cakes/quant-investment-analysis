@@ -58,7 +58,17 @@ class ExecutionEngine:
     risk_limits: RiskLimits
 
     def execute(self, account: Account, order: Order, snapshot: MarketSnapshot) -> ExecutionReport:
-        risk_decision = self.risk_limits.limit_quantity(order, snapshot.price)
+        total_quantity = account.portfolio.quantity(order.symbol)
+        allow_odd_lot_liquidation = (
+            order.side == OrderSide.SELL
+            and order.quantity == total_quantity
+        )
+        risk_decision = self.risk_limits.limit_quantity(
+            order,
+            snapshot.price,
+            allow_odd_lot_liquidation=allow_odd_lot_liquidation,
+            quantity_rules=snapshot.quantity_rules,
+        )
         if not risk_decision.allowed:
             return rejected_report(
                 order=order,
@@ -83,7 +93,13 @@ class ExecutionEngine:
 
         filled_quantity = risk_decision.quantity
         gross_notional = filled_quantity * snapshot.price
-        trade_cost = self.cost_model.calculate(effective_order.side, gross_notional)
+        trade_cost = self.cost_model.calculate(
+            effective_order.side,
+            gross_notional,
+            trade_date=snapshot.trade_date,
+            symbol=effective_order.symbol,
+            quantity=filled_quantity,
+        )
         total_fees = trade_cost.total
 
         if effective_order.side == OrderSide.BUY:

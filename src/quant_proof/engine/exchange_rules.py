@@ -9,6 +9,87 @@ from .portfolio import Portfolio
 
 
 @dataclass(frozen=True)
+class ShareQuantityRules:
+    buy_minimum: int
+    quantity_step: int
+    odd_lot_threshold: int
+
+    def __post_init__(self) -> None:
+        if min(self.buy_minimum, self.quantity_step, self.odd_lot_threshold) <= 0:
+            raise ValueError("share quantity rules must be positive")
+
+    @staticmethod
+    def _normalize(quantity: int, minimum: int, step: int) -> int:
+        quantity = int(quantity)
+        if quantity < minimum:
+            return 0
+        return minimum + ((quantity - minimum) // step) * step
+
+    def normalize_buy(self, quantity: int) -> int:
+        return self._normalize(quantity, self.buy_minimum, self.quantity_step)
+
+    def normalize_regular_sell(self, quantity: int) -> int:
+        return self._normalize(quantity, self.odd_lot_threshold, self.quantity_step)
+
+    def is_valid_buy(self, quantity: int) -> bool:
+        return int(quantity) == self.normalize_buy(quantity)
+
+    def is_valid_regular_sell(self, quantity: int) -> bool:
+        return int(quantity) == self.normalize_regular_sell(quantity)
+
+
+ORDINARY_A_SHARE_QUANTITY_RULES = ShareQuantityRules(
+    buy_minimum=100,
+    quantity_step=100,
+    odd_lot_threshold=100,
+)
+STAR_MARKET_QUANTITY_RULES = ShareQuantityRules(
+    buy_minimum=200,
+    quantity_step=1,
+    odd_lot_threshold=200,
+)
+
+
+def _security_code(symbol: str) -> str:
+    value = str(symbol).strip().lower()
+    if value.startswith(("sh.", "sz.")):
+        return value[3:]
+    if "." in value:
+        return value.split(".", 1)[0]
+    return value
+
+
+def quantity_rules_for(symbol: str, board: str | None = None) -> ShareQuantityRules | None:
+    code = _security_code(symbol)
+    board_name = "" if board is None else str(board).strip().lower()
+    compact_board = board_name.replace("-", "").replace("_", "").replace(" ", "")
+
+    if code.startswith("688") or compact_board in {
+        "科创板",
+        "star",
+        "starmarket",
+        "kcb",
+    }:
+        return STAR_MARKET_QUANTITY_RULES
+
+    if compact_board in {
+        "主板",
+        "main",
+        "mainboard",
+        "创业板",
+        "chinext",
+        "gem",
+    }:
+        return ORDINARY_A_SHARE_QUANTITY_RULES
+
+    if len(code) == 6 and code.isdigit() and code.startswith(
+        ("000", "001", "002", "003", "300", "301", "600", "601", "603", "605")
+    ):
+        return ORDINARY_A_SHARE_QUANTITY_RULES
+    return None
+
+
+@dataclass(frozen=True)
 class MarketSnapshot:
     symbol: str
     trade_date: date
@@ -16,6 +97,26 @@ class MarketSnapshot:
     suspended: bool = False
     limit_up: float | None = None
     limit_down: float | None = None
+    board: str | None = None
+
+    @property
+    def quantity_rules(self) -> ShareQuantityRules | None:
+        return quantity_rules_for(self.symbol, self.board)
+
+    @property
+    def buy_minimum(self) -> int | None:
+        rules = self.quantity_rules
+        return None if rules is None else rules.buy_minimum
+
+    @property
+    def quantity_step(self) -> int | None:
+        rules = self.quantity_rules
+        return None if rules is None else rules.quantity_step
+
+    @property
+    def odd_lot_threshold(self) -> int | None:
+        rules = self.quantity_rules
+        return None if rules is None else rules.odd_lot_threshold
 
     def is_limit_up(self, epsilon: float = 1e-9) -> bool:
         return self.limit_up is not None and self.price >= self.limit_up - epsilon
@@ -62,6 +163,25 @@ class ExchangeRules:
                 reason=RejectReason.INVALID_ORDER,
                 message="order quantity and execution price must be positive",
             )
+
+        quantity_rules = snapshot.quantity_rules
+        if quantity_rules is not None:
+            if order.side == OrderSide.BUY and not quantity_rules.is_valid_buy(order.quantity):
+                return RuleCheck(
+                    allowed=False,
+                    reason=RejectReason.INVALID_ORDER,
+                    message="buy quantity does not satisfy the security's board rules",
+                )
+            if order.side == OrderSide.SELL and not quantity_rules.is_valid_regular_sell(
+                order.quantity
+            ):
+                total_quantity = portfolio.quantity(order.symbol)
+                if order.quantity != total_quantity:
+                    return RuleCheck(
+                        allowed=False,
+                        reason=RejectReason.INVALID_ORDER,
+                        message="odd-lot balance must be sold in one order",
+                    )
         if snapshot.suspended:
             return RuleCheck(
                 allowed=False,

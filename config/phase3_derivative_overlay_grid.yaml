@@ -1,0 +1,309 @@
+version: 1
+search_id: phase3_derivative_overlay_v1
+
+policy:
+  catalog_expiry_mode: official_asof_history
+  execution_parameters: official_required
+  short_options: forbidden
+  stock_strategy_binding: none
+  automatic_stock_strategy_product: false
+
+limits:
+  max_total_combinations: 80
+
+stages:
+  screen:
+    max_combinations: 36
+    budget:
+      max_windows: 12
+      max_window_evaluations: 432
+      max_promotions: 8
+      futures_slippage_bps: 1.0
+      option_slippage_bps: 2.0
+      prior_day_volume_participation: 0.10
+    overlay_only:
+      enabled: true
+      futures:
+        max_combinations: 24
+        products: [IF, IH, IC, IM]
+        directions: [long, short]
+        sizing:
+          fixed_contracts: [1]
+          target_notional_multiple: [0.25]
+          margin_budget: [50000.0]
+        cash_buffer_pct: [0.15]
+        min_dte: [5]
+        rebalance_frequency: [monthly]
+        max_contracts: [4]
+      long_options:
+        max_combinations: 6
+        products: [IO, HO, MO]
+        option_types: [call, put]
+        premium_budget_pct_nav: [0.005]
+        target_abs_delta: [0.25]
+        dte_windows:
+          - {min_dte: 30, max_dte: 60}
+        exit_dte: [5]
+    futures_plus_long_option:
+      enabled: true
+      max_combinations: 4
+      pairs:
+        - label: screen_if_short_io_put
+          futures:
+            product: IF
+            direction: short
+            target_notional_multiple: 0.25
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: IO
+            option_type: put
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.25
+            min_dte: 30
+            max_dte: 60
+            exit_dte: 5
+        - label: screen_ih_short_ho_put
+          futures:
+            product: IH
+            direction: short
+            fixed_contracts: 1
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: HO
+            option_type: put
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.25
+            min_dte: 30
+            max_dte: 60
+            exit_dte: 5
+        - label: screen_im_short_mo_put
+          futures:
+            product: IM
+            direction: short
+            margin_budget: 50000.0
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: MO
+            option_type: put
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.25
+            min_dte: 30
+            max_dte: 60
+            exit_dte: 5
+        - label: screen_if_long_io_call
+          futures:
+            product: IF
+            direction: long
+            target_notional_multiple: 0.25
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: IO
+            option_type: call
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.50
+            min_dte: 30
+            max_dte: 60
+            exit_dte: 5
+
+  neighborhood:
+    max_combinations: 32
+    budget:
+      max_windows: 24
+      max_window_evaluations: 768
+      max_promotions: 4
+      futures_slippage_bps: 1.0
+      option_slippage_bps: 2.0
+      prior_day_volume_participation: 0.10
+    overlay_only:
+      enabled: true
+      futures:
+        max_combinations: 16
+        products: [IF, IM]
+        directions: [long, short]
+        sizing:
+          fixed_contracts: [1]
+          target_notional_multiple: [0.20, 0.35]
+          margin_budget: [25000.0]
+        cash_buffer_pct: [0.15]
+        min_dte: [5]
+        rebalance_frequency: [monthly]
+        max_contracts: [4]
+      long_options:
+        max_combinations: 8
+        products: [IO, MO]
+        option_types: [call, put]
+        premium_budget_pct_nav: [0.003, 0.008]
+        target_abs_delta: [0.35]
+        dte_windows:
+          - {min_dte: 30, max_dte: 75}
+        exit_dte: [5]
+    futures_plus_long_option:
+      enabled: true
+      max_combinations: 4
+      pairs:
+        - label: neighborhood_if_short_io_put_low
+          futures:
+            product: IF
+            direction: short
+            target_notional_multiple: 0.20
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: IO
+            option_type: put
+            premium_budget_pct_nav: 0.003
+            target_abs_delta: 0.35
+            min_dte: 30
+            max_dte: 75
+            exit_dte: 5
+        - label: neighborhood_if_short_io_put_high
+          futures:
+            product: IF
+            direction: short
+            target_notional_multiple: 0.35
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: IO
+            option_type: put
+            premium_budget_pct_nav: 0.008
+            target_abs_delta: 0.35
+            min_dte: 30
+            max_dte: 75
+            exit_dte: 5
+        - label: neighborhood_im_short_mo_put_low
+          futures:
+            product: IM
+            direction: short
+            target_notional_multiple: 0.20
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: MO
+            option_type: put
+            premium_budget_pct_nav: 0.003
+            target_abs_delta: 0.35
+            min_dte: 30
+            max_dte: 75
+            exit_dte: 5
+        - label: neighborhood_im_long_mo_call_high
+          futures:
+            product: IM
+            direction: long
+            target_notional_multiple: 0.35
+            cash_buffer_pct: 0.15
+            min_dte: 5
+            rebalance_frequency: monthly
+            max_contracts: 4
+          long_option:
+            product: MO
+            option_type: call
+            premium_budget_pct_nav: 0.008
+            target_abs_delta: 0.35
+            min_dte: 30
+            max_dte: 75
+            exit_dte: 5
+
+  stress:
+    max_combinations: 20
+    budget:
+      max_windows: 48
+      max_window_evaluations: 960
+      max_promotions: 0
+      futures_slippage_bps: 3.0
+      option_slippage_bps: 6.0
+      prior_day_volume_participation: 0.05
+    overlay_only:
+      enabled: true
+      futures:
+        max_combinations: 8
+        products: [IF, IH, IC, IM]
+        directions: [long, short]
+        sizing:
+          target_notional_multiple: [0.25]
+        cash_buffer_pct: [0.25]
+        min_dte: [10]
+        rebalance_frequency: [weekly]
+        max_contracts: [3]
+      long_options:
+        max_combinations: 6
+        products: [IO, HO, MO]
+        option_types: [call, put]
+        premium_budget_pct_nav: [0.005]
+        target_abs_delta: [0.25]
+        dte_windows:
+          - {min_dte: 45, max_dte: 90}
+        exit_dte: [10]
+    futures_plus_long_option:
+      enabled: true
+      max_combinations: 3
+      pairs:
+        - label: stress_if_short_io_put
+          futures:
+            product: IF
+            direction: short
+            target_notional_multiple: 0.25
+            cash_buffer_pct: 0.25
+            min_dte: 10
+            rebalance_frequency: weekly
+            max_contracts: 3
+          long_option:
+            product: IO
+            option_type: put
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.25
+            min_dte: 45
+            max_dte: 90
+            exit_dte: 10
+        - label: stress_ih_short_ho_put
+          futures:
+            product: IH
+            direction: short
+            target_notional_multiple: 0.25
+            cash_buffer_pct: 0.25
+            min_dte: 10
+            rebalance_frequency: weekly
+            max_contracts: 3
+          long_option:
+            product: HO
+            option_type: put
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.25
+            min_dte: 45
+            max_dte: 90
+            exit_dte: 10
+        - label: stress_im_short_mo_put
+          futures:
+            product: IM
+            direction: short
+            target_notional_multiple: 0.25
+            cash_buffer_pct: 0.25
+            min_dte: 10
+            rebalance_frequency: weekly
+            max_contracts: 3
+          long_option:
+            product: MO
+            option_type: put
+            premium_budget_pct_nav: 0.005
+            target_abs_delta: 0.25
+            min_dte: 45
+            max_dte: 90
+            exit_dte: 10

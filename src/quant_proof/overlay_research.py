@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from math import erf, exp, floor, log, sqrt
 from pathlib import Path
@@ -9,13 +10,19 @@ import numpy as np
 import pandas as pd
 
 from .free_real_backtest import (
+    DailyRows,
     FreeRealBacktestConfig,
     _date_index,
     _prepare_daily_panel,
-    _top_symbols_by_signal_date,
+    select_rolling_windows,
     simulate_free_real_window,
 )
-from .real_strategies import RealStockStrategySpec, compute_real_stock_scores, strategy_rebalance_dates
+from .real_strategies import (
+    RealStockStrategySpec,
+    compute_real_stock_scores,
+    strategy_rebalance_dates,
+    target_symbols_by_signal_date,
+)
 from .simulator import rolling_windows, summarize_equity
 
 
@@ -283,6 +290,24 @@ def select_base_rows(leaderboard: pd.DataFrame, top_n: int) -> pd.DataFrame:
     return selected.sort_values(["score", "p_success", "median_w24"], ascending=False).reset_index(drop=True)
 
 
+def highest_success_row(
+    leaderboard: pd.DataFrame,
+    overlay_type: str | None = None,
+) -> pd.Series | None:
+    rows = leaderboard
+    if overlay_type is not None:
+        rows = rows.loc[rows["overlay_type"] == overlay_type]
+    if rows.empty:
+        return None
+    sort_columns = [
+        column
+        for column in ["p_success", "p10_w24", "median_w24", "p95_max_drawdown"]
+        if column in rows.columns
+    ]
+    ascending = [False, False, False, True][: len(sort_columns)]
+    return rows.sort_values(sort_columns, ascending=ascending).iloc[0]
+
+
 def build_futures_specs(
     contracts: Iterable[str] = ("IF", "IH", "IC", "IM"),
     target_betas: Iterable[float] = (0.3, 0.5),
@@ -326,20 +351,27 @@ def equity_windows_for_strategy(
     spec: RealStockStrategySpec,
     cfg: FreeRealBacktestConfig,
     deposit_timing: str,
-    panel_by_date: dict[str, dict[str, dict[str, object]]] | None = None,
+    panel_by_date: Mapping[str, DailyRows] | None = None,
     max_windows: int = 0,
 ) -> list[tuple[pd.Timestamp, pd.Timestamp, pd.DataFrame]]:
     date_index = _date_index(panel)
     windows = rolling_windows(date_index, window_months=cfg.window_months, min_trading_days=cfg.min_trading_days)
-    if max_windows > 0:
-        windows = windows[:max_windows]
+    windows = select_rolling_windows(windows, max_windows=max_windows, sampling="even")
     panel_by_date = panel_by_date or _prepare_daily_panel(panel)
     trading_dates = sorted(panel_by_date)
     scores = compute_real_stock_scores(panel, spec)
     holding_k = int(spec.params.get("holding_k", 10))
-    top_by_signal_date = _top_symbols_by_signal_date(scores, holding_k=holding_k)
+    top_by_signal_date = target_symbols_by_signal_date(scores, spec=spec, holding_k=holding_k)
     rebalance = str(spec.params.get("rebalance", "daily"))
     rebalance_dates = set(strategy_rebalance_dates(panel, rebalance))
+    rebalance_only_on_target_change = str(spec.params.get("kind", "")) in {
+        "real_stock_breakout",
+        "real_stateful_trend",
+        "real_volatility_contraction",
+        "real_regime_contraction",
+        "real_gap_intraday",
+        "real_momentum_acceleration",
+    }
     out = []
     for start, end in windows:
         equity, metrics = simulate_free_real_window(
@@ -351,6 +383,7 @@ def equity_windows_for_strategy(
             end=end,
             deposit_timing=deposit_timing,
             cfg=cfg,
+            rebalance_only_on_target_change=rebalance_only_on_target_change,
         )
         if metrics:
             out.append((start, end, equity))

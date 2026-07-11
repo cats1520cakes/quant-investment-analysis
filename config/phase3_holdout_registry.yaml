@@ -1,0 +1,29 @@
+schema_version: 1
+formal_outer_available: false
+
+rules:
+  null_joint_hit_share: 0.50
+  familywise_alpha: 0.05
+  correction: holm
+  minimum_nonoverlap_blocks: 5
+  required_deposit_timings: [beginning, ending]
+
+periods:
+  dev_screen_2011_2012_exposed:
+    window_start_min: 2011-07-01
+    window_start_max: 2012-12-31
+    status: exposed_development
+  dev_confirm_2015_exposed:
+    window_start_min: 2015-01-01
+    window_start_max: 2015-12-31
+    status: exposed_development
+  dev_stress_2018_2024_exposed:
+    window_start_min: 2018-01-01
+    window_start_max: 2024-12-31
+    status: exposed_development
+
+formal_outer:
+  status: unavailable
+  reason: All currently complete 24-month historical spans influenced family or parameter design.
+  earliest_possible_fresh_start: 2026-07-01
+  earliest_complete_w24_observation: 2028-06-30

@@ -1,0 +1,25 @@
+version: 1
+data_root: /Volumes/PSSD1TB/量化数据
+
+network:
+  physical_interface: en0
+  physical_dns_server: auto
+  physical_dns_mode: dhcp_from_physical_interface
+  timeout_seconds: 60
+  max_response_bytes: 2097152
+
+source:
+  provider: cffex_official
+  url_pattern: http://www.cffex.com.cn/sj/jycs/{yyyymm}/{dd}/{yyyymmdd}_1.csv
+  encoding: gb18030
+  products: [IF, IH, IC, IM, IO, HO, MO]
+  source_tier: official_exchange_trade_parameters
+
+paths:
+  contract_panel: processed/phase3_derivatives/cffex_contract_daily.parquet
+  contract_master: processed/phase3_derivatives/cffex_contract_master.parquet
+  raw_trade_parameters: raw/cffex/trade_parameters
+  download_manifest: 00_meta/manifests/cffex_trade_parameters_manifest.csv
+  contract_metadata: processed/phase3_derivatives/cffex_contract_trade_parameters.parquet
+  contract_metadata_history: processed/phase3_derivatives/cffex_contract_trade_parameters_history.parquet
+  reconciliation_report: processed/phase3_derivatives/cffex_contract_trade_parameters_reconciliation.csv

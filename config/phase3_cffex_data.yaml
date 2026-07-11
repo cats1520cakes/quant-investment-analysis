@@ -1,0 +1,24 @@
+version: 1
+data_root: /Volumes/PSSD1TB/量化数据
+
+date_range:
+  start_date: "20100416"
+  end_date: "20260630"
+
+network:
+  physical_interface: en0
+  physical_dns_server: 192.168.3.1
+  timeout_seconds: 60
+
+source:
+  provider: cffex_official
+  archive_url: http://www.cffex.com.cn/sj/historysj/{month}/zip/{month}.zip
+  products: [IF, IH, IC, IM, IO, HO, MO]
+  source_tier: official_exchange_daily
+  execution_tier: daily_settlement_no_quotes
+
+paths:
+  monthly_archives: raw/cffex/monthly
+  download_manifest: 00_meta/manifests/cffex_monthly_manifest.csv
+  contract_panel: processed/phase3_derivatives/cffex_contract_daily.parquet
+  contract_master: processed/phase3_derivatives/cffex_contract_master.parquet

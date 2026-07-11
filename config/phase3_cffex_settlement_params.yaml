@@ -1,0 +1,77 @@
+version: 1
+data_root: /Volumes/PSSD1TB/量化数据
+
+source:
+  provider: cffex_official
+  origin: http://www.cffex.com.cn
+  first_page_url: http://www.cffex.com.cn/cn/jscs.html
+  numbered_page_url: http://www.cffex.com.cn/cn/jscs_{page}.html
+  csv_path_pattern: /sj/jscs/{yyyymm}/{dd}/{yyyymmdd}_1.csv
+  encoding: gb18030
+  expected_page_count: 36
+  expected_unique_csvs: 360
+  expected_first_snapshot: "20100414"
+  expected_last_snapshot: "20260623"
+  fail_on_unconfigured_page_growth: true
+  page_numbers:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    - 21
+    - 22
+    - 23
+    - 24
+    - 25
+    - 26
+    - 27
+    - 28
+    - 29
+    - 30
+    - 31
+    - 32
+    - 33
+    - 34
+    - 35
+    - 36
+  equity_products: [IF, IH, IC, IM, IO, HO, MO]
+
+network:
+  physical_interface: en0
+  physical_dns_server: auto
+  physical_dns_mode: dhcp_from_physical_interface
+  timeout_seconds: 60
+  max_page_bytes: 2097152
+  max_csv_bytes: 5242880
+  proxy_fallback: false
+  vpn_fallback: false
+
+paths:
+  raw_settlement_params: raw/cffex/settlement_params
+  download_manifest: 00_meta/manifests/cffex_settlement_params_downloads.json
+  canonical_parquet: processed/phase3_derivatives/cffex_settlement_params.parquet
+  canonical_manifest: processed/phase3_derivatives/cffex_settlement_params.parquet.manifest.json
+
+policy:
+  date_semantics: snapshot_date
+  effective_date_claimed: false
+  exact_contract_or_series_lookup: true
+  product_level_substitution: false
+  future_backfill: false
+  short_options_enabled: false

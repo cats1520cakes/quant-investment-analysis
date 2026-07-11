@@ -38,14 +38,16 @@ def last_trading_day_mask(index: pd.DatetimeIndex) -> pd.Series:
 
 
 def _window_end(index: pd.DatetimeIndex, start: pd.Timestamp, window_months: int) -> pd.Timestamp:
-    desired = start + pd.DateOffset(months=window_months) - pd.Timedelta(days=1)
-    eligible = index[index <= desired]
+    boundary = start.to_period("M").start_time + pd.DateOffset(months=window_months)
+    eligible = index[index < boundary]
     if eligible.empty:
         return index[-1]
     return eligible[-1]
 
 
 def rolling_windows(index: pd.DatetimeIndex, window_months: int, min_trading_days: int) -> List[Tuple[pd.Timestamp, pd.Timestamp]]:
+    if window_months <= 0:
+        raise ValueError("window_months must be positive")
     starts = index[first_trading_day_mask(index).values]
     windows: List[Tuple[pd.Timestamp, pd.Timestamp]] = []
     for start in starts:
@@ -270,7 +272,18 @@ def simulate_path_metrics_fast(
 
 
 def summarize_equity(equity: pd.DataFrame, monthly_deposit: float) -> Dict[str, float]:
+    if "daily_return" not in equity.columns:
+        raise ValueError("equity must include a 'daily_return' column for flow-adjusted risk metrics")
+
     wealth = equity["wealth"]
+    daily_returns = pd.to_numeric(equity["daily_return"], errors="coerce")
+    if daily_returns.isna().any() or np.isinf(daily_returns).any() or daily_returns.lt(-1.0).any():
+        raise ValueError("equity daily_return must be finite and no lower than -100%")
+    compounded_nav = (1.0 + daily_returns).cumprod()
+    flow_adjusted_nav = pd.Series(
+        np.concatenate(([1.0], compounded_nav.to_numpy(dtype=float))),
+        dtype=float,
+    )
     start = equity.index[0]
     month_number = ((equity.index.year - start.year) * 12 + (equity.index.month - start.month) + 1).astype(int)
     w12_rows = equity.loc[month_number <= 12]
@@ -282,11 +295,11 @@ def summarize_equity(equity: pd.DataFrame, monthly_deposit: float) -> Dict[str, 
         "w24": w24,
         "total_deposit": total_deposit,
         "net_profit": w24 - total_deposit,
-        "max_drawdown": max_drawdown(wealth),
-        "ulcer_index": ulcer_index(wealth),
-        "p99_one_day_loss": float(equity["daily_return"].quantile(0.01)),
-        "expected_shortfall_95": expected_shortfall(equity["daily_return"], 0.95),
-        "recovery_days": float(recovery_days(wealth)),
+        "max_drawdown": max_drawdown(flow_adjusted_nav),
+        "ulcer_index": ulcer_index(flow_adjusted_nav),
+        "p99_one_day_loss": float(daily_returns.quantile(0.01)),
+        "expected_shortfall_95": expected_shortfall(daily_returns, 0.95),
+        "recovery_days": float(recovery_days(flow_adjusted_nav)),
     }
 
 

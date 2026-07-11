@@ -1,0 +1,134 @@
+search_id: phase3_risk_weighting_v1
+base_config: config/phase2_free_real_data.yaml
+holdout_registry: config/phase3_holdout_registry.yaml
+output_root: /Volumes/PSSD1TB/量化数据/reports/phase3_search
+repo_status_report: reports/phase3_risk_weighting_search_status.md
+
+compute:
+  max_peak_rss_gib: 10.0
+
+sampling:
+  method: latin_hypercube
+  seed: 20260711
+  budget_per_family: 48
+  development_min_target_ratio: 0.75
+  development_max_drawdown: 0.60
+  neighborhood_min_dimensions: 2
+
+stages:
+  screen:
+    max_windows: 24
+    window_sampling: even
+    window_start_min: 2011-07-01
+    window_start_max: 2012-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 1.0
+    promote_per_family: 2
+    promote_global: 12
+    allow_ungated_shortlist: true
+    expand_parameter_neighbors: false
+    require_neighborhood_gate: false
+    promotion_gate: exploratory
+    evidence_role: development_exposed
+    holdout_signature: dev_screen_2011_2012_exposed
+    min_regime_blocks: 2
+  confirm:
+    max_windows: 0
+    window_sampling: even
+    window_start_min: 2015-01-01
+    window_start_max: 2015-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 1.0
+    promote_per_family: 0
+    promote_global: 0
+    allow_ungated_shortlist: false
+    expand_parameter_neighbors: true
+    require_neighborhood_gate: true
+    promotion_gate: development
+    evidence_role: development_exposed
+    holdout_signature: dev_confirm_2015_exposed
+    min_regime_blocks: 2
+  stress:
+    max_windows: 0
+    window_sampling: even
+    window_start_min: 2018-01-01
+    window_start_max: 2024-12-31
+    deposit_timings: [beginning, ending]
+    max_daily_amount_participation: 0.05
+    slippage_multiplier: 3.0
+    promote_per_family: 0
+    promote_global: 0
+    allow_ungated_shortlist: false
+    expand_parameter_neighbors: false
+    require_neighborhood_gate: true
+    promotion_gate: formal
+    evidence_role: development_exposed
+    holdout_signature: dev_stress_2018_2024_exposed
+    min_regime_blocks: 2
+
+strategy_spaces:
+  S2_real_stock_momentum:
+    kind: real_stock_momentum
+    budget: 48
+    ordered_parameters: [holding_k, rebalance, risk_window, gross_exposure, max_weight]
+    fixed:
+      data_tier: free_real
+      lookback: 260
+      min_listing_days: 120
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+      exclude_st: true
+    parameters:
+      holding_k: [3, 5, 10, 20]
+      rebalance: [2d, weekly, monthly]
+      weighting: [equal, inverse_volatility, atr_risk, rank]
+      risk_window: [20, 60]
+      gross_exposure: [0.75, 1.0]
+      max_weight: [0.10, 0.20, 0.35]
+
+  S3_real_stock_breakout:
+    kind: real_stock_breakout
+    budget: 48
+    ordered_parameters: [donchian, exit_donchian, holding_k, risk_window, gross_exposure, max_weight]
+    fixed:
+      data_tier: free_real
+      lookback: 260
+      min_listing_days: 120
+      min_price: 3.0
+      min_avg_amount_20d: 20000000
+      exclude_st: true
+      rebalance: daily
+      entry_rebalance: daily
+      trailing_stop: 0.0
+    parameters:
+      donchian: [20, 55, 120]
+      exit_donchian: [10, 20, 40]
+      max_holding_days: [40, 80, 160]
+      min_volume_breakout: [1.0, 1.2, 1.5]
+      holding_k: [3, 5, 10]
+      weighting: [equal, inverse_volatility, atr_risk, rank]
+      risk_window: [20, 60]
+      gross_exposure: [0.75, 1.0]
+      max_weight: [0.15, 0.25, 0.40]
+
+  S4_real_smallcap_factor:
+    kind: real_smallcap_factor
+    budget: 48
+    ordered_parameters: [holding_k, rebalance, risk_window, gross_exposure, max_weight]
+    fixed:
+      data_tier: free_real
+      lookback: 260
+      min_listing_days: 180
+      min_price: 3.0
+      min_avg_amount_20d: 10000000
+      exclude_st: true
+    parameters:
+      factor_mode: [low_turnover, high_turnover_breakout]
+      holding_k: [10, 20, 30, 50]
+      rebalance: [weekly, monthly]
+      weighting: [equal, inverse_volatility, atr_risk, rank]
+      risk_window: [20, 60]
+      gross_exposure: [0.75, 1.0]
+      max_weight: [0.05, 0.10, 0.20]

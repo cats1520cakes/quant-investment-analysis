@@ -9,6 +9,7 @@ from quant_proof.overlay_research import (
     apply_futures_overlay,
     apply_option_overlay,
     black_scholes_call_price,
+    highest_success_row,
 )
 
 
@@ -78,3 +79,31 @@ def test_parametric_option_overlay_spends_premium_and_collects_payoff() -> None:
 
 def test_black_scholes_call_price_is_positive_for_atm_option() -> None:
     assert black_scholes_call_price(spot=100.0, strike=100.0, years=30 / 365, sigma=0.2) > 0.0
+
+
+def test_highest_success_row_does_not_use_score_order() -> None:
+    leaderboard = pd.DataFrame(
+        [
+            {
+                "overlay_type": "futures_integer_lot_proxy",
+                "overlay_name": "best_score",
+                "p_success": 0.01,
+                "p10_w24": 700_000.0,
+                "median_w24": 800_000.0,
+                "p95_max_drawdown": 0.20,
+            },
+            {
+                "overlay_type": "futures_integer_lot_proxy",
+                "overlay_name": "highest_success",
+                "p_success": 0.05,
+                "p10_w24": 550_000.0,
+                "median_w24": 680_000.0,
+                "p95_max_drawdown": 0.31,
+            },
+        ]
+    )
+
+    result = highest_success_row(leaderboard, "futures_integer_lot_proxy")
+
+    assert result is not None
+    assert result["overlay_name"] == "highest_success"

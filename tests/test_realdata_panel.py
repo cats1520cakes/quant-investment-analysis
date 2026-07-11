@@ -127,6 +127,10 @@ def test_real_stock_strategy_specs_focus_on_s2_s3_s4() -> None:
     assert len([spec for spec in specs if spec.family == "S2_real_stock_momentum"]) == 18
     assert len([spec for spec in specs if spec.family == "S3_real_stock_breakout"]) == 8
     assert len([spec for spec in specs if spec.family == "S4_real_smallcap_factor"]) == 16
+    assert all("stop_loss" not in spec.params for spec in specs if spec.family == "S2_real_stock_momentum")
+    breakout_specs = [spec for spec in specs if spec.family == "S3_real_stock_breakout"]
+    assert all("risk_per_trade" not in spec.params and "atr_stop" not in spec.params for spec in breakout_specs)
+    assert len({(spec.params["donchian"], spec.params["holding_k"]) for spec in breakout_specs}) == 8
     assert "stk_limit" in required_tables_for_real_stock_strategies()
     assert "suspend_d" in required_tables_for_real_stock_strategies()
 
