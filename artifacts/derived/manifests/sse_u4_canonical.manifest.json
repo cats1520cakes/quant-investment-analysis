@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "panel_sha256": "2c5c31d886219807e10cf2c7126a77d699996ee8a999036970b11d2aeda4a9c8",
+  "config_hash": "78f142d8d0dd2b7a1910e2116eb589997e80d2c2b4acee17d71924155286965d",
+  "rows": 14214,
+  "codes": ["510050", "510300", "510500", "512100"],
+  "first_date": "20050223",
+  "last_date": "20260710",
+  "confirmed_suspension_rows": 3,
+  "undeclared_gaps": 0,
+  "source_tier": "official_exchange_daily",
+  "execution_tier": "daily_ohlcv_no_quotes",
+  "volume_unit": "fund_shares",
+  "amount_unit": "CNY",
+  "corporate_action_ledger": "incomplete_blocking_gate",
+  "survivorship_bias": "current-only ETF master"
+}
