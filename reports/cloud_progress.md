@@ -52,3 +52,11 @@
 - Panel hash: `bd68f5e8107a541a66bbf831eb50fc33b94b7f652f1e2a6719e85ae03507f746`; master hash: `6f4d7a818914adafb9c0577658a993d1ce290d9739658b3caa56d2e375322f39`.
 - The generated master labels expiry as `last_official_daily_record`; this is explicitly **not accepted** as official expiry evidence. Derivative strategy evaluation remains blocked until official as-of history is bound.
 - Strict candidates: **0**.
+
+## 2025 full year and continuous 24-month panel
+
+- Recovered 2025-01 and 2025-03 separately, then revalidated all 12/12 archives before publication.
+- 2025 panel: 176,230 rows, 2,630 master rows, 2025-01-02..2025-12-31; panel hash `1e6bb9f74d0302e75ec99988753ad7f8accffaad2f2676224f94fd583394db0f`.
+- Combined 2024+2025 panel: 24/24 months, 365,652 rows, 4,910 master rows, 2024-01-02..2025-12-31; panel hash `7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b`.
+- Raw archive lineage is bound by source-set hash `9c00d2abf8112e73cee866653b30481f5617b584d97f717a3c34eac2155b1796`.
+- Data continuity gate passed. Official effective-date expiry/margin/limit history gate remains blocked; no derivative backtest is released using panel-last-record expiry. Strict candidates: **0**.
