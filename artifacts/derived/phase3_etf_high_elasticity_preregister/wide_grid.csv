@@ -1,0 +1,205 @@
+spec_id,family,parameters,max_etf_exposure,borrowing,synthetic_leverage
+HE-single_159915_trend_cash-000,single_159915_trend_cash,"[20, 20, 0, 5]",1.0,False,False
+HE-single_159915_trend_cash-001,single_159915_trend_cash,"[20, 20, 0, 20]",1.0,False,False
+HE-single_159915_trend_cash-002,single_159915_trend_cash,"[20, 20, 0.2, 5]",1.0,False,False
+HE-single_159915_trend_cash-003,single_159915_trend_cash,"[20, 20, 0.2, 20]",1.0,False,False
+HE-single_159915_trend_cash-004,single_159915_trend_cash,"[20, 20, 0.4, 5]",1.0,False,False
+HE-single_159915_trend_cash-005,single_159915_trend_cash,"[20, 20, 0.4, 20]",1.0,False,False
+HE-single_159915_trend_cash-006,single_159915_trend_cash,"[20, 60, 0, 5]",1.0,False,False
+HE-single_159915_trend_cash-007,single_159915_trend_cash,"[20, 60, 0, 20]",1.0,False,False
+HE-single_159915_trend_cash-008,single_159915_trend_cash,"[20, 60, 0.2, 5]",1.0,False,False
+HE-single_159915_trend_cash-009,single_159915_trend_cash,"[20, 60, 0.2, 20]",1.0,False,False
+HE-single_159915_trend_cash-010,single_159915_trend_cash,"[20, 60, 0.4, 5]",1.0,False,False
+HE-single_159915_trend_cash-011,single_159915_trend_cash,"[20, 60, 0.4, 20]",1.0,False,False
+HE-single_159915_trend_cash-012,single_159915_trend_cash,"[60, 20, 0, 5]",1.0,False,False
+HE-single_159915_trend_cash-013,single_159915_trend_cash,"[60, 20, 0, 20]",1.0,False,False
+HE-single_159915_trend_cash-014,single_159915_trend_cash,"[60, 20, 0.2, 5]",1.0,False,False
+HE-single_159915_trend_cash-015,single_159915_trend_cash,"[60, 20, 0.2, 20]",1.0,False,False
+HE-single_159915_trend_cash-016,single_159915_trend_cash,"[60, 20, 0.4, 5]",1.0,False,False
+HE-single_159915_trend_cash-017,single_159915_trend_cash,"[60, 20, 0.4, 20]",1.0,False,False
+HE-single_159915_trend_cash-018,single_159915_trend_cash,"[60, 60, 0, 5]",1.0,False,False
+HE-single_159915_trend_cash-019,single_159915_trend_cash,"[60, 60, 0, 20]",1.0,False,False
+HE-single_159915_trend_cash-020,single_159915_trend_cash,"[60, 60, 0.2, 5]",1.0,False,False
+HE-single_159915_trend_cash-021,single_159915_trend_cash,"[60, 60, 0.2, 20]",1.0,False,False
+HE-single_159915_trend_cash-022,single_159915_trend_cash,"[60, 60, 0.4, 5]",1.0,False,False
+HE-single_159915_trend_cash-023,single_159915_trend_cash,"[60, 60, 0.4, 20]",1.0,False,False
+HE-single_159915_trend_cash-024,single_159915_trend_cash,"[120, 20, 0, 5]",1.0,False,False
+HE-single_159915_trend_cash-025,single_159915_trend_cash,"[120, 20, 0, 20]",1.0,False,False
+HE-single_159915_trend_cash-026,single_159915_trend_cash,"[120, 20, 0.2, 5]",1.0,False,False
+HE-single_159915_trend_cash-027,single_159915_trend_cash,"[120, 20, 0.2, 20]",1.0,False,False
+HE-single_159915_trend_cash-028,single_159915_trend_cash,"[120, 20, 0.4, 5]",1.0,False,False
+HE-single_159915_trend_cash-029,single_159915_trend_cash,"[120, 20, 0.4, 20]",1.0,False,False
+HE-single_159915_trend_cash-030,single_159915_trend_cash,"[120, 60, 0, 5]",1.0,False,False
+HE-single_159915_trend_cash-031,single_159915_trend_cash,"[120, 60, 0, 20]",1.0,False,False
+HE-single_159915_trend_cash-032,single_159915_trend_cash,"[120, 60, 0.2, 5]",1.0,False,False
+HE-single_159915_trend_cash-033,single_159915_trend_cash,"[120, 60, 0.2, 20]",1.0,False,False
+HE-single_159915_trend_cash-034,single_159915_trend_cash,"[120, 60, 0.4, 5]",1.0,False,False
+HE-single_159915_trend_cash-035,single_159915_trend_cash,"[120, 60, 0.4, 20]",1.0,False,False
+HE-e2_relative_absolute-000,e2_relative_absolute,"[20, 20, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-001,e2_relative_absolute,"[20, 20, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-002,e2_relative_absolute,"[20, 20, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-003,e2_relative_absolute,"[20, 20, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-004,e2_relative_absolute,"[20, 60, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-005,e2_relative_absolute,"[20, 60, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-006,e2_relative_absolute,"[20, 60, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-007,e2_relative_absolute,"[20, 60, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-008,e2_relative_absolute,"[20, 120, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-009,e2_relative_absolute,"[20, 120, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-010,e2_relative_absolute,"[20, 120, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-011,e2_relative_absolute,"[20, 120, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-012,e2_relative_absolute,"[60, 20, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-013,e2_relative_absolute,"[60, 20, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-014,e2_relative_absolute,"[60, 20, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-015,e2_relative_absolute,"[60, 20, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-016,e2_relative_absolute,"[60, 60, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-017,e2_relative_absolute,"[60, 60, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-018,e2_relative_absolute,"[60, 60, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-019,e2_relative_absolute,"[60, 60, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-020,e2_relative_absolute,"[60, 120, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-021,e2_relative_absolute,"[60, 120, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-022,e2_relative_absolute,"[60, 120, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-023,e2_relative_absolute,"[60, 120, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-024,e2_relative_absolute,"[120, 20, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-025,e2_relative_absolute,"[120, 20, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-026,e2_relative_absolute,"[120, 20, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-027,e2_relative_absolute,"[120, 20, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-028,e2_relative_absolute,"[120, 60, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-029,e2_relative_absolute,"[120, 60, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-030,e2_relative_absolute,"[120, 60, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-031,e2_relative_absolute,"[120, 60, ""510500"", 20]",1.0,False,False
+HE-e2_relative_absolute-032,e2_relative_absolute,"[120, 120, ""cash"", 5]",1.0,False,False
+HE-e2_relative_absolute-033,e2_relative_absolute,"[120, 120, ""cash"", 20]",1.0,False,False
+HE-e2_relative_absolute-034,e2_relative_absolute,"[120, 120, ""510500"", 5]",1.0,False,False
+HE-e2_relative_absolute-035,e2_relative_absolute,"[120, 120, ""510500"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-000,e3_concentrated_rotation,"[1, 20, 20, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-001,e3_concentrated_rotation,"[1, 20, 20, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-002,e3_concentrated_rotation,"[1, 20, 20, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-003,e3_concentrated_rotation,"[1, 20, 20, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-004,e3_concentrated_rotation,"[1, 20, 60, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-005,e3_concentrated_rotation,"[1, 20, 60, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-006,e3_concentrated_rotation,"[1, 20, 60, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-007,e3_concentrated_rotation,"[1, 20, 60, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-008,e3_concentrated_rotation,"[1, 20, 120, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-009,e3_concentrated_rotation,"[1, 20, 120, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-010,e3_concentrated_rotation,"[1, 20, 120, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-011,e3_concentrated_rotation,"[1, 20, 120, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-012,e3_concentrated_rotation,"[1, 60, 20, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-013,e3_concentrated_rotation,"[1, 60, 20, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-014,e3_concentrated_rotation,"[1, 60, 20, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-015,e3_concentrated_rotation,"[1, 60, 20, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-016,e3_concentrated_rotation,"[1, 60, 60, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-017,e3_concentrated_rotation,"[1, 60, 60, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-018,e3_concentrated_rotation,"[1, 60, 60, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-019,e3_concentrated_rotation,"[1, 60, 60, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-020,e3_concentrated_rotation,"[1, 60, 120, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-021,e3_concentrated_rotation,"[1, 60, 120, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-022,e3_concentrated_rotation,"[1, 60, 120, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-023,e3_concentrated_rotation,"[1, 60, 120, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-024,e3_concentrated_rotation,"[1, 120, 20, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-025,e3_concentrated_rotation,"[1, 120, 20, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-026,e3_concentrated_rotation,"[1, 120, 20, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-027,e3_concentrated_rotation,"[1, 120, 20, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-028,e3_concentrated_rotation,"[1, 120, 60, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-029,e3_concentrated_rotation,"[1, 120, 60, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-030,e3_concentrated_rotation,"[1, 120, 60, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-031,e3_concentrated_rotation,"[1, 120, 60, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-032,e3_concentrated_rotation,"[1, 120, 120, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-033,e3_concentrated_rotation,"[1, 120, 120, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-034,e3_concentrated_rotation,"[1, 120, 120, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-035,e3_concentrated_rotation,"[1, 120, 120, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-036,e3_concentrated_rotation,"[2, 20, 20, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-037,e3_concentrated_rotation,"[2, 20, 20, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-038,e3_concentrated_rotation,"[2, 20, 20, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-039,e3_concentrated_rotation,"[2, 20, 20, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-040,e3_concentrated_rotation,"[2, 20, 60, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-041,e3_concentrated_rotation,"[2, 20, 60, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-042,e3_concentrated_rotation,"[2, 20, 60, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-043,e3_concentrated_rotation,"[2, 20, 60, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-044,e3_concentrated_rotation,"[2, 20, 120, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-045,e3_concentrated_rotation,"[2, 20, 120, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-046,e3_concentrated_rotation,"[2, 20, 120, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-047,e3_concentrated_rotation,"[2, 20, 120, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-048,e3_concentrated_rotation,"[2, 60, 20, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-049,e3_concentrated_rotation,"[2, 60, 20, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-050,e3_concentrated_rotation,"[2, 60, 20, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-051,e3_concentrated_rotation,"[2, 60, 20, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-052,e3_concentrated_rotation,"[2, 60, 60, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-053,e3_concentrated_rotation,"[2, 60, 60, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-054,e3_concentrated_rotation,"[2, 60, 60, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-055,e3_concentrated_rotation,"[2, 60, 60, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-056,e3_concentrated_rotation,"[2, 60, 120, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-057,e3_concentrated_rotation,"[2, 60, 120, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-058,e3_concentrated_rotation,"[2, 60, 120, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-059,e3_concentrated_rotation,"[2, 60, 120, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-060,e3_concentrated_rotation,"[2, 120, 20, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-061,e3_concentrated_rotation,"[2, 120, 20, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-062,e3_concentrated_rotation,"[2, 120, 20, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-063,e3_concentrated_rotation,"[2, 120, 20, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-064,e3_concentrated_rotation,"[2, 120, 60, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-065,e3_concentrated_rotation,"[2, 120, 60, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-066,e3_concentrated_rotation,"[2, 120, 60, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-067,e3_concentrated_rotation,"[2, 120, 60, ""510300"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-068,e3_concentrated_rotation,"[2, 120, 120, ""cash"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-069,e3_concentrated_rotation,"[2, 120, 120, ""cash"", 20]",1.0,False,False
+HE-e3_concentrated_rotation-070,e3_concentrated_rotation,"[2, 120, 120, ""510300"", 5]",1.0,False,False
+HE-e3_concentrated_rotation-071,e3_concentrated_rotation,"[2, 120, 120, ""510300"", 20]",1.0,False,False
+HE-vol_drawdown_cash-000,vol_drawdown_cash,"[20, 0.05, 5, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-001,vol_drawdown_cash,"[20, 0.05, 5, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-002,vol_drawdown_cash,"[20, 0.05, 5, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-003,vol_drawdown_cash,"[20, 0.05, 20, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-004,vol_drawdown_cash,"[20, 0.05, 20, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-005,vol_drawdown_cash,"[20, 0.05, 20, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-006,vol_drawdown_cash,"[20, 0.1, 5, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-007,vol_drawdown_cash,"[20, 0.1, 5, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-008,vol_drawdown_cash,"[20, 0.1, 5, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-009,vol_drawdown_cash,"[20, 0.1, 20, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-010,vol_drawdown_cash,"[20, 0.1, 20, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-011,vol_drawdown_cash,"[20, 0.1, 20, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-012,vol_drawdown_cash,"[20, 0.15, 5, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-013,vol_drawdown_cash,"[20, 0.15, 5, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-014,vol_drawdown_cash,"[20, 0.15, 5, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-015,vol_drawdown_cash,"[20, 0.15, 20, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-016,vol_drawdown_cash,"[20, 0.15, 20, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-017,vol_drawdown_cash,"[20, 0.15, 20, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-018,vol_drawdown_cash,"[60, 0.05, 5, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-019,vol_drawdown_cash,"[60, 0.05, 5, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-020,vol_drawdown_cash,"[60, 0.05, 5, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-021,vol_drawdown_cash,"[60, 0.05, 20, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-022,vol_drawdown_cash,"[60, 0.05, 20, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-023,vol_drawdown_cash,"[60, 0.05, 20, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-024,vol_drawdown_cash,"[60, 0.1, 5, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-025,vol_drawdown_cash,"[60, 0.1, 5, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-026,vol_drawdown_cash,"[60, 0.1, 5, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-027,vol_drawdown_cash,"[60, 0.1, 20, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-028,vol_drawdown_cash,"[60, 0.1, 20, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-029,vol_drawdown_cash,"[60, 0.1, 20, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-030,vol_drawdown_cash,"[60, 0.15, 5, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-031,vol_drawdown_cash,"[60, 0.15, 5, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-032,vol_drawdown_cash,"[60, 0.15, 5, 1.0]",1.0,False,False
+HE-vol_drawdown_cash-033,vol_drawdown_cash,"[60, 0.15, 20, 0.4]",1.0,False,False
+HE-vol_drawdown_cash-034,vol_drawdown_cash,"[60, 0.15, 20, 0.7]",1.0,False,False
+HE-vol_drawdown_cash-035,vol_drawdown_cash,"[60, 0.15, 20, 1.0]",1.0,False,False
+HE-multiscale_breakout-000,multiscale_breakout,"[[20, 60], 20, 5, ""cash""]",1.0,False,False
+HE-multiscale_breakout-001,multiscale_breakout,"[[20, 60], 20, 5, ""510300""]",1.0,False,False
+HE-multiscale_breakout-002,multiscale_breakout,"[[20, 60], 20, 20, ""cash""]",1.0,False,False
+HE-multiscale_breakout-003,multiscale_breakout,"[[20, 60], 20, 20, ""510300""]",1.0,False,False
+HE-multiscale_breakout-004,multiscale_breakout,"[[20, 60], 60, 5, ""cash""]",1.0,False,False
+HE-multiscale_breakout-005,multiscale_breakout,"[[20, 60], 60, 5, ""510300""]",1.0,False,False
+HE-multiscale_breakout-006,multiscale_breakout,"[[20, 60], 60, 20, ""cash""]",1.0,False,False
+HE-multiscale_breakout-007,multiscale_breakout,"[[20, 60], 60, 20, ""510300""]",1.0,False,False
+HE-multiscale_breakout-008,multiscale_breakout,"[[20, 120], 20, 5, ""cash""]",1.0,False,False
+HE-multiscale_breakout-009,multiscale_breakout,"[[20, 120], 20, 5, ""510300""]",1.0,False,False
+HE-multiscale_breakout-010,multiscale_breakout,"[[20, 120], 20, 20, ""cash""]",1.0,False,False
+HE-multiscale_breakout-011,multiscale_breakout,"[[20, 120], 20, 20, ""510300""]",1.0,False,False
+HE-multiscale_breakout-012,multiscale_breakout,"[[20, 120], 60, 5, ""cash""]",1.0,False,False
+HE-multiscale_breakout-013,multiscale_breakout,"[[20, 120], 60, 5, ""510300""]",1.0,False,False
+HE-multiscale_breakout-014,multiscale_breakout,"[[20, 120], 60, 20, ""cash""]",1.0,False,False
+HE-multiscale_breakout-015,multiscale_breakout,"[[20, 120], 60, 20, ""510300""]",1.0,False,False
+HE-multiscale_breakout-016,multiscale_breakout,"[[60, 120], 20, 5, ""cash""]",1.0,False,False
+HE-multiscale_breakout-017,multiscale_breakout,"[[60, 120], 20, 5, ""510300""]",1.0,False,False
+HE-multiscale_breakout-018,multiscale_breakout,"[[60, 120], 20, 20, ""cash""]",1.0,False,False
+HE-multiscale_breakout-019,multiscale_breakout,"[[60, 120], 20, 20, ""510300""]",1.0,False,False
+HE-multiscale_breakout-020,multiscale_breakout,"[[60, 120], 60, 5, ""cash""]",1.0,False,False
+HE-multiscale_breakout-021,multiscale_breakout,"[[60, 120], 60, 5, ""510300""]",1.0,False,False
+HE-multiscale_breakout-022,multiscale_breakout,"[[60, 120], 60, 20, ""cash""]",1.0,False,False
+HE-multiscale_breakout-023,multiscale_breakout,"[[60, 120], 60, 20, ""510300""]",1.0,False,False
