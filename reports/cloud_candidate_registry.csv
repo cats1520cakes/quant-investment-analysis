@@ -6,3 +6,4 @@ phase3_im_tsmom,futures,eliminated,official_exchange_daily,worst deposit-timing 
 phase3_etf_u4_lb60_top2_monthly,etf_rotation,eliminated,development_official_raw_unadjusted_signals,worst timing success 0.02564; strict candidate 0 due numeric and accounting gates
 phase3_cffex_crowding_partial29m,futures_crowding,blocked,official_exchange_daily_signal_date,implementation smoke only; 29/195 months; strict candidates 0
 phase3_cffex_crowding_2026h1,futures_crowding,blocked,official_exchange_daily_plus_exact_expiry,96 direction maps resolved but horizon below W12/W24; strict candidates 0
+phase3_small_capital_2026h1,derivative_feasibility,blocked,official_daily_plus_single_margin_snapshot,IF IC IM 100pct infeasible in six-month screen; no W12/W24; strict candidates 0
