@@ -16,6 +16,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="config/phase3_etf_data.yaml")
     parser.add_argument("--data-root", default="")
+    parser.add_argument("--timeout", type=float, default=20.0)
     args = parser.parse_args()
     config_path = Path(args.config)
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
@@ -25,7 +26,7 @@ def main() -> None:
     frames, records = [], []
     for code in codes:
         for adjustment in ("raw", "hfq"):
-            path = download_tencent_day(code, adjustment, raw_root / f"{code}_{adjustment}.json")
+            path = download_tencent_day(code, adjustment, raw_root / f"{code}_{adjustment}.json", timeout=args.timeout)
             frame = parse_tencent_day(json.loads(path.read_text(encoding="utf-8")), code, adjustment)
             frames.append(frame)
             market = "sh" if code.startswith("5") else "sz"
