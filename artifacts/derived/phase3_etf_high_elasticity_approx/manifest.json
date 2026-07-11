@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "specifications": 204,
+  "strict_candidates": 0,
+  "approx_base_target_passes": 0,
+  "tier": "free_real_approx",
+  "strict_promotion_allowed": false,
+  "tencent_159915_raw_sha256": "dfcdfa5ae9030fecf926d3fb28eae72568ae93c12d80de98d4f69080c0f64171",
+  "official_159915_action_manifest": "460 announcements/10 pages/0 dividends/0 share changes/2 suspension-resumption events",
+  "liquidity_limit": "159915 vendor volume units undocumented and no official amount; capacity gate cannot pass strict",
+  "asset_identity_passed": true
+}
