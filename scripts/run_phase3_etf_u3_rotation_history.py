@@ -30,6 +30,7 @@ def adjusted_signal(close, ev):
 
 def simulate(dates, close, opn, trad, amount, weights, ev, timing, hold):
  cash=0.; shares={c:0 for c in CODES}; pending={}; fees=turn=blocked=orders=0; nav=[]; flows=[]
+ reasons={"funds_insufficient":0,"lot_rounding":0,"suspension_or_missing_price":0,"target_change_unfilled":0}
  by_record={}; by_pay={}; by_ex={}
  for x in ev.itertuples():
   by_record.setdefault(pd.Timestamp(x.record_date),[]).append(x); by_pay.setdefault(pd.Timestamp(x.pay_date),[]).append(x); by_ex.setdefault(pd.Timestamp(x.ex_date),[]).append(x)
@@ -47,22 +48,24 @@ def simulate(dates, close, opn, trad, amount, weights, ev, timing, hold):
   if gi>0 and gi%hold==0:
    px=opn.loc[d]; prior_amt=amount.iloc[gi-1]; n0=cash+sum(shares[c]*close.loc[d,c] for c in CODES); target=weights.iloc[gi-1]
    desired={c:int(n0*max(float(target[c]),0)/px[c]/100)*100 if np.isfinite(px[c]) else shares[c] for c in CODES}
+   for c in CODES:
+    if np.isfinite(px[c]) and target[c]>0 and n0*float(target[c])/px[c] >= 1 and desired[c]==0: reasons['lot_rounding']+=1
    for side in ('sell','buy'):
     for c in CODES:
      q=desired[c]-shares[c]
      if (side=='sell' and q>=0) or (side=='buy' and q<=0): continue
      orders+=1
-     if not bool(trad.loc[d,c]) or not np.isfinite(px[c]): blocked+=1; continue
+     if not bool(trad.loc[d,c]) or not np.isfinite(px[c]): blocked+=1; reasons['suspension_or_missing_price']+=1; continue
      cap=max(float(prior_amt[c])*0.05,0); maxq=int(cap/px[c]/100)*100
      qty=min(abs(q),maxq)
-     if qty<=0: blocked+=1; continue
+     if qty<=0: blocked+=1; reasons['target_change_unfilled']+=1; continue
      if side=='sell':
-      if qty<abs(q): blocked+=1
+      if qty<abs(q): blocked+=1; reasons['target_change_unfilled']+=1
       gross=qty*px[c]; fee=max(5.,gross*.0007); cash+=gross-fee; shares[c]-=qty
      else:
       affordable=int(max(cash-5,0)/(px[c]*1.0007)/100)*100; qty=min(qty,affordable)
-      if qty<=0: blocked+=1; continue
-      if qty<q: blocked+=1
+      if qty<=0: blocked+=1; reasons['funds_insufficient']+=1; continue
+      if qty<q: blocked+=1; reasons['funds_insufficient' if affordable<q else 'target_change_unfilled']+=1
       gross=qty*px[c]; fee=max(5.,gross*.0007); cash-=gross+fee; shares[c]+=qty
      fees+=fee; turn+=gross
   if timing=='ending' and me[j]: cash+=30000; flow=30000
@@ -70,7 +73,7 @@ def simulate(dates, close, opn, trad, amount, weights, ev, timing, hold):
   if cash < -1e-7 or abs(n-(cash+sum(shares[c]*close.loc[d,c] for c in CODES)))>1e-7: raise RuntimeError('asset identity')
   nav.append(n); flows.append(flow)
  a=np.array(nav); peak=np.maximum.accumulate(a); dd=np.zeros_like(a); np.divide(a,peak,out=dd,where=peak>0); dd=np.where(peak>0,dd-1,0)
- return {'w12':a[min(len(a)-1,np.searchsorted(dates,dates[0]+pd.DateOffset(months=12),side='left')-1)],'w24':a[-1],'max_drawdown':float(-dd.min()),'fees':fees,'turnover':turn,'blocked_orders':blocked,'orders':orders,'unexecutable_rate':blocked/max(orders,1)}
+ return {'w12':a[min(len(a)-1,np.searchsorted(dates,dates[0]+pd.DateOffset(months=12),side='left')-1)],'w24':a[-1],'max_drawdown':float(-dd.min()),'fees':fees,'turnover':turn,'blocked_orders':blocked,'orders':orders,'unexecutable_rate':blocked/max(orders,1),**reasons,'asset_identity_passed':True,'negative_cash_events':0}
 
 def evaluate_spec(item):
  si,spec=item; top,mom,absolute,fallback,hold=spec; close=G['close']; signal=G['signal']
