@@ -44,3 +44,11 @@
 - 2024-07 and 2024-12 were recovered with bounded 60-second single-worker resumes; all 12/12 archives then passed a fresh cache-content validation pass.
 - Durable official panel: 189,422 rows, 3,032-contract master, 2024-01-02..2024-12-31, all seven IF/IH/IC/IM/IO/HO/MO products. Panel hash `b0eb01683556edcf193560d505e03d26fb8a4dfcfd690263e369ad6dbe4bd45e`.
 - This is one complete year, not a 24-month evaluation interval. W12/W24 promotion remains blocked pending adjacent continuous official coverage and historical effective-date trade parameters. Strict candidates: **0**.
+
+## 2025 first pass and H2 checkpoint
+
+- First pass recovered 10/12 official archives; gaps are 2025-01 and 2025-03. Failures did not stop later months.
+- 2025H2 passed a second complete cache validation and durable publication: 6/6 months, 89,822 rows, 1,636 master rows, 2025-07-01..2025-12-31, seven products.
+- Panel hash: `bd68f5e8107a541a66bbf831eb50fc33b94b7f652f1e2a6719e85ae03507f746`; master hash: `6f4d7a818914adafb9c0577658a993d1ce290d9739658b3caa56d2e375322f39`.
+- The generated master labels expiry as `last_official_daily_record`; this is explicitly **not accepted** as official expiry evidence. Derivative strategy evaluation remains blocked until official as-of history is bound.
+- Strict candidates: **0**.
