@@ -97,6 +97,12 @@
 - Tests: 30 passed
 - Strict candidates: **0**
 
+## 2024Q4 batch 1
+
+- Scope 2024-10-01..11-15: valid 29/46, unavailable 17
+- Next scope: 2024-11-16..12-31
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
