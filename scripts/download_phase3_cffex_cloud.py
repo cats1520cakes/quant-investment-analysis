@@ -51,6 +51,11 @@ def main() -> None:
     attempt_path.parent.mkdir(parents=True, exist_ok=True)
     attempts_log = json.loads(attempt_path.read_text(encoding="utf-8")) if attempt_path.exists() else {}
 
+    def persist_attempts() -> None:
+        temporary_attempt = attempt_path.with_suffix(".json.tmp")
+        temporary_attempt.write_text(json.dumps(attempts_log, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        temporary_attempt.replace(attempt_path)
+
     def acquire(month: str) -> tuple[str, Path, str, dict[str, object]]:
         path = archive_root / f"{month}.zip"
         try:
@@ -99,6 +104,7 @@ def main() -> None:
                 failures.append(month)
                 consecutive_failures += 1
                 attempts_log[month] = {"status": "failed", "error": str(exc), "attempts": args.attempts}
+                persist_attempts()
                 print(f"[cffex-cloud] {index}/{len(months)} month={month} status=failed", flush=True)
                 if consecutive_failures >= args.max_consecutive_failures:
                     for pending in futures:
@@ -108,10 +114,9 @@ def main() -> None:
             completed_paths[month] = path
             consecutive_failures = 0
             attempts_log[month] = {"status": status, "rows": int(summary["rows"]), "url": cffex_month_url(month), "bytes": path.stat().st_size, "sha256": hashlib.sha256(path.read_bytes()).hexdigest(), "attempt_details": summary.get("attempt_details", [])}
+            persist_attempts()
             print(f"[cffex-cloud] {index}/{len(months)} month={month} status={status} rows={summary['rows']}", flush=True)
-    temporary_attempt = attempt_path.with_suffix(".json.tmp")
-    temporary_attempt.write_text(json.dumps(attempts_log, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    temporary_attempt.replace(attempt_path)
+    persist_attempts()
     if failures:
         raise SystemExit(f"CFFEX acquisition incomplete: valid={len(completed_paths)}/{len(months)} failed={len(failures)}")
     paths = [completed_paths[month] for month in months]
