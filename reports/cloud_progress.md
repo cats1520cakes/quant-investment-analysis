@@ -76,3 +76,8 @@
 - Official last-trading-day, listing date, contract month, limit prices and position-limit raw fields have 100% within-snapshot coverage. Futures limit percentages are complete; IO/HO/MO percentage cells are absent although official limit prices are present, so percentage-based execution remains blocked for options.
 - This endpoint does not supply historical initial/maintenance margin, multiplier or minimum tick. Those four official rule fields remain 0% and require versioned rule sources with effective dates.
 - Panel/calendar binding is unavailable after runtime pruning, so Q1 remains evidence collection rather than an execution master. Strict candidates: **0**.
+
+## 2024Q2 batch 1 parameter recovery
+
+- 2024-04-01..05-15 completed: 45 natural dates, 28 valid official snapshots, 17 unavailable weekend/holiday dates. Raw snapshots remain runtime-only.
+- This is a resumable acquisition checkpoint, not a complete-quarter coverage claim. Strict candidates: **0**.
