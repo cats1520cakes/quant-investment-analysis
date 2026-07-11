@@ -41,3 +41,8 @@ def test_undeclared_gap_and_conflicting_quote_fail_closed() -> None:
     conflicting.loc[0, "trade_date"] = "20220902"
     with pytest.raises(SseEtfDataError, match="conflicts"):
         expand_official_calendar(conflicting, ["20220902"])
+
+
+def test_parse_rejects_declared_payload_without_rows() -> None:
+    with pytest.raises(SseEtfDataError, match="kline"):
+        parse_sse_dayk({"total": 1}, "510050")
