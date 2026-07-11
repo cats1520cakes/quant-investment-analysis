@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "valid_official_raw_months": 71,
+  "target_months": 195,
+  "new_since_64m_checkpoint": 7,
+  "new_valid_months": ["202307", "202312", "202401", "202402", "202403", "202404", "202405"],
+  "complete_2023_segment": true,
+  "segment_2024_panel_promoted": false,
+  "segment_2024_blocker": "post-write Parquet footer validation",
+  "evidence_tier": "official_exchange_raw_validated",
+  "canonical_panel_complete": false,
+  "strict_candidates": 0
+}
