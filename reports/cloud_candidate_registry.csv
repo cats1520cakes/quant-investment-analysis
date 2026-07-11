@@ -1,0 +1,5 @@
+experiment_id,family,status,data_tier,reason
+baseline_phase1,index_proxy,eliminated,proxy_research,dual-target success only low single digits
+phase2_s4_weekly,stock_auxiliary,eliminated,free_real,best observed success 0.0629
+phase2_option_proxy,option_proxy,eliminated,proxy_research,best observed success 0.0914 and no executable chain
+phase3_im_tsmom,futures,eliminated,official_exchange_daily,worst deposit-timing success 0.25 and margin-call windows 0.083
