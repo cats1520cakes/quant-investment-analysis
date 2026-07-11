@@ -116,3 +116,10 @@
 - Rebuilt SSE U4 canonical data from official endpoints: 14,214 rows, four codes, three confirmed suspension rows, panel SHA256 `f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2`.
 - Source units remain fund shares and CNY. Tencent raw/hfq cross-check is complete for U4 only; U2 was not promoted after one hfq failure.
 - Corporate-action announcement coverage for 2024-2025 is not yet proven complete, so strict ETF evaluation remains fail-closed. Strict candidates: **0**.
+
+## 2026-07-12 — long-history ETF sample gate and U3 B evaluation
+
+- U4 remains time-evidence-pending: 4 complete non-overlapping W24 blocks through 2025 versus 5 required.
+- U3 was selected without return information by removing only later-inception 512100. Common inception is 2013-03-15; first post-warmup signal is 2013-09-11; 6 W24 blocks are available.
+- Historical official event evidence closed for the SSE index chain: 710 announcements, 42 candidate bodies, 22 stable account events, unresolved candidates 0.
+- Frozen B rotation completed 72 specifications over 124 monthly cohorts and both deposit timings. Dual-target passes 0; strict candidates **0**. Best worst W12/W24 were 321,724/646,617 (different specifications).
