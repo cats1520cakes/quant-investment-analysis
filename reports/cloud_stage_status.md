@@ -103,6 +103,13 @@
 - Next scope: 2024-11-16..12-31
 - Strict candidates: **0**
 
+## 2024Q4 complete
+
+- Valid official snapshots: 59/92 natural dates; unavailable 33
+- Coverage matrix: 413 rows, seven products
+- Runtime 24-month raw/panel: pruned; exact hash restoration required
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
