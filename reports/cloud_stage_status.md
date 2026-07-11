@@ -125,6 +125,14 @@
 - Official 2024-2025 company-action coverage: blocking
 - Strict candidates: **0**
 
+## B historical sample feasibility
+
+- U4 common start: 2016-11-04; 120-day warmup first signal: 2017-05-04
+- Through 2025-12: 104 months, at most four nonoverlap 24-month blocks
+- Formal minimum: five blocks; earliest sufficient end: 2027-04
+- Historical extension remains useful for cohort p5/worst and reverse-time validation, but cannot formally pass the sample gate today
+- Strict candidates: **0**
+
 ## 2024 archive recovery status
 
 - Revalidated official months: 10/12
