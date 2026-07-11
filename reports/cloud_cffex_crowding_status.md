@@ -11,3 +11,5 @@ Quantile thresholds use `value.shift(1).expanding(...)`, so the current observat
 Partial official IF smoke evidence: 29 months, 580 signal dates, 12 resolved gates and 6,960 gate-date rows. The full grid has 48 specifications; 36 IH/IC/IM entries are blocked as product-absent in the partial horizon. No W12/W24 claim is made from this partial panel. Strict candidates: **0**.
 
 The integration runner now combines a causal gate with predeclared 20/60-day futures direction rules and exports resolved direction maps. On the partial panel all 24 IF base/gate combinations are deliberately blocked by right-censored contract expiries at the 2012-08 panel boundary. No last-observation date is treated as a real expiry. Full integration requires the official expiry-history metadata and complete panel.
+
+For the separately recovered 2026H1 segment, 45/45 official trade-parameter snapshots now cover all 1,694 master contracts. This removes right-censoring and resolves 96 base-rule/gate direction maps with zero errors. Because the segment is only six months, it cannot enter W12/W24 ranking and remains blocked rather than promoted.
