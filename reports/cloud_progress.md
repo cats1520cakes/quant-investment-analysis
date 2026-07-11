@@ -86,3 +86,7 @@
 
 - Q2 completed: 91 natural dates, 59 valid official snapshots and 32 unavailable weekend/holiday dates. Coverage matrix has 413 date-product rows across all seven products; source-set SHA256 is `d82f40768bb182cd6773ed9dfd8b785403e378dc64e46a4898c9769f3b5b9c34`.
 - Snapshot fields retain the Q1 pattern. Historical exchange margin, multiplier and minimum-tick rule versions remain the minimum补证 set; no synthetic maintenance margin is introduced. Strict candidates: **0**.
+
+## 2024Q3 batch 1
+
+- 2024-07-01..08-15 completed: 46 natural dates, 33 valid official snapshots and 13 unavailable dates. Raw remains runtime-only; quarter coverage is not yet promoted. Strict candidates: **0**.
