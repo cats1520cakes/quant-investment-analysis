@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "scope": "2024-01-01/2024-01-10",
+  "natural_dates_attempted": 10,
+  "official_valid_snapshots": 7,
+  "unavailable_dates": 3,
+  "minimum_contracts": 672,
+  "maximum_contracts": 684,
+  "source_tier": "official_cffex_trade_parameter_snapshot",
+  "panel_calendar_bound": false,
+  "metadata_gate_passed": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0,
+  "raw_data_committed": false
+}
