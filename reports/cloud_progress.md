@@ -60,3 +60,10 @@
 - Combined 2024+2025 panel: 24/24 months, 365,652 rows, 4,910 master rows, 2024-01-02..2025-12-31; panel hash `7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b`.
 - Raw archive lineage is bound by source-set hash `9c00d2abf8112e73cee866653b30481f5617b584d97f717a3c34eac2155b1796`.
 - Data continuity gate passed. Official effective-date expiry/margin/limit history gate remains blocked; no derivative backtest is released using panel-last-record expiry. Strict candidates: **0**.
+
+## Official trade-parameter calendar recovery
+
+- Added an unbound calendar-crawl mode for recovery after runtime-cache loss. It never promotes metadata: valid official snapshots must later be reconciled to the frozen panel calendar and contract master.
+- Every attempt is atomically persisted with URL, date, HTTP status where available, bytes, SHA-256, row/contract counts, failure text, and evidence tier.
+- Smoke scope 2024-01-01..10: 7 official valid snapshots and 3 unavailable holiday/weekend dates; valid snapshots contain 672–684 contracts.
+- Tests: 24/24 passed across the trade-parameter adapter and new calendar/atomic-ledger regressions. Metadata and strategy gates remain blocked. Strict candidates: **0**.
