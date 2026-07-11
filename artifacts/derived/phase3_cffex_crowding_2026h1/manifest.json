@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "panel_sha256": "a93ddf92dff3f064ddd40616b018a358f90c063cd06b77b6058b83cfe83e81f4",
+  "config_sha256": "feec2477c651c2e9b3d76a8ffee74fb8e35c110723215588843697484a1e11a2",
+  "gate_specs": 48,
+  "gated_direction_specs": 96,
+  "integration_errors": [],
+  "strict_candidates": 0,
+  "execution_lag": "signal close to next open",
+  "evidence_tier": "official_exchange_daily_signal_date"
+}
