@@ -23,3 +23,5 @@
 - Small-capital executable screen on 116 dates: with 12% margin and 15% cash buffer, IF/IC/IM are infeasible on 100% of 2026H1 dates under both deposit timings; IH is infeasible on 60.34% (beginning) and 81.90% (ending). This uses the official 2026-06-23 margin snapshot, not a complete effective-date schedule.
 - Fixed-premium long-option lower bound is also mostly infeasible: at 0.5% NAV, IO/HO/MO infeasible shares are 96.55%/93.10%/98.28% for beginning deposits and 98.28%/97.41%/98.28% for ending deposits. DTE and exact target-delta constraints can only make these rates worse.
 - Sparse recovery continued into 2023: 10/12 months validated; 2023-07 and 2023-12 remain in the gap ledger. Total official monthly archives are 64/195, 10,377,039 bytes. No incomplete 2023 segment panel was promoted.
+- 2023-07 and 2023-12 were subsequently recovered, completing the 2023 12/12 segment. 2024-01..05 raw archives also validated, taking raw coverage to 71/195.
+- The 2024 five-month panel failed post-write Parquet footer validation. It was not promoted; a new immediate post-write Parquet/row-count gate now fails before manifest publication. Strict candidates remain 0.
