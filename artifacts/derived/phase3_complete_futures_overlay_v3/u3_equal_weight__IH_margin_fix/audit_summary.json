@@ -1,0 +1,18 @@
+{
+  "rerun_specs": 20,
+  "identity_fixed_specs": 20,
+  "remaining_identity_failures": 0,
+  "margin_call_specs": 20,
+  "forced_liquidation_specs": 20,
+  "dual_target_specs": 0,
+  "best_worst_W12": 391441.15224000014,
+  "best_worst_W24": 827327.6591500002,
+  "worst_drawdown": -0.1866982625186062,
+  "fee_range": [
+    698.63597,
+    982.3481199999992
+  ],
+  "before_after_rows": 40,
+  "strict_candidates": 0,
+  "lineage": "v3_margin_cash_negative_trigger_fix"
+}
