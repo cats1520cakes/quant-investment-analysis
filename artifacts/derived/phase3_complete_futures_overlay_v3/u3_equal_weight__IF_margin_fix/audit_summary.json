@@ -1,0 +1,23 @@
+{
+  "product": "IF",
+  "base_specs": 108,
+  "corrected_specs": 40,
+  "final_specs": 108,
+  "economic_dual_target_specs": 0,
+  "best_worst_w12": 461503.31995,
+  "best_worst_w24": 923536.36665,
+  "remaining_asset_identity_failures": 0,
+  "strict_candidates": 0,
+  "strict_blockers": ["daily_official_margin", "five_nonoverlapping_w24_blocks"],
+  "evidence_tier": "free_real_approx_conservative_margin",
+  "max_drawdown_min": -0.2816751278751421,
+  "max_drawdown_max": -0.0706548481416751,
+  "margin_peak_min": 229740.0,
+  "margin_peak_max": 252936.0,
+  "margin_mean_min": 52927.81855670103,
+  "margin_mean_max": 145088.61030927836,
+  "margin_to_nav_peak_min": 0.3364798500924786,
+  "margin_to_nav_peak_max": 0.913572083579256,
+  "fees_min": 412.27829,
+  "fees_max": 1429.5208
+}
