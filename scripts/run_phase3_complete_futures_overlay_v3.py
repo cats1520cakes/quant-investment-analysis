@@ -11,8 +11,8 @@ def atomic_csv(d,p):
  try:d.to_csv(t,index=False);os.replace(t,p)
  finally:
   if os.path.exists(t):os.unlink(t)
-def one(spec,timing,etf,fut,meta,events):
- p=json.loads(spec.parameters);L=SharedPortfolioLedger();nav=[];etfp=futp=0.;first='';feasible=attempts=rolls=identity=0;last_month=None;cur=None;prev_vol={};margin=[];rat=[];reject=defaultdict(int);monthly=defaultdict(lambda:defaultdict(int));signal=fut.groupby('date').settle.mean();trend=signal/signal.shift(p['trend_window'])-1;dailyf={d:x.set_index('contract') for d,x in fut.groupby('date')};dailye={d:x.set_index('code') for d,x in etf.groupby('date')};event_by_date=defaultdict(list)
+def one(spec,timing,etf,fut,meta,events,capture_daily=False):
+ p=json.loads(spec.parameters);L=SharedPortfolioLedger();nav=[];daily_ledger=[];etfp=futp=0.;first='';feasible=attempts=rolls=identity=0;last_month=None;cur=None;prev_vol={};margin=[];rat=[];reject=defaultdict(int);monthly=defaultdict(lambda:defaultdict(int));signal=fut.groupby('date').settle.mean();trend=signal/signal.shift(p['trend_window'])-1;dailyf={d:x.set_index('contract') for d,x in fut.groupby('date')};dailye={d:x.set_index('code') for d,x in etf.groupby('date')};event_by_date=defaultdict(list)
  for e in events.itertuples(index=False):event_by_date[str(e.record_date).replace('-','')].append(e)
  for d in sorted(set(dailye)&set(dailyf)):
   ds=d.strftime('%Y%m%d');month=d.strftime('%Y%m');bars=dailye[d];day=dailyf[d];mkey=(d.year,d.month)
@@ -41,20 +41,27 @@ def one(spec,timing,etf,fut,meta,events):
    else:reason='other'
    if reason:reject[reason]+=1;monthly[month][reason]+=1
   n=L.nav(closes);nav.append((d,n));margin.append(L.margin);rat.append(L.margin/n if n>0 else np.nan)
+  if capture_daily:daily_ledger.append({'date':ds,'cash':L.cash,'margin':L.margin,'futures_qty':L.futures_qty,'futures_contract':cur or '','shares_510050':L.shares['510050'],'shares_510300':L.shares['510300'],'shares_510500':L.shares['510500'],'etf_market_value':sum(L.shares[c]*closes[c] for c in CODES),'nav':n,'fees_cumulative':L.fees,'futures_pnl_cumulative':futp,'asset_identity_residual':n-(L.cash+L.margin+sum(L.shares[c]*closes[c] for c in CODES))})
   try:L.assert_identity(closes)
   except AssertionError:identity+=1
   prev_vol.update(day.volume.fillna(0).astype(float).to_dict())
   if timing=='ending' and mkey!=last_month:L.deposit(30000)
   last_month=mkey
- s=pd.Series(dict(nav));w12=float(s.iloc[min(251,len(s)-1)]);w24=float(s.iloc[-1]);return {'spec_id':spec.spec_id,'deposit_timing':timing,'first_feasible_month':first,'feasible_date_rate':feasible/max(attempts,1),'W12':w12,'W24':w24,'etf_pnl':etfp,'futures_pnl':futp,'margin_peak':max(margin,default=0.),'margin_mean':float(np.nanmean(margin)),'margin_to_nav_peak':float(np.nanmax(rat)) if any(pd.notna(x) for x in rat) else 0.,**{f'reject_{k}':reject[k] for k in ['free_cash_insufficient','nav_multiple_gate','prior_day_volume','limit_price','contract_unavailable','expiry_roll_unavailable','other']},'monthly_reject_json':json.dumps(monthly,separators=(',',':')),'margin_calls':L.margin_calls,'forced_liquidations':L.forced_liquidations,'rolls':rolls,'fees':L.fees,'max_drawdown':float((s/s.cummax()-1).min()),'asset_identity_failures':identity,'u3_codes_traded':','.join(c for c in CODES if L.shares[c]>0),'dual_target_pass':w12>=500000 and w24>=1200000}
+ s=pd.Series(dict(nav));w12=float(s.iloc[min(251,len(s)-1)]);w24=float(s.iloc[-1]);result={'spec_id':spec.spec_id,'deposit_timing':timing,'first_feasible_month':first,'feasible_date_rate':feasible/max(attempts,1),'W12':w12,'W24':w24,'etf_pnl':etfp,'futures_pnl':futp,'margin_peak':max(margin,default=0.),'margin_mean':float(np.nanmean(margin)),'margin_to_nav_peak':float(np.nanmax(rat)) if any(pd.notna(x) for x in rat) else 0.,**{f'reject_{k}':reject[k] for k in ['free_cash_insufficient','nav_multiple_gate','prior_day_volume','limit_price','contract_unavailable','expiry_roll_unavailable','other']},'monthly_reject_json':json.dumps(monthly,separators=(',',':')),'margin_calls':L.margin_calls,'forced_liquidations':L.forced_liquidations,'rolls':rolls,'fees':L.fees,'max_drawdown':float((s/s.cummax()-1).min()),'asset_identity_failures':identity,'u3_codes_traded':','.join(c for c in CODES if L.shares[c]>0),'dual_target_pass':w12>=500000 and w24>=1200000};return result,pd.DataFrame(daily_ledger)
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--product',required=True);ap.add_argument('--spec-ids',nargs='*');ap.add_argument('--output-suffix',default='');a=ap.parse_args();family=f'u3_equal_weight__{a.product}';grid=pd.read_csv(GRID);grid=grid[grid.family.eq(family)];
+ ap=argparse.ArgumentParser();ap.add_argument('--product',required=True);ap.add_argument('--spec-ids',nargs='*');ap.add_argument('--output-suffix',default='');ap.add_argument('--schema-version',type=int,default=3);a=ap.parse_args();family=f'u3_equal_weight__{a.product}';grid=pd.read_csv(GRID);grid=grid[grid.family.eq(family)];
  if a.spec_ids:grid=grid[grid.spec_id.isin(a.spec_ids)]
  etf=pd.read_parquet(EP);etf=etf[etf.code.astype(str).isin(CODES)].copy();etf['date']=pd.to_datetime(etf.trade_date);f=pd.read_parquet(FP);f=f[f.instrument_type.eq('future')&f['product'].eq(a.product)].copy();f['date']=pd.to_datetime(f.trade_date);m=pd.read_parquet(MP);ev=pd.read_csv(DIV);ev=ev[ev.code.astype(str).isin(CODES)];out=OUT/(family+a.output_suffix);parts=out/'parts';parts.mkdir(parents=True,exist_ok=True)
  for i,s in enumerate(grid.itertuples(index=False),1):
   part=parts/f'{s.spec_id}.csv'
   if part.exists():continue
-  atomic_csv(pd.DataFrame([one(s,t,etf,f,m,ev) for t in ('beginning','ending')]),part);atomic_csv(pd.DataFrame([{'spec_id':x.stem,'status':'complete'} for x in sorted(parts.glob('*.csv'))]),out/'attempt_ledger.csv')
+  rows=[]
+  for t in ('beginning','ending'):
+   row,ledger=one(s,t,etf,f,m,ev,capture_daily=a.schema_version>=4)
+   if a.schema_version>=4:
+    lp=out/'daily_ledgers'/f'{s.spec_id}_{t}.parquet';lp.parent.mkdir(parents=True,exist_ok=True);tmp=lp.with_suffix('.tmp');ledger.to_parquet(tmp,index=False,compression='zstd');os.replace(tmp,lp);row['daily_ledger_sha256']=hashlib.sha256(lp.read_bytes()).hexdigest();row['daily_ledger_rows']=len(ledger)
+   rows.append(row)
+  atomic_csv(pd.DataFrame(rows),part);atomic_csv(pd.DataFrame([{'spec_id':x.stem,'status':'complete'} for x in sorted(parts.glob('*.csv'))]),out/'attempt_ledger.csv')
   if i%12==0:print(family,i,len(grid),flush=True)
- r=pd.concat([pd.read_csv(x) for x in sorted(parts.glob('*.csv'))]);atomic_csv(r,out/'results.csv');w=r.groupby('spec_id').agg(W12=('W12','min'),W24=('W24','min'),margin_peak=('margin_peak','max'),asset_identity_failures=('asset_identity_failures','sum')).reset_index();atomic_csv(w.sort_values('W24',ascending=False),out/'pareto.csv');man={'schema_version':3,'family':family,'specifications':len(grid),'completed':r.spec_id.nunique(),'timing_rows':len(r),'grid_sha256':hashlib.sha256(GRID.read_bytes()).hexdigest(),'panel_sha256':hashlib.sha256(FP.read_bytes()).hexdigest(),'u3_codes':CODES,'strict_candidates':0,'economic_dual_target_specs':int(w.eval('W12>=500000 and W24>=1200000 and asset_identity_failures==0').sum()),'evidence_tier':'free_real_approx_conservative_margin'};(out/'manifest.json').write_text(json.dumps(man,indent=2)+'\n');print(json.dumps(man))
+ r=pd.concat([pd.read_csv(x) for x in sorted(parts.glob('*.csv'))]);atomic_csv(r,out/'results.csv');w=r.groupby('spec_id').agg(W12=('W12','min'),W24=('W24','min'),margin_peak=('margin_peak','max'),asset_identity_failures=('asset_identity_failures','sum')).reset_index();atomic_csv(w.sort_values('W24',ascending=False),out/'pareto.csv');man={'schema_version':a.schema_version,'family':family,'specifications':len(grid),'completed':r.spec_id.nunique(),'timing_rows':len(r),'grid_sha256':hashlib.sha256(GRID.read_bytes()).hexdigest(),'panel_sha256':hashlib.sha256(FP.read_bytes()).hexdigest(),'u3_codes':CODES,'daily_ledger':a.schema_version>=4,'strict_candidates':0,'economic_dual_target_specs':int(w.eval('W12>=500000 and W24>=1200000 and asset_identity_failures==0').sum()),'evidence_tier':'free_real_approx_conservative_margin'};(out/'manifest.json').write_text(json.dumps(man,indent=2)+'\n');print(json.dumps(man))
 if __name__=='__main__':main()
