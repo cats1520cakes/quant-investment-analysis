@@ -1,0 +1,47 @@
+{
+  "family": "510300_dca__IF",
+  "specifications": 108,
+  "valid_specs": 108,
+  "invalid_asset_identity_specs": 0,
+  "failure_reason_counts": {
+    "negative_cash_or_identity_gate": 0,
+    "no_futures_execution": 108
+  },
+  "overlay_executed_specs": 0,
+  "economic_dual_target_specs": 0,
+  "best_valid_executed_worst_W12": null,
+  "best_valid_executed_worst_W24": null,
+  "first_feasible_months": [],
+  "feasible_date_rate_range": [
+    0.0,
+    0.0
+  ],
+  "etf_pnl_range": [
+    -3437.300000000001,
+    937.6999999999904
+  ],
+  "futures_pnl_range": [
+    0.0,
+    0.0
+  ],
+  "margin_occupancy": "not_emitted_by_v1_runner; strict reporting gate fail",
+  "margin_calls": 0,
+  "forced_liquidations": 0,
+  "max_rolls": 0,
+  "limit_rejects": 108,
+  "fee_range": [
+    161.91342,
+    215.90988
+  ],
+  "worst_max_drawdown": -0.114462475022156,
+  "asset_identity_failures": 0,
+  "strict_candidates": 0,
+  "evidence_tier": "free_real_approx_conservative_margin",
+  "strict_blockers": [
+    "point_in_time_daily_margin",
+    "five_nonoverlap_W24_blocks",
+    "margin_occupancy_not_emitted"
+  ],
+  "best_etf_only_worst_W12": 419309.48685,
+  "best_etf_only_worst_W24": 875012.38571
+}
