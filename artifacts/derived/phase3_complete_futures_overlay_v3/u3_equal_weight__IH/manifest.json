@@ -1,0 +1,17 @@
+{
+  "schema_version": 3,
+  "family": "u3_equal_weight__IH",
+  "specifications": 108,
+  "completed": 108,
+  "timing_rows": 216,
+  "grid_sha256": "fb61c95be9917b261cef26ad414b410e171320ebeb3c0df2dd4b46279794bbf7",
+  "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "u3_codes": [
+    "510050",
+    "510300",
+    "510500"
+  ],
+  "strict_candidates": 0,
+  "economic_dual_target_specs": 0,
+  "evidence_tier": "free_real_approx_conservative_margin"
+}
