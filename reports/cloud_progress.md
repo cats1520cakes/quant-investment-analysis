@@ -155,3 +155,10 @@
 - Four official SSE ETF histories share 2013-07-29 through 2026-07-10; after 120 common observations the evaluation start is 2014-01-22, providing six complete non-overlapping W24 intervals for ETF evidence. Twelve focused causality, risk-budget, suspension, action and shared-cash tests passed.
 - IH completed 108/108 specifications. Best worst-timing W12/W24 is 385,612/810,311; economic dual-target passes 0; asset-identity failures 0. The derivative execution sample remains one W24 interval and point-in-time official margin is absent, so no strict promotion is possible.
 - The original five-asset v2 remains frozen and blocked pending complete official 159915 canonical history. No four-asset result changes its parameters. Strict candidates: **0**.
+
+## 2026-07-13 — automated workspace-prune recovery
+
+- Platform maintenance removed the runtime cache and the IF atomic parts that had not reached GitHub. The remote IF attempt ledger listed 24+ specifications but no corresponding part or daily-ledger artifacts were recoverable; those rows are not accepted as completed. IF is therefore restarted from 0/108 after data gates recover.
+- Rebuilt all 24 official CFFEX 2024–2025 archives. Two post-download corrupt files were quarantined and individually recovered. The rebuilt panel exactly matches frozen SHA `7a119d96...c380b`, with 365,652 rows and 4,910 contracts; master SHA also exactly matches `c405a1a3...b6de`.
+- Rebuilt the four official SSE ETF histories. Restoring the frozen empty suspension-lineage columns reproduced the exact panel SHA `c3e58154...370ac` and 14,541 rows.
+- Official CFFEX trade-parameter recovery (192 required snapshots) and official 159915 single-date recovery continue. Public raw remains runtime-only. Strict candidates: **0**.
