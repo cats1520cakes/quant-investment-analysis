@@ -44,3 +44,10 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 - Through 2025-12-31 this provides only 4 complete non-overlapping W24 blocks versus the unchanged formal requirement of 5.
 - The fifth block cannot mature before 2027-04. U4 is retained as `time_evidence_pending`, not classified as an economic strategy failure and not promoted.
 - Strict candidates: **0**.
+
+## CFFEX long-option approximation O1/O2 — 2026-07-12
+
+- O1 completed 180/180 specifications (360 deposit-timing paths); O2 completed 360/360 (720 paths).
+- Both families have zero dual-target passes. Worst-timing W12/W24 are 390,000/720,000, reflecting deposits only.
+- Every attempted purchase was infeasible: the cheapest eligible real contract premium exceeded the frozen 0.5%–5% NAV hard budget. No infeasible date was skipped or converted to a fractional contract.
+- Evidence tier is `free_real_approx_daily_open_no_quotes`; the one-W24-block sample gate and missing bid/ask independently prohibit strict promotion. Strict candidates: **0**.
