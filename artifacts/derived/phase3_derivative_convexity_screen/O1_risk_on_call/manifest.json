@@ -1,0 +1,11 @@
+{
+  "family": "O1_risk_on_call",
+  "specifications": 180,
+  "timing_results": 360,
+  "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "metadata_sha256": "4eb34a9563f556473a7dcf936f28822231361dbf6b12ef019aa5960d1313e364",
+  "strict_candidates": 0,
+  "economic_dual_target_specs": 0,
+  "sample_size_gate": "fail_one_W24_block",
+  "evidence_tier": "free_real_approx_daily_open_no_quotes"
+}
