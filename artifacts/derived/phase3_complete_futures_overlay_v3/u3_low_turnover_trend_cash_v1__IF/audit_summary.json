@@ -1,0 +1,10 @@
+{
+  "specifications": 108, "timing_rows": 216, "daily_ledgers": 216, "sha_missing": 0,
+  "identity_fail_specs": 0, "economic_dual_target_specs": 0,
+  "best_worst_w12": 555162.6882099999, "best_worst_w24": 1007194.46583,
+  "worst_mdd": -0.2551016257126152, "margin_calls_total": 72,
+  "forced_liquidations_total": 72, "rolls_total": 1184,
+  "fees_min": 343.04785, "fees_max": 1030.37645,
+  "evidence_tier": "free_real_approx_conservative_margin", "strict_candidates": 0,
+  "strict_blockers": ["five_nonoverlapping_w24_blocks", "official_margin_point_in_time_gate"]
+}
