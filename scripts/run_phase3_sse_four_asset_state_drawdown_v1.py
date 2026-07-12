@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import hashlib, itertools, json, math, os, tempfile
+import argparse, hashlib, itertools, json, math, os, tempfile
 from pathlib import Path
 
 import numpy as np
@@ -88,6 +88,7 @@ def simulate(dates,close,opn,trad,amount,w,ev,timing):
  return {'w12':a[i12],'w24':a[-1],'max_drawdown':float(dd.min()),'fees':fees,'turnover':turn,'unexecutable_rate':blocked/max(orders,1),**reasons,'asset_identity_passed':True},pd.DataFrame(daily)
 
 def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--recompute-required',action='store_true');ap.add_argument('--spec-ids',nargs='*');args=ap.parse_args()
  if sha(OP)!=EXPECTED_OPERATION_SHA:raise RuntimeError('operation manifest hash mismatch')
  em=json.loads(EVENT_MANIFEST.read_text())
  if not em.get('body_gate_passed') or em.get('unresolved_candidates'):raise RuntimeError('company action body gate')
@@ -96,9 +97,10 @@ def main():
  ev=pd.read_csv(EVENTS);ev['code']=ev.code.astype(str);signal=adjusted_signal(close,ev);starts=pd.Series(close.index[240:]).groupby(close.index[240:].to_period('M')).first();starts=[d for d in starts if d+pd.DateOffset(months=24)<=close.index.max()+pd.Timedelta(days=1)]
  specs=list(itertools.product([60,120,240],[.5,.75,1.],[.5,.75,1.],[.08,.12],[.03,.06]));out=ROOT/'run';parts=out/'parts';ledgers=out/'daily_ledgers';parts.mkdir(parents=True,exist_ok=True);ledgers.mkdir(parents=True,exist_ok=True)
  remote_attempt=out/'attempt_ledger.csv'
- remote_complete=set(pd.read_csv(remote_attempt).spec_id.astype(str)) if remote_attempt.exists() else set()
+ remote_complete=set(pd.read_csv(remote_attempt).spec_id.astype(str)) if remote_attempt.exists() and not args.recompute_required else set()
  for i,spec in enumerate(specs):
   sid=f'S4SD-{i:04d}';part=parts/f'{sid}.csv'
+  if args.spec_ids and sid not in set(args.spec_ids):continue
   if part.exists() or sid in remote_complete:continue
   w=weights(spec,signal);rows=[];all_daily=[]
   for timing in ('beginning','ending'):
@@ -107,9 +109,11 @@ def main():
   lp=ledgers/f'{sid}.parquet';tmp=lp.with_suffix('.tmp');pd.concat(all_daily).to_parquet(tmp,index=False,compression='zstd');os.replace(tmp,lp);h=sha(lp);frame=pd.DataFrame(rows);frame['daily_ledger_sha256']=h;frame['daily_ledger_rows']=sum(map(len,all_daily));atomic_csv(frame,part)
   local_done=sorted(parts.glob('*.csv'));all_done=sorted(remote_complete|{p.stem for p in local_done});atomic_csv(pd.DataFrame({'spec_id':all_done,'status':'complete'}),out/'attempt_ledger.csv');atomic_json({'completed_specs':len(all_done),'target_specs':108,'remote_compact_only_specs':len(remote_complete),'new_atomic_parts':len(local_done),'operation_sha256':EXPECTED_OPERATION_SHA,'panel_sha256':sha(PANEL),'event_ledger_sha256':sha(EVENTS),'daily_ledger_files_claimed':len(remote_complete)+len(local_done),'daily_ledger_files_locally_auditable':len(local_done),'reporting_gate':'fail_closed_until_remote_85_large_artifacts_recovered','strict_candidates':0},out/'coverage.json')
   if len(local_done)%6==0:print(f'sse_four_asset_state_drawdown_v1 {len(all_done)}/108 ({len(local_done)} new atomic)',flush=True)
- frames=[pd.read_csv(p) for p in sorted(parts.glob('*.csv'))];res=pd.concat(frames);atomic_csv(res,out/'results_by_cohort_timing_new_23.csv');agg=[]
+ frames=[pd.read_csv(p) for p in sorted(parts.glob('*.csv'))]
+ if not frames:return
+ res=pd.concat(frames);atomic_csv(res,out/'results_by_cohort_timing_recovery.csv');agg=[]
  for sid,g in res.groupby('spec_id'):
   per=g.groupby('cohort_start').agg(w12=('w12','min'),w24=('w24','min'),max_drawdown=('max_drawdown','min'),unexecutable_rate=('unexecutable_rate','max'),fees=('fees','max'),turnover=('turnover','max')).reset_index();blocks=per.iloc[::24].head(6);agg.append({'spec_id':sid,'cohorts':len(per),'worst_w12':per.w12.min(),'p5_w12':per.w12.quantile(.05),'worst_w24':per.w24.min(),'p5_w24':per.w24.quantile(.05),'dual_target_rate':((per.w12>=500000)&(per.w24>=1200000)).mean(),'nonoverlap_blocks':len(blocks),'nonoverlap_dual_passes':int(((blocks.w12>=500000)&(blocks.w24>=1200000)).sum()),'max_drawdown':per.max_drawdown.min(),'unexecutable_rate':per.unexecutable_rate.max(),'fees':per.fees.max(),'turnover':per.turnover.max(),'asset_identity_passed':bool(g.asset_identity_passed.all()),'passes_targets':per.w12.min()>=500000 and per.w24.min()>=1200000})
- a=pd.DataFrame(agg);a['strict_candidate']=False;a['reporting_gate']='remote_first_85_detailed_artifacts_missing';atomic_csv(a,out/'candidate_registry_new_23.csv');atomic_csv(a,out/'elimination_ledger_new_23.csv');atomic_csv(a.sort_values(['worst_w24','worst_w12'],ascending=False).head(20),out/'pareto_new_23.csv');atomic_json({'schema_version':1,'family':'sse_four_asset_state_drawdown_v1','operation_sha256':EXPECTED_OPERATION_SHA,'specifications':108,'execution_coverage':108,'new_atomic_results':len(a),'remote_compact_only_results':85,'complete_family_aggregation_permitted':False,'reporting_gate':'remote_first_85_parts_and_ledgers_not_in_disaster_checkpoint','cohorts_per_new_spec':int(a.cohorts.min()),'six_block_gate_new_specs':bool((a.nonoverlap_blocks>=6).all()),'new_spec_dual_target_passes':int(a.passes_targets.sum()),'strict_candidates':0,'evidence_tier':'official_sse_raw_plus_official_sse_event_pdfs_etf_only','official_daily_margin_required':False,'panel_sha256':sha(PANEL),'event_ledger_sha256':sha(EVENTS)},out/'manifest.json')
+ a=pd.DataFrame(agg);complete=len(a)==108;a['strict_candidate']=a.passes_targets & (a.nonoverlap_blocks>=6) & a.asset_identity_passed if complete else False;a['reporting_gate']='pass' if complete else 'recovery_recompute_incomplete';atomic_csv(a,out/'candidate_registry_recovery.csv');atomic_csv(a[~a.strict_candidate],out/'elimination_ledger_recovery.csv');atomic_csv(a.sort_values(['worst_w24','worst_w12'],ascending=False).head(20),out/'pareto_recovery.csv');atomic_json({'schema_version':1,'family':'sse_four_asset_state_drawdown_v1','operation_sha256':EXPECTED_OPERATION_SHA,'specifications':108,'fully_auditable_specs':len(a),'complete_family_aggregation_permitted':complete,'reporting_gate':'pass' if complete else 'recovery_recompute_incomplete','cohorts_per_spec':int(a.cohorts.min()),'six_block_gate':bool((a.nonoverlap_blocks>=6).all()),'dual_target_passes':int(a.passes_targets.sum()),'strict_candidates':int(a.strict_candidate.sum()),'evidence_tier':'official_sse_raw_plus_official_sse_event_pdfs_etf_only','official_daily_margin_required':False,'panel_sha256':sha(PANEL),'event_ledger_sha256':sha(EVENTS)},out/'manifest.json')
 
 if __name__=='__main__':main()
