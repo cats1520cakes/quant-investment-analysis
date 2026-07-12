@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "purpose": "independent_quote_availability_audit_only",
+  "products": [
+    "IO",
+    "HO",
+    "MO"
+  ],
+  "strict_bid_ask_available": false,
+  "strict_strategy_run_permitted": false,
+  "free_real_approx_only": true,
+  "strict_candidates": 0
+}
