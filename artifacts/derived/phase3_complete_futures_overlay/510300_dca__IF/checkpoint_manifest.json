@@ -1,8 +1,8 @@
 {
   "family": "510300_dca__IF",
-  "completed_specs": 36,
-  "timing_rows": 72,
-  "last_spec": "CO-0143",
+  "completed_specs": 48,
+  "timing_rows": 96,
+  "last_spec": "CO-0155",
   "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
   "strict_candidates": 0
 }
