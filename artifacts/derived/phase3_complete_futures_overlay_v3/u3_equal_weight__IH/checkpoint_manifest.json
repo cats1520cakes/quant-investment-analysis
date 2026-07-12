@@ -1,0 +1,22 @@
+{
+  "schema_version": 3,
+  "family": "u3_equal_weight__IH",
+  "completed_specs": 12,
+  "last_spec": "CO-0443",
+  "u3_codes_seen": [
+    "510050",
+    "510300",
+    "510500"
+  ],
+  "reject_totals": {
+    "reject_free_cash_insufficient": 1248,
+    "reject_nav_multiple_gate": 1416,
+    "reject_prior_day_volume": 0,
+    "reject_limit_price": 24,
+    "reject_contract_unavailable": 0,
+    "reject_expiry_roll_unavailable": 0,
+    "reject_other": 0
+  },
+  "grid_sha256": "fb61c95be9917b261cef26ad414b410e171320ebeb3c0df2dd4b46279794bbf7",
+  "strict_candidates": 0
+}
