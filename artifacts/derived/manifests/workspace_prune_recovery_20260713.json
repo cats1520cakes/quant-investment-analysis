@@ -16,7 +16,7 @@
   "sse_four_asset_panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
   "sse_four_asset_rows": 14541,
   "sse_writer_reproduction": "frozen empty suspension_status and suspension_source_url columns restored",
-  "trade_parameter_recovery": "in_progress_0_to_192",
+  "trade_parameter_recovery": "complete_192_of_192",
   "szse_159915_recovery": "in_progress_rebuild_from_frozen_350_hash_ledger",
   "raw_committed": false,
   "strict_candidates": 0
