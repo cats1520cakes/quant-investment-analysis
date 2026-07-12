@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "scope": "2024-01-01/2025-12-31",
+  "codes": ["510300", "510880", "518880", "511010"],
+  "official_index_candidate_count": 9,
+  "cash_dividend_events": 6,
+  "non_economic_candidates": 3,
+  "unresolved_candidates": 0,
+  "index_pagination_complete": true,
+  "event_ledger_scope_note": "execution-period subset reconstructed after workspace pruning; it does not replace the frozen 39-event full-history ledger",
+  "canonical_source": "SSE official announcement index and PDF bodies",
+  "strategy_execution_period_gate": true,
+  "full_history_event_ledger_sha_recovered": false,
+  "raw_committed": false,
+  "strict_candidates": 0
+}
