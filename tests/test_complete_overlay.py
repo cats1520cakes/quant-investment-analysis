@@ -12,3 +12,7 @@ def test_etf_sell_and_identity():
  x=SharedLedger(30000);q=x.buy_etf(3,30000);x.assert_identity(3);assert x.sell_etf(3.1,q)==q;x.assert_identity(3.1)
 def test_if_reachability_uses_whole_contract_and_timing():
  d=pd.DataFrame([{'instrument_type':'future','product':'IF','open_executable':True,'trade_date':'20240102','open':3000,'multiplier':300},{'instrument_type':'future','product':'IF','open_executable':True,'trade_date':'20240202','open':2800,'multiplier':300}]);x=build(d);assert x.minimum_one_contract_margin.tolist()==[180000,168000];assert not x.beginning_reachable_1_25x.any();assert x.ending_deposit_equity.tolist()==[0,30000]
+def test_margin_occupancy_metrics_are_daily_not_inferred():
+ x=SharedLedger(300000);assert x.open_future(3000,300,.2,1.25);series=[]
+ for settle in (3000,3010,2990):x.settle_future(settle,300);series.append(x.margin)
+ assert max(series)==180000 and sum(series)/len(series)==180000
