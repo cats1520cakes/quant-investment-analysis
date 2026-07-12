@@ -1,0 +1,15 @@
+{
+  "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "margin_upper_bound": 0.2,
+  "rows": 24,
+  "first_reachable": {
+    "beginning_reachable_1_25x": "202409",
+    "ending_reachable_1_25x": "202409",
+    "beginning_reachable_1_5x": "202412",
+    "ending_reachable_1_5x": "202501",
+    "beginning_reachable_2_0x": "202504",
+    "ending_reachable_2_0x": "202504"
+  },
+  "strict_candidates": 0,
+  "evidence_tier": "free_real_approx_conservative_margin"
+}
