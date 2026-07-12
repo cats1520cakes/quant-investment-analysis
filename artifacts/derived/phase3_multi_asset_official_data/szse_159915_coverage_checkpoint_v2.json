@@ -19,8 +19,8 @@
   "canonical_promoted": false,
   "strategy_run_permitted": false,
   "strict_candidates": 0,
-  "raw_files_present": 59,
-  "raw_files_hash_validated": 59,
+  "raw_files_present": 105,
+  "raw_files_hash_validated": 105,
   "raw_registered_hash_mismatch_count": 0,
   "raw_registered_hash_mismatch_examples": []
 }
