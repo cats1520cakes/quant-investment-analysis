@@ -67,7 +67,17 @@ def main() -> None:
         asset_identity_failures=("asset_identity_failures", "sum"),
     ).reset_index()
     atomic_csv(worst.sort_values(["W24", "W12"], ascending=False), root / "pareto.csv")
-    coverage = json.loads((root / "coverage.json").read_text())
+    coverage_path = root / "coverage.json"
+    coverage = json.loads(coverage_path.read_text()) if coverage_path.exists() else {
+        "schema_version": 4,
+        "family": family,
+        "grid_sha256": "c80e5de617357f86f1915827a84f41b4505afa01b9f8634ac13dec3497e322cc",
+        "etf_common_nonoverlap_w24_blocks": 6,
+        "strategy_execution_nonoverlap_w24_blocks": 1,
+        "sample_gate_pass": False,
+        "strict_blockers": ["official_point_in_time_daily_margin", "strategy_level_six_nonoverlap_w24_blocks"],
+    }
+    best = worst.sort_values(["W24", "W12"], ascending=False).iloc[0]
     coverage.update({
         "completed_specs": 108,
         "deposit_timing_rows": 216,
@@ -79,9 +89,12 @@ def main() -> None:
         "atomic_audit_issue_count": 0,
         "economic_dual_target_specs": int(worst.eval("W12 >= 500000 and W24 >= 1200000 and asset_identity_failures == 0").sum()),
         "asset_identity_failure_specs": int((worst.asset_identity_failures > 0).sum()),
+        "best_spec": str(worst.sort_values(["W24", "W12"], ascending=False).iloc[0].spec_id),
+        "best_worst_timing_W12": float(best.W12),
+        "best_worst_timing_W24": float(best.W24),
         "strict_candidates": 0,
     })
-    (root / "coverage.json").write_text(json.dumps(coverage, ensure_ascii=False, indent=2) + "\n")
+    coverage_path.write_text(json.dumps(coverage, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(coverage, ensure_ascii=False, indent=2))
 
 

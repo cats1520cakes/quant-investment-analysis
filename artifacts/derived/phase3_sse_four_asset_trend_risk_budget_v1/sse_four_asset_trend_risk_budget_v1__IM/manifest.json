@@ -1,0 +1,16 @@
+{
+  "schema_version": 4,
+  "family": "sse_four_asset_trend_risk_budget_v1__IM",
+  "specifications": 108,
+  "completed": 108,
+  "timing_rows": 216,
+  "grid_sha256": "c80e5de617357f86f1915827a84f41b4505afa01b9f8634ac13dec3497e322cc",
+  "etf_panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+  "daily_ledger": true,
+  "economic_dual_target_specs": 0,
+  "evidence_tier": "official_exchange_etf_canonical_plus_free_real_approx_conservative_futures_margin",
+  "strict_blockers": [
+    "official_point_in_time_daily_margin"
+  ],
+  "strict_candidates": 0
+}

@@ -99,3 +99,22 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 - For the best specification, beginning-timing W24 is 859,394 with futures PnL 34,092 and ETF/shared-fee residual 105,302; ending-timing W24 is 889,303 with futures PnL 135,282 and residual 64,021. Reported fees are 1,374/1,263. Worst maximum drawdown is -7.43%; peak margin is 279,300, peak margin/NAV 43.03%, with one margin call/forced liquidation in the beginning path.
 - Aggregate rejection counts are free cash 5,128, NAV threshold 19,264, and limit price 216. Risk-budget weights follow the frozen causal 60-day inverse-volatility water-fill with 40% cap and cash residual; no result-dependent weight changes occurred.
 - Official ETF history has six W24 blocks, but the bound derivative execution panel has one. Strategy-level sample gate and point-in-time official daily margin gate fail independently. Strict candidates: **0**.
+
+## SSE four-asset trend/risk-budget v1 × IC — audited recovery — 2026-07-13
+
+- IC was 0/108 at remote checkpoint `2c9dd25a...` and was rerun from its first frozen specification without parameter changes. All 108 parts, 216 timing paths and 216 daily-ledger hashes pass the atomic audit; asset-identity failure specifications are 0.
+- Best worst-timing W12/W24 is 392,149/860,515 (`S4ARB-0280`); economic dual-target passes are 0. All 108 specifications traded futures; first feasible month was 2024-08.
+- Best-spec worst drawdown is -2.82%; futures PnL 90,812; peak/mean margin 243,720/65,414; peak margin/NAV 44.79%; ten rolls; no margin call or forced liquidation. Across all paths, 48 specifications experienced a margin call.
+- Aggregate rejections are free cash 3,096, NAV threshold 18,544 and limit price 216. The strategy execution sample remains one W24 block despite six ETF-history blocks, and official point-in-time daily margin is absent. Strict candidates: **0**.
+
+## SSE four-asset trend/risk-budget v1 × IM — audited recovery — 2026-07-13
+
+- IM was 0/108 at remote checkpoint `2c9dd25a...`; the frozen grid SHA `c80e5de617357f86f1915827a84f41b4505afa01b9f8634ac13dec3497e322cc` completed 108/108 without parameter changes. All 108 parts and 216 timing ledgers pass hash, row-count and daily asset-identity audit.
+- Best worst-timing W12/W24 is 396,347/906,462 (`S4ARB-0424`); economic dual-target passes are 0 and asset-identity failure specifications are 0.
+- Maximum observed futures PnL is 184,564; peak/mean margin reach 300,600/149,526. Aggregate rejections are free cash 3,684, NAV multiple 25,560 and limit price 216. Exact per-spec and monthly rejection evidence remains in the atomic parts and ledgers.
+- The frozen ETF history supports six non-overlapping W24 blocks, but the bound 2024–2025 derivative execution period supports only one. Strategy-level sample gate and official point-in-time daily-margin gate fail independently. Evidence tier remains `free_real_approx_conservative_margin`; strict candidates: **0**.
+
+## SSE four-asset state/drawdown v1 — preregistered — 2026-07-13
+
+- This non-repeating ETF-led family replaces inverse-volatility weighting with causal sleeve-relative momentum plus flow-adjusted drawdown hysteresis. Its 108 ETF-only combinations were frozen before any result was run.
+- Execution remains blocked until the four official full-history canonical panels and point-in-time company-action ledgers are bound to one manifest. The optional futures overlay remains separately blocked by official daily margin and execution-period sample coverage. Strict candidates: **0**.

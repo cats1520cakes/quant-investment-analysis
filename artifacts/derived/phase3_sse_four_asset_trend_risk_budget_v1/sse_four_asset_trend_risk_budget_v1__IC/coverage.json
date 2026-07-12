@@ -1,0 +1,26 @@
+{
+  "schema_version": 4,
+  "family": "sse_four_asset_trend_risk_budget_v1__IC",
+  "grid_sha256": "c80e5de617357f86f1915827a84f41b4505afa01b9f8634ac13dec3497e322cc",
+  "etf_common_nonoverlap_w24_blocks": 6,
+  "strategy_execution_nonoverlap_w24_blocks": 1,
+  "sample_gate_pass": false,
+  "strict_blockers": [
+    "official_point_in_time_daily_margin",
+    "strategy_level_six_nonoverlap_w24_blocks"
+  ],
+  "completed_specs": 108,
+  "deposit_timing_rows": 216,
+  "daily_ledgers": 216,
+  "results_sha256": "2db71ff7d7e9ed04e31405e66c0d5c4fa3fbcc4600f67507c8e0806ba387e8ba",
+  "attempt_ledger_sha256": "3d46ca193450c76022048b393df82c57c3d9b4fb590770595cf7a4af81573753",
+  "pareto_sha256": "ef81c219268949ffce5e82c4bf52a9e9da31119476df8df72f9d12721aa2f5b8",
+  "atomic_audit_pass": true,
+  "atomic_audit_issue_count": 0,
+  "economic_dual_target_specs": 0,
+  "asset_identity_failure_specs": 0,
+  "best_spec": "S4ARB-0280",
+  "best_worst_timing_W12": 392148.62495,
+  "best_worst_timing_W24": 860515.1413500002,
+  "strict_candidates": 0
+}

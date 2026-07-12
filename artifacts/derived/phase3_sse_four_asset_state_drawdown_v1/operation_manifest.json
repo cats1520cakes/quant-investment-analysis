@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "family": "sse_four_asset_state_drawdown_v1",
+  "status": "preregistered_data_gate_pending",
+  "results_seen_before_freeze": false,
+  "nonduplicate_basis": "state-conditioned sleeve allocation with portfolio drawdown hysteresis; no inverse-volatility risk-budget weights",
+  "assets": {
+    "equity": ["510300", "510880"],
+    "defensive": ["518880", "511010"]
+  },
+  "signals": {
+    "known_information": "prior trading-day close and earlier only",
+    "equity_state": "510300 adjusted close above its trailing 120-observation simple moving average",
+    "relative_selection": "within each sleeve rank trailing adjusted-close return over the frozen lookback",
+    "drawdown_state": "flow-adjusted portfolio NAV drawdown computed through prior close",
+    "hysteresis": "risk reduction enters at frozen drawdown threshold and exits only after frozen recovery threshold"
+  },
+  "allocation": {
+    "risk_on": "top equity plus top defensive asset at frozen equity/defensive split",
+    "risk_off": "top defensive asset plus cash at frozen defensive cap",
+    "suspended_or_missing": "retain existing holding; missed target capital remains cash and is not redistributed",
+    "gross_cap": 1.0,
+    "borrowing": false
+  },
+  "execution": {
+    "rebalance": "first common trading day of each month at official raw next open",
+    "deposit_timings": ["beginning", "ending"],
+    "monthly_deposit": 30000,
+    "lot_shares": 100,
+    "company_actions": "official record-date entitlement, pay-date cash, effective-date share factor",
+    "fees": "frozen project ETF fee and slippage configuration",
+    "futures_overlay": "optional frozen one-contract IH/IF/IC/IM trend overlay only after shared-cash NAV and margin gates; separate evidence tier"
+  },
+  "parameter_axes": {
+    "relative_lookback": [60, 120, 240],
+    "equity_weight_risk_on": [0.5, 0.75, 1.0],
+    "defensive_cap_risk_off": [0.5, 0.75, 1.0],
+    "drawdown_enter": [0.08, 0.12],
+    "recovery_exit": [0.03, 0.06]
+  },
+  "specifications_etf_only": 108,
+  "targets": {"W12": 500000, "W24": 1200000},
+  "minimum_nonoverlap_W24_blocks": 5,
+  "data_gate": "official canonical full history, calendar, suspension rows and complete point-in-time company-action lineage for all four ETFs",
+  "strategy_run_permitted": false,
+  "strict_candidates": 0
+}
