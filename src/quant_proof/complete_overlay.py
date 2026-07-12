@@ -3,6 +3,37 @@ from dataclasses import dataclass
 from math import floor
 from collections import defaultdict
 
+
+def prior_sma_risk_on(closes, lookback: int = 120):
+    """Causal risk switch: day t uses close[t-1] and its trailing SMA."""
+    if lookback < 1:
+        raise ValueError("lookback must be positive")
+    prior = closes.shift(1)
+    return prior > prior.rolling(lookback, min_periods=lookback).mean()
+
+
+def capped_inverse_volatility(volatility: dict[str, float], cap: float = .40) -> dict[str, float]:
+    """Deterministic capped water-fill; unallocatable residual stays cash."""
+    valid = {key: float(value) for key, value in volatility.items()
+             if float(value) > 0 and float(value) < float("inf")}
+    weights = {key: 0.0 for key in volatility}
+    active = set(valid)
+    remaining = 1.0
+    while active and remaining > 1e-12:
+        inverse = {key: 1.0 / valid[key] for key in active}
+        total = sum(inverse.values())
+        proposed = {key: remaining * inverse[key] / total for key in active}
+        capped = [key for key, value in proposed.items() if value > cap]
+        if not capped:
+            for key, value in proposed.items():
+                weights[key] = value
+            break
+        for key in capped:
+            weights[key] = cap
+            remaining -= cap
+            active.remove(key)
+    return weights
+
 @dataclass
 class SharedLedger:
     cash: float = 0.; etf_shares: int = 0; margin: float = 0.; futures_qty: int = 0
@@ -49,6 +80,30 @@ class SharedPortfolioLedger:
         for c in codes:
             if not tradable[c]:continue
             deficit=max(0.,target-self.shares[c]*opens[c]);q=floor(min(deficit,max(0,self.cash-reserve))/(opens[c]*100*(1+fee_rate)))*100;v=q*opens[c];fee=v*fee_rate;self.cash-=v+fee;self.shares[c]+=q;self.fees+=fee;fills[c]=fills.get(c,0)+q
+        return fills
+    def liquidate_tradable(self,opens:dict[str,float],tradable:dict[str,bool],fee_rate=.0003):
+        fills={}
+        for c in sorted(opens):
+            if not tradable[c]:fills[c]=0;continue
+            q=self.shares[c]
+            if q:
+                value=q*opens[c];fee=value*fee_rate;self.cash+=value-fee;self.shares[c]-=q;self.fees+=fee;fills[c]=-q
+            else:fills[c]=0
+        return fills
+    def rebalance_target_weights(self,opens:dict[str,float],tradable:dict[str,bool],target_weights:dict[str,float],reserve:float=0.,fee_rate=.0003):
+        codes=sorted(opens);investable=max(0.,self.cash+sum(self.shares[c]*opens[c] for c in codes)-reserve)
+        targets={c:investable*max(0.,float(target_weights.get(c,0.))) for c in codes};fills={c:0 for c in codes}
+        for c in codes:
+            if not tradable[c]:continue
+            excess=self.shares[c]*opens[c]-targets[c]
+            if excess>=opens[c]*100:
+                q=min(self.shares[c],floor(excess/(opens[c]*100))*100);value=q*opens[c];fee=value*fee_rate
+                self.cash+=value-fee;self.shares[c]-=q;self.fees+=fee;fills[c]-=q
+        for c in codes:
+            if not tradable[c]:continue
+            deficit=max(0.,targets[c]-self.shares[c]*opens[c])
+            q=floor(min(deficit,max(0.,self.cash-reserve))/(opens[c]*100*(1+fee_rate)))*100
+            value=q*opens[c];fee=value*fee_rate;self.cash-=value+fee;self.shares[c]+=q;self.fees+=fee;fills[c]+=q
         return fills
     def register_dividend(self,event_id,code,record_date,pay_date,cash_per_share,date):
         if date==record_date:self.receivables.append((event_id,code,pay_date,self.shares[code]*cash_per_share))
