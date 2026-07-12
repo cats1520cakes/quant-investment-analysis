@@ -1,6 +1,9 @@
 # Cloud progress
 
 - Base commit: `53eb97461f88cebff345009d6f25ab7d99d28004`.
+- 2026-07-12 recovery: platform pruning removed the active worktree and IM partial parts. The official 2024–2025 archive set was rebuilt 24/24 and exactly reproduced panel SHA `7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b` and master SHA `c405a1a3c09e5a3e6793b41286226ef43ab896e54d45bed9e7e682d8e025b6de`; official trade-parameter snapshots were restored 192/192. The SSE U4 logical rebuild is official but its Parquet byte SHA differs, so its byte-lineage remains fail-closed.
+- U3×IM schema v4 was restarted from zero after pruning and completed 108/108 with 216 SHA-bound daily ledgers. Best worst-timing W12/W24: 459,980/972,748; dual-target specifications: 0; strict candidates: 0. Full details are in the elimination ledger and local pending-sync manifest.
+- 159915 official history remains blocked by external-domain approval/usage limits; Tencent is not used as a canonical replacement.
 - Branch: `cloud/quant-exhaustive-work`.
 - Resources: 9 CPU threads, 55 GB initially free, no visible GPU.
 - Baseline: 439 passed, 4 environment-link failures, 1 skipped; the four failures share a malformed runtime-created virtualenv symlink.
@@ -145,3 +148,10 @@
 - Announcement coverage closed: 460 records, 10/10 pages, 10 candidate PDFs read, zero dividends, zero share-factor events, and two execution events (2021-02-08 full suspension; 2021-02-09 open suspended until 10:30).
 - Official history reports expose raw OHLC, volume in ten-thousand fund units, and amount in ten-thousand CNY. They return one requested trading date per response; 134 validated responses are cached and resumable. The full strict panel remains incomplete and fail-closed.
 - The isolated free-real approximation ran all 204 frozen specifications. Base target passes 0; strict candidates **0**. Best family worst W12/W24 was 346,865/694,031.
+
+## 2026-07-13 — SSE four-asset risk-budget IH checkpoint
+
+- Froze `sse_four_asset_trend_risk_budget_v1` before results as a mechanical, data-availability-only projection of five-asset v2: 432 specifications, 108 per futures product, unchanged parameter axes, grid SHA `c80e5de617357f86f1915827a84f41b4505afa01b9f8634ac13dec3497e322cc`.
+- Four official SSE ETF histories share 2013-07-29 through 2026-07-10; after 120 common observations the evaluation start is 2014-01-22, providing six complete non-overlapping W24 intervals for ETF evidence. Twelve focused causality, risk-budget, suspension, action and shared-cash tests passed.
+- IH completed 108/108 specifications. Best worst-timing W12/W24 is 385,612/810,311; economic dual-target passes 0; asset-identity failures 0. The derivative execution sample remains one W24 interval and point-in-time official margin is absent, so no strict promotion is possible.
+- The original five-asset v2 remains frozen and blocked pending complete official 159915 canonical history. No four-asset result changes its parameters. Strict candidates: **0**.
