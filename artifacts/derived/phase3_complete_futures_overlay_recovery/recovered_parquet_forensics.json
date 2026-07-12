@@ -1,0 +1,410 @@
+{
+  "file_sha256": "fc525130235670a08e2c4552fc1802b0b427846c75e82c7bbba45995e14a1d1d",
+  "canonical_content_sha256": "6f239feecb171c17415de46d19606d9ef59801071ec2387cfef71b8324a2bec3",
+  "columns": [
+    {
+      "name": "trade_date",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    },
+    {
+      "name": "contract",
+      "pandas_dtype": "string",
+      "arrow_type": "string"
+    },
+    {
+      "name": "product",
+      "pandas_dtype": "string",
+      "arrow_type": "string"
+    },
+    {
+      "name": "instrument_type",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    },
+    {
+      "name": "underlying_index",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    },
+    {
+      "name": "contract_month",
+      "pandas_dtype": "string",
+      "arrow_type": "string"
+    },
+    {
+      "name": "option_type",
+      "pandas_dtype": "string",
+      "arrow_type": "string"
+    },
+    {
+      "name": "strike",
+      "pandas_dtype": "Int64",
+      "arrow_type": "int64"
+    },
+    {
+      "name": "multiplier",
+      "pandas_dtype": "float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "open",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "high",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "low",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "close",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "settle",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "pre_settle",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "volume",
+      "pandas_dtype": "Int64",
+      "arrow_type": "int64"
+    },
+    {
+      "name": "turnover_10k_cny",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "open_interest",
+      "pandas_dtype": "Int64",
+      "arrow_type": "int64"
+    },
+    {
+      "name": "open_interest_change",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "delta",
+      "pandas_dtype": "Float64",
+      "arrow_type": "double"
+    },
+    {
+      "name": "open_executable",
+      "pandas_dtype": "boolean",
+      "arrow_type": "bool"
+    },
+    {
+      "name": "settlement_mark_valid",
+      "pandas_dtype": "boolean",
+      "arrow_type": "bool"
+    },
+    {
+      "name": "source",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    },
+    {
+      "name": "source_file",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    },
+    {
+      "name": "source_tier",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    },
+    {
+      "name": "execution_tier",
+      "pandas_dtype": "object",
+      "arrow_type": "string"
+    }
+  ],
+  "parquet": {
+    "created_by": "parquet-cpp-arrow version 22.0.0",
+    "row_groups": 1,
+    "rows": 365652,
+    "serialized_size": 13322,
+    "format_version": "2.6"
+  },
+  "row_groups": [
+    {
+      "index": 0,
+      "rows": 365652,
+      "bytes": 10745791,
+      "columns": [
+        {
+          "path": "trade_date",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: 20240102\n  max: 20251231\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "contract",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: HO2401-C-1975\n  max: MO2612-P-8400\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "product",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: HO\n  max: MO\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "instrument_type",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: future\n  max: option\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "underlying_index",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: CSI1000\n  max: SSE50\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "contract_month",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 2401\n  max: 2612\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "option_type",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: \n  max: put\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "strike",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 1950\n  max: 8600\n  null_count: 7760\n  distinct_count: None\n  num_values: 357892\n  physical_type: INT64\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "multiplier",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: 100.0\n  max: 300.0\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "open",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 0.2\n  max: 7601.2\n  null_count: 41188\n  distinct_count: None\n  num_values: 324464\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "high",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: 0.2\n  max: 7660.0\n  null_count: 41188\n  distinct_count: None\n  num_values: 324464\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "low",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 0.2\n  max: 7563.2\n  null_count: 41188\n  distinct_count: None\n  num_values: 324464\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "close",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: 0.2\n  max: 7607.4\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "settle",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: -0.0\n  max: 7618.8\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "pre_settle",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: 0.2\n  max: 7618.8\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "volume",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 0\n  max: 307215\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: INT64\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "turnover_10k_cny",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: -0.0\n  max: 35699966.772\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "open_interest",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 0\n  max: 244705\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: INT64\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "open_interest_change",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: -64278.0\n  max: 38840.0\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "delta",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: -1.0\n  max: 1.0\n  null_count: 11920\n  distinct_count: None\n  num_values: 353732\n  physical_type: DOUBLE\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "open_executable",
+          "compression": "ZSTD",
+          "encodings": [
+            "RLE",
+            "PLAIN"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: False\n  max: True\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BOOLEAN\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "settlement_mark_valid",
+          "compression": "ZSTD",
+          "encodings": [
+            "RLE",
+            "PLAIN"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: True\n  max: True\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BOOLEAN\n  logical_type: None\n  converted_type (legacy): NONE"
+        },
+        {
+          "path": "source",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: cffex_official\n  max: cffex_official\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "source_file",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: 202401.zip:20240102_1.csv\n  max: 202512.zip:20251231_1.csv\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "source_tier",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5cb0>\n  has_min_max: True\n  min: official_exchange_daily\n  max: official_exchange_daily\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        },
+        {
+          "path": "execution_tier",
+          "compression": "ZSTD",
+          "encodings": [
+            "PLAIN",
+            "RLE",
+            "RLE_DICTIONARY"
+          ],
+          "statistics": "<pyarrow._parquet.Statistics object at 0x7f0f1c9e5990>\n  has_min_max: True\n  min: daily_settlement_no_quotes\n  max: daily_settlement_no_quotes\n  null_count: 0\n  distinct_count: None\n  num_values: 365652\n  physical_type: BYTE_ARRAY\n  logical_type: String\n  converted_type (legacy): UTF8"
+        }
+      ]
+    }
+  ]
+}
