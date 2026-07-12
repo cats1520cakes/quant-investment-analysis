@@ -1,0 +1,13 @@
+spec_id,reject_free_cash_insufficient,reject_nav_multiple_gate,reject_prior_day_volume,reject_limit_price,reject_contract_unavailable,reject_expiry_roll_unavailable,reject_other
+CO-0432,107,118,0,2,0,0,0
+CO-0433,107,118,0,2,0,0,0
+CO-0434,107,118,0,2,0,0,0
+CO-0435,107,118,0,2,0,0,0
+CO-0436,97,118,0,2,0,0,0
+CO-0437,97,118,0,2,0,0,0
+CO-0438,97,118,0,2,0,0,0
+CO-0439,97,118,0,2,0,0,0
+CO-0440,108,118,0,2,0,0,0
+CO-0441,108,118,0,2,0,0,0
+CO-0442,108,118,0,2,0,0,0
+CO-0443,108,118,0,2,0,0,0
