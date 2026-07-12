@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "scope": "ETF strict lineage and frozen-family readiness",
+  "u3": {
+    "official_sse_source_rows": {
+      "510050": 5196,
+      "510300": 3431,
+      "510500": 3234
+    },
+    "official_source_date_end": "20260710",
+    "confirmed_suspension_rows_u4": 3,
+    "volume_unit": "fund_shares",
+    "amount_unit": "CNY",
+    "company_action_index_records_2013_2023": 710,
+    "company_action_events": 22,
+    "cash_dividends": 20,
+    "share_factor_events": 2,
+    "company_action_events_2024_2025": 7,
+    "company_action_candidates_2024_2025": 12,
+    "company_action_gate": true,
+    "frozen_panel_sha256": "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2",
+    "frozen_results_panel_hashes": [
+      "f21ff743900607819436fc3897d1af6ac152e8993649241c79139ed26b6cb3b2"
+    ],
+    "current_runtime_panel_sha256": "4ebf9cc24a774489f8d0ddd0d7d99decc5251c46a15100539bc1ce057622a1dc",
+    "current_runtime_rerun_permitted": false,
+    "frozen_result_status": "completed_auditable_elimination",
+    "frozen_specs": 174,
+    "monthly_cohorts_per_spec": 124,
+    "nonoverlap_w24_blocks": 6,
+    "strict_candidates": 0
+  },
+  "high_elasticity": {
+    "159915_official_announcement_records": 460,
+    "159915_announcement_pages": 10,
+    "159915_announcement_terminal_page": true,
+    "159915_bodies_read": 10,
+    "159915_stable_events": 2,
+    "159915_unresolved_candidates": 0,
+    "159915_official_history_validated_responses": 134,
+    "official_history_complete": false,
+    "strict_run_permitted": false,
+    "blocked_universes": [
+      "E1",
+      "E2",
+      "E3"
+    ],
+    "minimum_evidence": [
+      "official SZSE raw OHLCV for 159915 from 2011-12-09 through evaluation end with units and terminal pagination",
+      "official trading calendar expansion with confirmed suspension gaps",
+      "official SZSE or fund-manager announcement index paged to completion",
+      "parsed point-in-time dividend, split, merge, suspension and other account-impact event ledger",
+      "canonical panel and event ledger hashes bound to the execution manifest"
+    ],
+    "strict_candidates": 0
+  },
+  "raw_committed": false,
+  "strict_candidates": 0,
+  "coverage_matrix_sha256": "8761f64ab81a3788703eb8d69c660ad2656328c028082b6d3758f61542bc5e68"
+}
