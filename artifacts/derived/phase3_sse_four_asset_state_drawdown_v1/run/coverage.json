@@ -1,9 +1,9 @@
 {
-  "completed_specs": 42,
+  "completed_specs": 56,
   "target_specs": 108,
   "operation_sha256": "5c949ec12854a6b951dbc8ecc10f470189db049271516a99e997c990702476c2",
   "panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
   "event_ledger_sha256": "ab496ce0daf42e7274b59c2cef87053c4af7a9b8a342d99a5f3b1ef3b1d38c91",
-  "daily_ledger_files": 42,
+  "daily_ledger_files": 56,
   "strict_candidates": 0
 }
