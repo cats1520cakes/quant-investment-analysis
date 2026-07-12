@@ -1,0 +1,33 @@
+{
+  "family": "u3_low_turnover_trend_cash_v1",
+  "status": "preregistered_before_results",
+  "etf_pool": ["510050", "510300", "510500"],
+  "rebalance": "monthly_on_first_available_trade_day_only",
+  "signal": {
+    "risk_on": "prior_close_510300 > simple_mean(close_510300[t-120:t-1])",
+    "known_at_execution": "all inputs end at prior trading day",
+    "risk_on_target": "equal_weight_three_etfs",
+    "risk_off_target": "cash_zero_etf_target"
+  },
+  "execution": {
+    "etf": "official_raw_next_open_100_share_lots",
+    "suspension": "retain_unfilled_holding; do_not_reallocate_its_target",
+    "deposit_timings": ["beginning", "ending"],
+    "monthly_deposit": 30000,
+    "fees": "v4_ledger_default",
+    "corporate_actions": "official_dividend_ledger",
+    "futures": "shared_cash_integer_contract_prior_day_volume_next_open_daily_mtm_margin_call"
+  },
+  "targets": {"W12": 500000, "W24": 1200000},
+  "evidence_tier": "free_real_approx_conservative_margin",
+  "strict_blockers": ["five_nonoverlapping_w24_blocks", "official_margin_point_in_time_gate"],
+  "strict_candidates": 0,
+  "grid_sha256": "6413e808243ca42ce26bf460beffb4c83d002356119b5dc929e26803772933df",
+  "specifications": 432,
+  "family_counts": {
+    "u3_low_turnover_trend_cash_v1__IC": 108,
+    "u3_low_turnover_trend_cash_v1__IF": 108,
+    "u3_low_turnover_trend_cash_v1__IH": 108,
+    "u3_low_turnover_trend_cash_v1__IM": 108
+  }
+}
