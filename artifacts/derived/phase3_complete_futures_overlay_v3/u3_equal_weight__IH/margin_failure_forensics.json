@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "frozen_failed_specs": [
+    "CO-0432",
+    "CO-0433",
+    "CO-0434",
+    "CO-0435",
+    "CO-0436",
+    "CO-0437",
+    "CO-0438",
+    "CO-0439",
+    "CO-0440",
+    "CO-0441",
+    "CO-0442",
+    "CO-0443",
+    "CO-0448",
+    "CO-0449",
+    "CO-0450",
+    "CO-0451",
+    "CO-0452",
+    "CO-0453",
+    "CO-0454",
+    "CO-0455"
+  ],
+  "failed_spec_count": 20,
+  "failed_timing_rows": 20,
+  "all_failed_timings": [
+    "beginning"
+  ],
+  "representative_spec": "CO-0432",
+  "first_failure_date": "20250402",
+  "first_failure": {
+    "cash": -1000.3847599999026,
+    "margin": 160476.0,
+    "holdings_market_value": 390093.2,
+    "nav": 549568.8152400001,
+    "equation_residual": 0.0,
+    "last_settlement": {
+      "cash_before": 559.6152400000428,
+      "margin_before": 160476.0,
+      "last_settle": 2664.2,
+      "settle": 2659.0,
+      "multiplier": 300.0,
+      "mtm": -1559.9999999999454,
+      "cash_after": -1000.3847599999026,
+      "margin_after": 160476.0,
+      "margin_calls_after": 0,
+      "forced_after": 0
+    }
+  },
+  "classification": "margin_call_trigger_bug_negative_variation_cash_not_caught",
+  "accounting_equation_exact": true,
+  "required_action": "retain frozen v3; fix negative-cash margin trigger; rerun exactly the 20 listed specs"
+}
