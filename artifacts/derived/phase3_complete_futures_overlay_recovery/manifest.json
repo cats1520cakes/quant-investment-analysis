@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "status": "blocked_binary_lineage_mismatch",
+  "expected_panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "recovered_panel_sha256": "fc525130235670a08e2c4552fc1802b0b427846c75e82c7bbba45995e14a1d1d",
+  "expected_source_set_sha256": "9c00d2abf8112e73cee866653b30481f5617b584d97f717a3c34eac2155b1796",
+  "recovered_source_set_sha256": "9c00d2abf8112e73cee866653b30481f5617b584d97f717a3c34eac2155b1796",
+  "source_set_matches": true,
+  "semantic_shape": {
+    "rows": 365652,
+    "contracts": 4910,
+    "first_date": "20240102",
+    "last_date": "20251231",
+    "products": [
+      "HO",
+      "IC",
+      "IF",
+      "IH",
+      "IM",
+      "IO",
+      "MO"
+    ]
+  },
+  "trade_parameter_snapshots": 192,
+  "strategy_run_permitted": false,
+  "reason": "Exact official raw source set and semantic dimensions match, but rebuilt Parquet bytes do not match frozen panel hash; fail closed until writer/runtime identity is reproduced or frozen panel is recovered."
+}
