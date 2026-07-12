@@ -1,0 +1,50 @@
+{
+  "family": "510300_dca__IM",
+  "schema_version": 2,
+  "specifications": 108,
+  "valid_specs": 108,
+  "overlay_executed_specs": 0,
+  "economic_dual_target_specs": 0,
+  "best_valid_executed_worst_W12": null,
+  "best_valid_executed_worst_W24": null,
+  "best_etf_only_worst_W12": 418130.38259,
+  "best_etf_only_worst_W24": 867706.55585,
+  "first_feasible_months": [],
+  "feasible_date_rate_range": [
+    0.0,
+    0.0
+  ],
+  "margin_peak_range": [
+    0.0,
+    0.0
+  ],
+  "margin_mean_range": [
+    0.0,
+    0.0
+  ],
+  "margin_to_nav_peak_range": [
+    0.0,
+    0.0
+  ],
+  "reject_totals": {
+    "reject_free_cash_insufficient": 39816,
+    "reject_nav_multiple_gate": 14328,
+    "reject_prior_day_volume": 0,
+    "reject_limit_price": 216,
+    "reject_contract_unavailable": 0,
+    "reject_expiry_roll_unavailable": 0,
+    "reject_other": 0
+  },
+  "monthly_reject_breakdown": "not emitted by schema v2; reporting gate fail",
+  "margin_calls": 0,
+  "forced_liquidations": 0,
+  "max_rolls": 0,
+  "fee_range": [
+    161.87091,
+    215.85189
+  ],
+  "worst_max_drawdown": -0.1143761190024205,
+  "asset_identity_failures": 0,
+  "strict_candidates": 0,
+  "evidence_tier": "free_real_approx_conservative_margin"
+}
