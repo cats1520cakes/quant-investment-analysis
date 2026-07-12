@@ -1,0 +1,4 @@
+product,rows,contracts,first_date,last_date,open_executable_rows,positive_volume_rows,bid_column_present,ask_column_present,strict_quote_eligible,tier
+HO,107512,1388,20240102,20251231,85636,85636,False,False,False,daily_settlement_no_quotes
+IO,118594,1606,20240102,20251231,108004,108004,False,False,False,daily_settlement_no_quotes
+MO,131786,1804,20240102,20251231,123064,123064,False,False,False,daily_settlement_no_quotes
