@@ -1,0 +1,54 @@
+{
+  "schema_version": 3,
+  "family": "u3_equal_weight__IH",
+  "specifications": 108,
+  "valid_specs": 88,
+  "invalid_specs": 20,
+  "overlay_executed_specs": 108,
+  "economic_dual_target_specs": 0,
+  "best_valid_worst_W12": 410751.28784000006,
+  "best_valid_worst_W24": 851957.34013,
+  "first_feasible_months": [
+    "2024-06",
+    "2024-08",
+    "2024-10"
+  ],
+  "feasible_rate_range": [
+    0.0246913580246913,
+    0.24
+  ],
+  "margin_peak_range": [
+    168432.0,
+    170388.0
+  ],
+  "margin_mean_range": [
+    98057.19587628866,
+    101455.02680412371
+  ],
+  "margin_to_nav_peak_range": [
+    0.4777141343647293,
+    0.8677113897235016
+  ],
+  "margin_calls": 20,
+  "forced_liquidations": 20,
+  "max_rolls": 24,
+  "fee_range": [
+    369.62049,
+    1014.4622299999996
+  ],
+  "worst_max_drawdown": -0.1875587864387621,
+  "asset_identity_failure_events": 20,
+  "reject_totals": {
+    "reject_free_cash_insufficient": 3604,
+    "reject_nav_multiple_gate": 9288,
+    "reject_prior_day_volume": 0,
+    "reject_limit_price": 216,
+    "reject_contract_unavailable": 0,
+    "reject_expiry_roll_unavailable": 0,
+    "reject_other": 0
+  },
+  "six_nonoverlap_W24_blocks": "fail_2024_2025_only_one_block",
+  "daily_complete_cash_ledger": "not_emitted_by_v3_part; reporting gate fail",
+  "strict_candidates": 0,
+  "evidence_tier": "free_real_approx_conservative_margin"
+}
