@@ -43,5 +43,12 @@
     "margin_occupancy_not_emitted"
   ],
   "best_etf_only_worst_W12": 419309.48685,
-  "best_etf_only_worst_W24": 875012.38571
+  "best_etf_only_worst_W24": 875012.38571,
+  "capital_reachability_audit": "capital_reachability_by_month.csv",
+  "gross_equity_first_reachable": {
+    "1.25x": "202409",
+    "1.5x": "202412_beginning/202501_ending",
+    "2.0x": "202504"
+  },
+  "interpretation": "Gross contributed equity can reach conservative one-contract thresholds, but existing IF v1 paths recorded zero fills. Daily free-cash/margin occupancy was not emitted, so the exact no-fill path decomposition cannot be reconstructed and remains fail-closed."
 }
