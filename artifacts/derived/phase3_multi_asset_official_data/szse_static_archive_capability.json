@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "audit_scope": "one_bounded_official_static_archive_discovery",
+  "code": "159915",
+  "audited_at_utc": "2026-07-13T00:00:00Z",
+  "official_page_url": "https://www.szse.cn/market/trend/archive/index.html?code=159915",
+  "page_sha256": "2869271b18f479730f4772331694f4f4a025241fe2d2a8b3fc52075c342c7422",
+  "explicit_archive_links_examined": [],
+  "explicit_page_scripts_examined": [
+    "/modules/report/js/report_new.js",
+    "/modules/report/js/detail_report.js",
+    "/modules/report/js/common_report.js"
+  ],
+  "script_fetch_result": "all three explicit unversioned paths returned HTTP 404 on www.szse.cn and res.static.szse.cn",
+  "search_scope": "SZSE official archive page, its explicit links, and a domain-restricted public search; no URL guessing or path enumeration",
+  "csv_or_zip_link_found": false,
+  "static_archive_available": false,
+  "twenty_day_overlap_validation_run": false,
+  "batch_mode_permitted": false,
+  "decision": "permanent_single_date_official_worker",
+  "evidence_tier": "official_page_capability_audit",
+  "raw_committed": false
+}
