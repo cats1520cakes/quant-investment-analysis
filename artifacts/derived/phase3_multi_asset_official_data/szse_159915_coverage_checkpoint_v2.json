@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "code": "159915",
+  "registered": 350,
+  "success": 350,
+  "validated": 350,
+  "unique": 350,
+  "contiguous": true,
+  "contiguous_semantics": "ordered_unique_registered_exchange_responses; official_trade_calendar_not_bound",
+  "first_date": "20111209",
+  "last_date": "20130524",
+  "missing": "unknown_until_official_trade_calendar_bound",
+  "duplicate": 0,
+  "hash_mismatch": "not_recomputable_without_raw; registered_hash_schema_valid_only",
+  "attempt_ledger_sha256": "3b76210b5e29790b1acdaeb1141fa08a6f6a68fffe8f3b54c8e56d5d83f00cb3",
+  "old_checkpoint_completed_date_responses": 100,
+  "reconciled_recoverable_count": 350,
+  "raw_committed": false,
+  "canonical_promoted": false,
+  "strategy_run_permitted": false,
+  "strict_candidates": 0
+}
