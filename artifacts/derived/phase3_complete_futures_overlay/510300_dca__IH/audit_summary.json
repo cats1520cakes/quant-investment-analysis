@@ -1,0 +1,25 @@
+{
+  "family": "510300_dca__IH",
+  "specifications": 108,
+  "valid_specs": 96,
+  "invalid_asset_identity_specs": 12,
+  "overlay_executed_specs": 24,
+  "economic_dual_target_specs": 0,
+  "best_valid_worst_W12": 419309.48685,
+  "best_valid_worst_W24": 874676.72759,
+  "first_feasible_months": [
+    "2025-04",
+    "2025-11"
+  ],
+  "feasible_date_rate_range": [
+    0.0,
+    0.0034722222222222
+  ],
+  "margin_calls": 0,
+  "forced_liquidations": 0,
+  "max_rolls": 6,
+  "limit_rejects": 108,
+  "asset_identity_failures": 24,
+  "strict_candidates": 0,
+  "evidence_tier": "free_real_approx_conservative_margin"
+}
