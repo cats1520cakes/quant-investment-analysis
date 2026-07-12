@@ -62,7 +62,10 @@ class SharedPortfolioLedger:
     def settle_future(self,settle,multiplier,maintenance_rate=.75):
         if not self.futures_qty:return 0.
         pnl=(settle-self.futures_last_settle)*multiplier;self.cash+=pnl;self.futures_last_settle=settle
-        if self.cash+self.margin<self.margin*maintenance_rate:self.margin_calls+=1;self.close_future(settle,multiplier,forced=True)
+        # Daily variation margin is a cash obligation. A negative free-cash
+        # balance cannot be carried merely because frozen initial margin keeps
+        # aggregate equity above the maintenance ratio.
+        if self.cash < 0 or self.cash+self.margin<self.margin*maintenance_rate:self.margin_calls+=1;self.close_future(settle,multiplier,forced=True)
         return pnl
     def close_future(self,price,multiplier,fee=8.,forced=False):
         if not self.futures_qty:return 0.
