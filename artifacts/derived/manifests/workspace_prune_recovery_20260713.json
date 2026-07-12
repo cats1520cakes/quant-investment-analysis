@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "reason": "automated_workspace_pruning_removed_runtime_and_unsynced_atomic_parts",
+  "remote_resume_commit": "aaccda6e3dfb5bec58540415987b7115ecac3f57",
+  "if_remote_attempt_rows": 26,
+  "if_recoverable_atomic_parts": 0,
+  "if_resume_decision": "fail_closed_restart_0_of_108",
+  "library_artifact_recovery": false,
+  "cffex_24m_recovered": true,
+  "cffex_panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "cffex_master_sha256": "c405a1a3c09e5a3e6793b41286226ef43ab896e54d45bed9e7e682d8e025b6de",
+  "cffex_rows": 365652,
+  "cffex_contracts": 4910,
+  "cffex_products": ["HO", "IC", "IF", "IH", "IM", "IO", "MO"],
+  "sse_four_asset_recovered": true,
+  "sse_four_asset_panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+  "sse_four_asset_rows": 14541,
+  "sse_writer_reproduction": "frozen empty suspension_status and suspension_source_url columns restored",
+  "trade_parameter_recovery": "in_progress_0_to_192",
+  "szse_159915_recovery": "in_progress_rebuild_from_frozen_350_hash_ledger",
+  "raw_committed": false,
+  "strict_candidates": 0
+}
