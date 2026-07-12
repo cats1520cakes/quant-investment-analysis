@@ -1,0 +1,11 @@
+{
+  "bounded_attempts": [
+    {"attempt": 1, "pandas": "2.2.3", "pyarrow": "25.0.0", "result_sha256": "75f9056b5a151990c601d3ecce2ba369535105a057df76fb349efd57371acaf7", "matched": false},
+    {"attempt": 2, "pandas": "2.2.3", "pyarrow": "22.0.0", "result_sha256": "fc525130235670a08e2c4552fc1802b0b427846c75e82c7bbba45995e14a1d1d", "matched": false},
+    {"attempt": 3, "pandas": "3.0.3", "pyarrow": "24.0.0", "status": "dependency_download_blocked_after_two_bounded_retries", "matched": null}
+  ],
+  "frozen_copy_found": false,
+  "frozen_canonical_content_hash_found": false,
+  "dual_hash_gate_permitted": false,
+  "strategy_run_permitted": false
+}
