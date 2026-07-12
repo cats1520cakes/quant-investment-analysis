@@ -1,9 +1,18 @@
 {
   "family": "510300_dca__IM",
   "schema_version": 2,
-  "completed_specs": 13,
-  "timing_rows": 26,
-  "last_spec": "CO-0336",
+  "completed_specs": 46,
+  "timing_rows": 92,
+  "last_spec": "CO-0369",
+  "reject_totals": {
+    "reject_free_cash_insufficient": 16572,
+    "reject_nav_multiple_gate": 6756,
+    "reject_prior_day_volume": 0,
+    "reject_limit_price": 92,
+    "reject_contract_unavailable": 0,
+    "reject_expiry_roll_unavailable": 0,
+    "reject_other": 0
+  },
   "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
   "strict_candidates": 0
 }
