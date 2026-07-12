@@ -2,10 +2,11 @@
   "bounded_attempts": [
     {"attempt": 1, "pandas": "2.2.3", "pyarrow": "25.0.0", "result_sha256": "75f9056b5a151990c601d3ecce2ba369535105a057df76fb349efd57371acaf7", "matched": false},
     {"attempt": 2, "pandas": "2.2.3", "pyarrow": "22.0.0", "result_sha256": "fc525130235670a08e2c4552fc1802b0b427846c75e82c7bbba45995e14a1d1d", "matched": false},
-    {"attempt": 3, "pandas": "3.0.3", "pyarrow": "24.0.0", "status": "dependency_download_blocked_after_two_bounded_retries", "matched": null}
+    {"attempt": 3, "install_try": 1, "source": "official_pypi_simple", "status": "proxy_timeout"},
+    {"attempt": 4, "install_try": 2, "source": "exact_official_wheel_urls_from_uv_lock", "pandas": "3.0.3", "pyarrow": "24.0.0", "pandas_wheel_sha256": "6dc0b3fd2169c9157deed50b4d519553a3655c8c6a96027136d654592be973a9", "pyarrow_wheel_sha256": "6165461f55ef6314f026de6638d661188e3455d3ec49834556a0ebbdbace18bb", "result_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b", "matched": true}
   ],
-  "frozen_copy_found": false,
-  "frozen_canonical_content_hash_found": false,
-  "dual_hash_gate_permitted": false,
-  "strategy_run_permitted": false
+  "writer": {"created_by": "parquet-cpp-arrow version 24.0.0", "compression": "zstd", "row_groups": 1, "format_version": "2.6", "serialized_footer_size": 13248, "index": false, "column_order": "canonical_adapter_schema"},
+  "strategy_run_permitted": true,
+  "strict_promotion_permitted": false,
+  "remaining_strict_blockers": ["official point-in-time daily margin", "five non-overlap W24 blocks"]
 }
