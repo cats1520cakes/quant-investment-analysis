@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "preregistered": true,
+  "results_seen_before_freeze": false,
+  "specifications": 1364,
+  "family_counts": {
+    "F1_etf_trend_overlay": 32,
+    "F2_nav_feasible_activation": 64,
+    "F3_vol_drawdown_hedge": 128,
+    "O1_risk_on_call": 180,
+    "O2_multiscale_trend_call": 360,
+    "O3_drawdown_protective_put": 360,
+    "O4_vol_long_straddle": 240
+  },
+  "period": [
+    "2024-01-01",
+    "2025-12-31"
+  ],
+  "targets": {
+    "w12": 500000,
+    "w24": 1200000
+  },
+  "monthly_deposit": 30000,
+  "deposit_timings": [
+    "beginning",
+    "ending"
+  ],
+  "option_policy": {
+    "net_long_only": true,
+    "synthetic_prices_forbidden": true,
+    "execution": "actual_daily_open",
+    "liquidity": "prior_day_volume",
+    "budgets_pct_nav": [
+      0.005,
+      0.01,
+      0.02,
+      0.03,
+      0.05
+    ],
+    "minimum_contracts": 1,
+    "infeasible_is_failure": true,
+    "slippage_bps": [
+      10,
+      25,
+      50
+    ]
+  },
+  "futures_policy": {
+    "integer_contracts": true,
+    "daily_mark_to_market": true,
+    "margin_upper_bound_approx_only": true,
+    "margin_call_required": true,
+    "limit_block_required": true
+  },
+  "tier_separation": {
+    "strict": "requires_bid_ask_plus_point_in_time_margin_and_five_blocks",
+    "free_real_approx": "daily_open_no_quotes_plus_margin_upper_bound",
+    "strict_promotion_from_approx": false
+  },
+  "source_manifest_sha256": "05c7ac77771ca8b934faf43064511513f3ed0e499c8588ef3ef9a0f4bb3a6409",
+  "known_source_panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b",
+  "sample_gate": "2024-2025 has one W24 block; formal five-block gate fails",
+  "strict_candidates": 0
+}
