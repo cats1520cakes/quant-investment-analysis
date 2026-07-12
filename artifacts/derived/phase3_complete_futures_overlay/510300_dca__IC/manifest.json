@@ -1,0 +1,10 @@
+{
+  "family": "510300_dca__IC",
+  "specifications": 108,
+  "completed": 108,
+  "timing_rows": 216,
+  "strict_candidates": 0,
+  "economic_dual_target_specs": 0,
+  "evidence_tier": "free_real_approx_conservative_margin",
+  "panel_sha256": "7a119d96a5a456f2b5635720263bbb22d3b7b633f667a54370b9deaf105c380b"
+}
