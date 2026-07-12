@@ -1,0 +1,5 @@
+universe,code,official_ohlcv,start,end,rows,calendar_suspension_gate,units,company_actions,second_source,strict_rerun
+U3,510050,complete,20050223,20260710,5196,complete_for_frozen_evaluation,shares;CNY,complete_2013-03-15_to_2025-12-31,Tencent_crosscheck_only,blocked_runtime_panel_hash
+U3,510300,complete,20120528,20260710,3431,complete_for_frozen_evaluation,shares;CNY,complete_2013-03-15_to_2025-12-31,Tencent_crosscheck_only,blocked_runtime_panel_hash
+U3,510500,complete,20130315,20260710,3234,complete_for_frozen_evaluation,shares;CNY,complete_2013-03-15_to_2025-12-31,Tencent_crosscheck_only,blocked_runtime_panel_hash
+E1/E2/E3,159915,incomplete,2011-12-09,2025-12-31,134,blocked_until_official_history_complete,official_labels_identified_not_full_series_validated,complete_index_and_bodies,Tencent_3539_rows_crosscheck_only,blocked_official_ohlcv
