@@ -118,3 +118,13 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 
 - This non-repeating ETF-led family replaces inverse-volatility weighting with causal sleeve-relative momentum plus flow-adjusted drawdown hysteresis. Its 108 ETF-only combinations were frozen before any result was run.
 - Execution remains blocked until the four official full-history canonical panels and point-in-time company-action ledgers are bound to one manifest. The optional futures overlay remains separately blocked by official daily margin and execution-period sample coverage. Strict candidates: **0**.
+
+## SSE four-asset state/drawdown v1 — disaster recovery completion — 2026-07-13
+
+- Remote baseline `03ded172...` proved 85/108 execution IDs but omitted their detailed parts and daily ledgers. Recovery computed only the missing `S4SD-0085`–`S4SD-0107`, closing execution-ID coverage to 108/108 without repeating the first 85.
+- All 23 recovery specifications contain 121 monthly cohorts, both deposit timings and six non-overlapping W24 blocks. Their best worst W12/W24 is 343,858/713,417; p5 W24 is 716,862; dual-target passes are 0; daily asset identity passes.
+- Complete 108-spec economic aggregation remains fail-closed because the first 85 detailed artifacts are absent from the disaster checkpoint. Official daily margin is not applicable to this ETF-only family. Strict candidates: **0**.
+
+## Index-option minimum-contract regime v1 — preregistered — 2026-07-13
+
+- This next family is distinct from eliminated continuous-budget O1–O4: it uses an atomic minimum-one-contract affordability rule and causal ETF regime triggers. It cannot run until quote/expiry/settlement evidence is bound; daily-open-only results, if run, remain approximate. Strict candidates: **0**.

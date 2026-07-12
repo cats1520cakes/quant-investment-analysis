@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "family": "sse_four_asset_state_drawdown_v1",
+  "operation_sha256": "5c949ec12854a6b951dbc8ecc10f470189db049271516a99e997c990702476c2",
+  "specifications": 108,
+  "execution_coverage": 108,
+  "new_atomic_results": 23,
+  "remote_compact_only_results": 85,
+  "complete_family_aggregation_permitted": false,
+  "reporting_gate": "remote_first_85_parts_and_ledgers_not_in_disaster_checkpoint",
+  "cohorts_per_new_spec": 121,
+  "six_block_gate_new_specs": true,
+  "new_spec_dual_target_passes": 0,
+  "strict_candidates": 0,
+  "evidence_tier": "official_sse_raw_plus_official_sse_event_pdfs_etf_only",
+  "official_daily_margin_required": false,
+  "panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+  "event_ledger_sha256": "ab496ce0daf42e7274b59c2cef87053c4af7a9b8a342d99a5f3b1ef3b1d38c91"
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "family": "index_option_min_contract_regime_v1",
+  "status": "preregistered_data_gate_pending",
+  "results_seen_before_freeze": false,
+  "nonduplicate_basis": "event-driven minimum-one-contract long convexity conditioned on ETF regime; excludes previously eliminated continuous NAV-budget O1-O4 designs",
+  "underlyings": ["IO", "HO", "MO"],
+  "signal_information": "official ETF/index information through prior close only",
+  "entry_regimes": ["trend_acceleration", "drawdown_break", "realized_volatility_expansion"],
+  "structures": ["one_atm_call", "one_otm_call", "one_atm_put", "one_straddle_atomic"],
+  "execution": "real daily open, prior-day volume, minimum one complete contract/structure, next-open, no Black-Scholes synthetic fill",
+  "capital_rule": "trade only when full minimum premium plus conservative cost is available; infeasible otherwise; no continuous percentage budget",
+  "strict_data_gate": "official bid/ask or auditable executable quote, official expiry and cash settlement, complete company actions, five non-overlapping W24 blocks",
+  "approximate_tier": "daily_open_no_quotes may screen economics but can never promote strict",
+  "targets": {"W12": 500000, "W24": 1200000},
+  "strategy_run_permitted": false,
+  "strict_candidates": 0
+}
