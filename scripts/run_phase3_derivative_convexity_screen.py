@@ -45,9 +45,17 @@ def simulate(spec, panel, meta, timing):
                     cand=cand.assign(prior_volume=[previous_volume.get(x,0) for x in cand.index])
                     cand=cand[cand.prior_volume>0].sort_values(['dist','prior_volume'],ascending=[True,False])
                     if len(cand):
-                        row=cand.iloc[0]; premium=float(row.pv)*1.0025+3; budget=max(cash,0)*float(prm['budget_pct_nav'])
-                        if premium<=cash and premium<=budget:
-                            cash-=premium; costs+=premium-float(row.pv); positions[row.name]={'qty':1,'date':date,'last':float(row.open)}
+                        legs=[cand.iloc[0]]
+                        if family.startswith('O4'):
+                            put=day[(day.option_type=='P')&day.open_executable].copy()
+                            put=put.assign(dist=(put.strike.astype(float)-spot*(1-float(prm['moneyness']))).abs(),pv=put.open.astype(float)*put.multiplier.astype(float),prior_volume=[previous_volume.get(x,0) for x in put.index])
+                            put=put[put.prior_volume>0].sort_values(['dist','prior_volume'],ascending=[True,False])
+                            if put.empty: legs=[]
+                            else: legs.append(put.iloc[0])
+                        premium=sum(float(x.pv)*1.0025+3 for x in legs); budget=max(cash,0)*float(prm['budget_pct_nav'])
+                        if legs and premium<=cash and premium<=budget:
+                            cash-=premium; costs+=sum(float(x.pv)*.0025+3 for x in legs)
+                            for row in legs: positions[row.name]={'qty':1,'date':date,'last':float(row.open)}
                         else: infeasible+=1
                     else: infeasible+=1
                 else: infeasible+=1
