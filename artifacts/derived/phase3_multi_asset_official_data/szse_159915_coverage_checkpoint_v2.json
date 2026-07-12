@@ -11,12 +11,16 @@
   "last_date": "20130524",
   "missing": "unknown_until_official_trade_calendar_bound",
   "duplicate": 0,
-  "hash_mismatch": "not_recomputable_without_raw; registered_hash_schema_valid_only",
+  "hash_mismatch": 0,
   "attempt_ledger_sha256": "3b76210b5e29790b1acdaeb1141fa08a6f6a68fffe8f3b54c8e56d5d83f00cb3",
   "old_checkpoint_completed_date_responses": 100,
   "reconciled_recoverable_count": 350,
   "raw_committed": false,
   "canonical_promoted": false,
   "strategy_run_permitted": false,
-  "strict_candidates": 0
+  "strict_candidates": 0,
+  "raw_files_present": 59,
+  "raw_files_hash_validated": 59,
+  "raw_registered_hash_mismatch_count": 0,
+  "raw_registered_hash_mismatch_examples": []
 }

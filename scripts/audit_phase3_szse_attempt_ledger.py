@@ -12,6 +12,7 @@ import pandas as pd
 ROOT = Path("artifacts/derived/phase3_multi_asset_official_data")
 LEDGER = ROOT / "szse_159915_attempt_ledger.csv"
 OUT = ROOT / "szse_159915_coverage_checkpoint_v2.json"
+RAW = Path("artifacts/runtime_data/raw/szse_159915_history")
 
 
 def atomic_json(payload: dict, path: Path) -> None:
@@ -66,5 +67,23 @@ payload = {
     "strategy_run_permitted": False,
     "strict_candidates": 0,
 }
+registered_hash = dict(zip(frame.chunk.astype(str), frame.sha256.astype(str)))
+raw_files = sorted(RAW.glob("*.json")) if RAW.exists() else []
+raw_validated = 0
+raw_hash_mismatch = []
+for path in raw_files:
+    expected = registered_hash.get(path.stem)
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    if expected is not None and expected != actual:
+        raw_hash_mismatch.append(path.stem)
+    else:
+        raw_validated += 1
+payload.update({
+    "raw_files_present": len(raw_files),
+    "raw_files_hash_validated": raw_validated,
+    "raw_registered_hash_mismatch_count": len(raw_hash_mismatch),
+    "raw_registered_hash_mismatch_examples": raw_hash_mismatch[:10],
+    "hash_mismatch": len(raw_hash_mismatch),
+})
 atomic_json(payload, OUT)
 print(json.dumps(payload, ensure_ascii=False, indent=2))
