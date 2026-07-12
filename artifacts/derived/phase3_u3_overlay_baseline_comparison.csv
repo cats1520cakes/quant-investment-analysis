@@ -1,0 +1,5 @@
+product,equal_weight_best_worst_w12,equal_weight_best_worst_w24,trend_cash_best_worst_w12,trend_cash_best_worst_w24,delta_w12,delta_w24,trend_cash_dual_target_specs,evidence_tier,strict_candidates
+IH,391441.15224,827327.65915,429024.38257,898933.31399,37583.23033,71605.65484,0,free_real_approx_conservative_margin,0
+IF,461503.31995,923536.36665,555162.68821,1007194.46583,93659.36826,83658.09918,0,free_real_approx_conservative_margin,0
+IC,459979.58926,952009.98056,594412.55287,1054313.82281,134432.96361,102303.84225,0,free_real_approx_conservative_margin,0
+IM,459979.58926,972748.15349,654280.27207,1128086.99980,194300.68281,155338.84631,0,free_real_approx_conservative_margin,0
