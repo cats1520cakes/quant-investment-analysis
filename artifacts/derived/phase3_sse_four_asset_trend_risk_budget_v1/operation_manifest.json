@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "family": "sse_four_asset_trend_risk_budget_v1",
+  "status": "preregistered_before_results",
+  "results_seen_before_freeze": false,
+  "derivation": "mechanical projection of frozen multi_asset_trend_risk_budget_v2 caused only by official canonical data availability",
+  "does_not_replace": "multi_asset_trend_risk_budget_v2",
+  "source_operation_sha256": "57ee745a417ca2cbae419988fd61f826aecd954eb712036abb4c3f9c7f5eedd0",
+  "asset_roles": {
+    "broad_equity": "510300",
+    "dividend_equity": "510880",
+    "gold": "518880",
+    "government_bond": "511010"
+  },
+  "signal": {
+    "prices": "official raw plus confirmed point-in-time cash/share action adjustment; signal only",
+    "known_information": "all features end at prior trading-day close",
+    "absolute_trend": "prior adjusted close above prior 120-observation simple moving average",
+    "volatility": "sample standard deviation of 60 prior adjusted-close simple returns"
+  },
+  "weights": {
+    "eligible": "absolute-trend pass and finite positive volatility",
+    "raw": "inverse_volatility among eligible assets",
+    "cap": 0.4,
+    "algorithm": "iterative water-fill capped at 40%; if fewer than three eligible assets, unallocatable residual remains cash",
+    "failed_or_missing": "zero target and its capital remains cash",
+    "gross_cap": 1.0
+  },
+  "execution": {
+    "rebalance": "first common calendar trading day of each month at official raw open",
+    "deposit_beginning": "deposit before company-action cash payment and trades",
+    "deposit_ending": "company actions and trades first; deposit after daily valuation",
+    "company_actions": "record-date entitlement; official pay-date cash; official share factor effective date",
+    "lots": "100 ETF shares and integer futures contracts",
+    "suspension": "retain holding; frozen target capital is not redistributed",
+    "cash_and_margin": "single shared ledger; margin unavailable to ETF purchases; daily MTM and immediate margin action"
+  },
+  "targets": {
+    "W12": 500000,
+    "W24": 1200000
+  },
+  "deposit_timings": [
+    "beginning",
+    "ending"
+  ],
+  "monthly_deposit": 30000,
+  "common_history": {
+    "first_common_date": "2013-07-29",
+    "warmup_observations": 120,
+    "first_evaluable_date": "2014-01-22",
+    "last_date": "2026-07-10",
+    "complete_months_after_warmup": 150,
+    "nonoverlap_W24_blocks": 6
+  },
+  "minimum_nonoverlap_W24_blocks": 6,
+  "panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+  "grid_sha256": "c80e5de617357f86f1915827a84f41b4505afa01b9f8634ac13dec3497e322cc",
+  "specifications": 432,
+  "family_counts": {
+    "sse_four_asset_trend_risk_budget_v1__IC": 108,
+    "sse_four_asset_trend_risk_budget_v1__IF": 108,
+    "sse_four_asset_trend_risk_budget_v1__IH": 108,
+    "sse_four_asset_trend_risk_budget_v1__IM": 108
+  },
+  "strategy_run_permitted": true,
+  "evidence_tier": "official_exchange_etf_canonical_plus_free_real_approx_conservative_futures_margin",
+  "strict_blockers": [
+    "official_point_in_time_daily_margin"
+  ],
+  "strict_candidates": 0
+}
