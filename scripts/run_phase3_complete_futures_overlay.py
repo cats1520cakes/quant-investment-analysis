@@ -13,7 +13,7 @@ def atomic_csv(df,path):
   if os.path.exists(tmp):os.unlink(tmp)
 def one(spec,timing,etf,fut,meta):
  p=json.loads(spec.parameters);L=SharedLedger(); nav=[];etf_pnl=fut_pnl=0.;first='';feasible=attempts=rolls=limit_rejects=identity=0;last_month=None;cur=None
- close=etf.set_index('date').close; signal=fut.groupby('date').settle.mean();trend=signal/signal.shift(p['trend_window'])-1;prev_vol={};expiry=meta.groupby('contract').official_last_trade_date.last().astype(str).to_dict();daily={d:x.set_index('contract') for d,x in fut.groupby('date')}
+ close=etf.set_index('date').close; signal=fut.groupby('date').settle.mean();trend=signal/signal.shift(p['trend_window'])-1;prev_vol={};expiry=meta.groupby('contract').official_last_trade_date.last().astype(str).to_dict();daily={d:x.set_index('contract') for d,x in fut.groupby('date')};margin_series=[];margin_nav=[];reject={k:0 for k in ['free_cash_insufficient','nav_multiple_gate','prior_day_volume','limit_price','contract_unavailable','expiry_roll_unavailable','other']}
  for d in sorted(set(etf.date)&set(fut.date)):
   month=(d.year,d.month);bar=etf[etf.date.eq(d)].iloc[0];day=daily[d]
   if timing=='beginning' and month!=last_month:L.deposit(30000)
@@ -23,26 +23,33 @@ def one(spec,timing,etf,fut,meta):
    if remain<=p['roll_lead_days']:
     L.close_future(float(r.open),float(r.multiplier));cur=None;rolls+=1
   tv=trend.get(d,np.nan);active=bool(pd.notna(tv) and tv>0)
-  cand=day[day.open_executable].copy();cand['pv']=[prev_vol.get(x,0) for x in cand.index];cand=cand[cand.pv>0].sort_values(['contract_month','pv'],ascending=[True,False])
+  executable=day[day.open_executable].copy();cand=executable.copy();cand['pv']=[prev_vol.get(x,0) for x in cand.index];cand=cand[cand.pv>0].sort_values(['contract_month','pv'],ascending=[True,False])
   reserve=0.
-  if active and not L.futures_qty and len(cand):
-   attempts+=1;r=cand.iloc[0];reserve=float(r.open)*float(r.multiplier)*.20*p['nav_margin_multiple']
+  if active and not L.futures_qty:
+   attempts+=1
+   if executable.empty: reject['contract_unavailable']+=1
+   elif cand.empty: reject['prior_day_volume']+=1
+   else: r=cand.iloc[0];reserve=float(r.open)*float(r.multiplier)*.20*p['nav_margin_multiple']+8.
   if month!=last_month and bar.tradable:
    before=L.etf_shares*float(bar.open);q=L.buy_etf(float(bar.open),max(0,L.cash-reserve));etf_pnl+=q*(float(bar.close)-float(bar.open))
   if active and not L.futures_qty and len(cand):
    r=cand.iloc[0];upper=meta[(meta.snapshot_date.eq(d.strftime('%Y%m%d')))&meta.contract.eq(r.name)].upper_limit_price
    lower=meta[(meta.snapshot_date.eq(d.strftime('%Y%m%d')))&meta.contract.eq(r.name)].lower_limit_price
    blocked=(len(upper) and float(r.open)>=float(upper.iloc[0])) or (len(lower) and float(r.open)<=float(lower.iloc[0]))
-   if blocked:limit_rejects+=1
+   need=float(r.open)*float(r.multiplier)*.20;nav_before=L.nav(float(bar.close))
+   if blocked:limit_rejects+=1;reject['limit_price']+=1
+   elif nav_before < need*p['nav_margin_multiple']+8.: reject['nav_multiple_gate']+=1
+   elif L.cash < need*p['nav_margin_multiple']+8.: reject['free_cash_insufficient']+=1
    elif L.open_future(float(r.open),float(r.multiplier),.20,p['nav_margin_multiple']):cur=r.name;feasible+=1;first=first or d.strftime('%Y-%m')
-  n=L.nav(float(bar.close));nav.append((d,n));
+   else:reject['other']+=1
+  n=L.nav(float(bar.close));nav.append((d,n));margin_series.append(L.margin);margin_nav.append(L.margin/n if n>0 else float('nan'))
   try:L.assert_identity(float(bar.close))
   except AssertionError:identity+=1
   prev_vol.update(day.volume.fillna(0).astype(float).to_dict())
   if timing=='ending' and month!=last_month:L.deposit(30000)
   last_month=month
  s=pd.Series(dict(nav));w12=float(s.iloc[min(251,len(s)-1)]);w24=float(s.iloc[-1]);mdd=float((s/s.cummax()-1).min())
- return {'spec_id':spec.spec_id,'deposit_timing':timing,'first_feasible_month':first,'feasible_date_rate':feasible/max(attempts,1),'W12':w12,'W24':w24,'etf_pnl':etf_pnl,'futures_pnl':fut_pnl,'margin_calls':L.margin_calls,'forced_liquidations':L.forced_liquidations,'rolls':rolls,'limit_rejects':limit_rejects,'fees':L.fees,'max_drawdown':mdd,'asset_identity_failures':identity,'dual_target_pass':w12>=500000 and w24>=1200000}
+ return {'spec_id':spec.spec_id,'deposit_timing':timing,'first_feasible_month':first,'feasible_date_rate':feasible/max(attempts,1),'W12':w12,'W24':w24,'etf_pnl':etf_pnl,'futures_pnl':fut_pnl,'margin_peak':max(margin_series,default=0.),'margin_mean':float(np.nanmean(margin_series)) if margin_series else 0.,'margin_to_nav_peak':float(np.nanmax(margin_nav)) if any(pd.notna(x) for x in margin_nav) else 0.,**{f'reject_{k}':v for k,v in reject.items()},'margin_calls':L.margin_calls,'forced_liquidations':L.forced_liquidations,'rolls':rolls,'limit_rejects':limit_rejects,'fees':L.fees,'max_drawdown':mdd,'asset_identity_failures':identity,'dual_target_pass':w12>=500000 and w24>=1200000}
 def main():
  ap=argparse.ArgumentParser();ap.add_argument('--baseline',required=True);ap.add_argument('--product',required=True);a=ap.parse_args();family=f'{a.baseline}__{a.product}';out=OUT/family;out.mkdir(parents=True,exist_ok=True)
  grid=pd.read_csv(GRID);grid=grid[grid.family.eq(family)];etf=pd.read_parquet(EP);etf=etf[etf.code.astype(str).eq('510300')].copy();etf['date']=pd.to_datetime(etf.trade_date);f=pd.read_parquet(FP);f=f[(f.instrument_type.eq('future'))&f['product'].eq(a.product)].copy();f['date']=pd.to_datetime(f.trade_date);m=pd.read_parquet(MP)
