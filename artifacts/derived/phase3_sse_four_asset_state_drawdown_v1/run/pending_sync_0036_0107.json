@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "family": "sse_four_asset_state_drawdown_v1",
+  "detected_by": "fresh_clone_remote_reassembly_audit",
+  "audited_remote_head": "35fb28e817f9c3da19687a1fd336adba9f80d5a8",
+  "last_fully_auditable_spec": "S4SD-0035",
+  "first_missing_spec": "S4SD-0036",
+  "pending_specs": 72,
+  "reason": "2MB base64 source output was silently truncated before GitHub blob creation",
+  "affected_packages": 12,
+  "safe_chunk_bytes": 700000,
+  "reporting_gate": "fail_closed",
+  "strict_candidates": 0
+}
