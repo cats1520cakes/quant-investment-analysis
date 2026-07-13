@@ -19,6 +19,17 @@
     "gzip_validation": "failed_unexpected_eof",
     "counted_complete": false
   },
+  "processed_panel_rebuild": {
+    "cutoff": "2026-07-10",
+    "rows": 14541,
+    "schema": "frozen_empty_suspension_lineage_columns",
+    "parquet_writer": "parquet-cpp-arrow 24.0.0",
+    "observed_sha256": "6fd7e8a7c9bc5b3b93c29bc894a014c928158395da6dfc14147e25162a29717d",
+    "frozen_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+    "sha_gate_passed": false,
+    "downstream_specs_executed": false,
+    "raw_committed": false
+  },
   "reporting_gate": "fail_closed",
   "strict_candidates": 0
 }
