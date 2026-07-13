@@ -2,13 +2,23 @@
   "schema_version": 1,
   "family": "sse_four_asset_state_drawdown_v1",
   "detected_by": "fresh_clone_remote_reassembly_audit",
-  "audited_remote_head": "35fb28e817f9c3da19687a1fd336adba9f80d5a8",
+  "audited_remote_head": "c616209c19c211608b09e7e78bcad8ff6c077cf3",
   "last_fully_auditable_spec": "S4SD-0035",
   "first_missing_spec": "S4SD-0036",
   "pending_specs": 72,
-  "reason": "2MB base64 source output was silently truncated before GitHub blob creation",
+  "reason": "S4SD-0036_0041 remote chunks fail their frozen SHA256 manifest and reassemble to a truncated gzip; HEAD does not contain the processed canonical panel required for deterministic recomputation",
   "affected_packages": 12,
   "safe_chunk_bytes": 700000,
+  "failed_batch": "S4SD-0036..S4SD-0041",
+  "failed_batch_observed": {
+    "part_00_sha256": "05684045a9095f2c2f963220a9978cc9bcc7fc41d0183bb6836a5b75b7bbf1da",
+    "part_01_sha256": "701606b9e87b3cfc799f1512fdf73b0cbf980e31eec66c5c8fb62543a9ac6b55",
+    "part_02_sha256": "cbac30e733bb9d5cf0fbab06f014031dbfea07d25b9ff0fd218bcf75aa3fc96f",
+    "reassembled_sha256": "a2ec5a11e51f1b9694e943bfc84c6cc4d33d3239a69592ed300d1f4764d23959",
+    "frozen_archive_sha256": "d804ec79ddbceaa0c37b6765083f7c4a6040f28a41ef43ff693df362a40bff72",
+    "gzip_validation": "failed_unexpected_eof",
+    "counted_complete": false
+  },
   "reporting_gate": "fail_closed",
   "strict_candidates": 0
 }
