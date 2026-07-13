@@ -3,7 +3,7 @@
   "family": "sse_four_asset_state_drawdown_v1",
   "operation_sha256": "5c949ec12854a6b951dbc8ecc10f470189db049271516a99e997c990702476c2",
   "specifications": 108,
-  "fully_auditable_specs": 36,
+  "fully_auditable_specs": 42,
   "complete_family_aggregation_permitted": false,
   "reporting_gate": "recovery_recompute_incomplete",
   "cohorts_per_spec": 121,

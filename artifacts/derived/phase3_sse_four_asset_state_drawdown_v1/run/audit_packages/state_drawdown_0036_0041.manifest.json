@@ -1,0 +1,74 @@
+{
+  "files": [
+    {
+      "bytes": 49150,
+      "path": "parts/S4SD-0036.csv",
+      "sha256": "5408cfe1b2a37c1861955a4fe02f16156feaea246d4300632146db29418b9adc"
+    },
+    {
+      "bytes": 763092,
+      "path": "daily_ledgers/S4SD-0036.parquet",
+      "sha256": "0322606c5735c7537046c2422274db5c2362a055cf9206ce1a1404ad346cb760"
+    },
+    {
+      "bytes": 49182,
+      "path": "parts/S4SD-0037.csv",
+      "sha256": "3aa2c7a4cec1ff3c15864a3583f4c1e7e12949ba8b14b8626020d4b965925d10"
+    },
+    {
+      "bytes": 763204,
+      "path": "daily_ledgers/S4SD-0037.parquet",
+      "sha256": "f292cc1ab5e9980b3693b9298091daa8da8c4077b8a0b69187554edb30b2438c"
+    },
+    {
+      "bytes": 49104,
+      "path": "parts/S4SD-0038.csv",
+      "sha256": "8edf5d809e2ab365f62b2b7acbadeeed55643a5b97c796b0a3a0052588e761f0"
+    },
+    {
+      "bytes": 764127,
+      "path": "daily_ledgers/S4SD-0038.parquet",
+      "sha256": "52afb99cad5b6aff64799aaed1ddd314e98ce6522c165d6eeaaaaa46361ba0a9"
+    },
+    {
+      "bytes": 49160,
+      "path": "parts/S4SD-0039.csv",
+      "sha256": "30e62341f07e48929752542e79d81ca0ec9b96935718769e6bc31c1fb2b71354"
+    },
+    {
+      "bytes": 764276,
+      "path": "daily_ledgers/S4SD-0039.parquet",
+      "sha256": "381bc1921f50206d66790e7c87c2d4075bf6438fc8c00a8b60008f25036652a0"
+    },
+    {
+      "bytes": 48850,
+      "path": "parts/S4SD-0040.csv",
+      "sha256": "cb1fb81ede4488f59e5dc117e1026823d50d2d26a4524abdb38b31691f775f8c"
+    },
+    {
+      "bytes": 769886,
+      "path": "daily_ledgers/S4SD-0040.parquet",
+      "sha256": "7c181dfab28d6496ffff4622064e2f5036653a6d5bdedbcfab0805e6b613d585"
+    },
+    {
+      "bytes": 48901,
+      "path": "parts/S4SD-0041.csv",
+      "sha256": "291804296b30ba8b578f2c043fca1f4dd21856bbba892ae7dcba0075510d182d"
+    },
+    {
+      "bytes": 769927,
+      "path": "daily_ledgers/S4SD-0041.parquet",
+      "sha256": "7026e7a35ebcbc289b61e1cfe220a29ed4b4e45e3a1756cd6a89fff54016905f"
+    }
+  ],
+  "raw_data": false,
+  "schema_version": 1,
+  "specs": [
+    "S4SD-0036",
+    "S4SD-0037",
+    "S4SD-0038",
+    "S4SD-0039",
+    "S4SD-0040",
+    "S4SD-0041"
+  ]
+}
