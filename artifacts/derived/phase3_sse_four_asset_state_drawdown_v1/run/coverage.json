@@ -1,13 +1,13 @@
 {
-  "completed_specs": 84,
+  "completed_specs": 90,
   "target_specs": 108,
   "remote_compact_only_specs": 0,
-  "new_atomic_parts": 84,
+  "new_atomic_parts": 90,
   "operation_sha256": "5c949ec12854a6b951dbc8ecc10f470189db049271516a99e997c990702476c2",
   "panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
   "event_ledger_sha256": "ab496ce0daf42e7274b59c2cef87053c4af7a9b8a342d99a5f3b1ef3b1d38c91",
-  "daily_ledger_files_claimed": 84,
-  "daily_ledger_files_locally_auditable": 84,
+  "daily_ledger_files_claimed": 90,
+  "daily_ledger_files_locally_auditable": 90,
   "reporting_gate": "fail_closed_until_remote_108_large_artifacts_recovered",
   "strict_candidates": 0
 }
