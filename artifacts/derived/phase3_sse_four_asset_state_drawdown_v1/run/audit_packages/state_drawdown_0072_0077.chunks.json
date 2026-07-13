@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "archive": "state_drawdown_0072_0077.tar.gz",
+  "archive_bytes": 4434003,
+  "archive_sha256": "8be5ff4ef073adf84573f8f8becf01746f606df7eb2e677cac146aeb23760c90",
+  "reassembly": "concatenate parts in lexical order",
+  "parts": [
+    {"path": "state_drawdown_0072_0077.tar.gz.part-00", "bytes": 2000000, "sha256": "18a41a94074887ade05d1b9de4914c7ddecaeff869ad91a37b5f30137e5b6eca"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-01", "bytes": 2000000, "sha256": "d5f3ba4b75bf4cfd21dd24e7640379a86c747fa031ab56294311966b7a0dc357"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-02", "bytes": 434003, "sha256": "06c6dc09b9cc84694489147824e2dee43d22f8db809e02e2e872617a97f6127b"}
+  ]
+}
