@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "scope": "S4SD deterministic processed panel",
+  "base_remote_head": "8852d35f511938eb545bbeec5e69559a9b96266e",
+  "frozen_panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+  "rows": 14541,
+  "date_boundary": {"cutoff": "2026-07-10", "match": true},
+  "source_audit": {
+    "current_official_source_contains_post_freeze_rows_through": "2026-07-13",
+    "post_freeze_rows_removed_before_comparison": true,
+    "committed_frozen_manifest_contains_per_source_sha256": false,
+    "logical_values_after_cutoff_match_inferred_from_exact_final_panel_sha": true
+  },
+  "schema_and_order": {
+    "column_order_match": true,
+    "row_sort": ["trade_date", "code"],
+    "row_sort_match": true,
+    "pandas_2_2_3_string_dtype": "object",
+    "pandas_3_0_3_string_dtype": "str"
+  },
+  "parquet_metadata": {
+    "failed_rebuild": {"pandas": "2.2.3", "pyarrow": "24.0.0", "sha256": "6fd7e8a7c9bc5b3b93c29bc894a014c928158395da6dfc14147e25162a29717d"},
+    "frozen_rebuild": {"pandas": "3.0.3", "pyarrow": "24.0.0", "sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac"}
+  },
+  "first_difference": "pandas parquet metadata and Arrow string encoding produced by pandas 2.2.3 versus frozen pandas 3.0.3",
+  "gate_passed": true
+}

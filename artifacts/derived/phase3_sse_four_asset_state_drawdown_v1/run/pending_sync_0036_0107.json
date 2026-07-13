@@ -2,11 +2,11 @@
   "schema_version": 1,
   "family": "sse_four_asset_state_drawdown_v1",
   "detected_by": "fresh_clone_remote_reassembly_audit",
-  "audited_remote_head": "c616209c19c211608b09e7e78bcad8ff6c077cf3",
-  "last_fully_auditable_spec": "S4SD-0035",
-  "first_missing_spec": "S4SD-0036",
-  "pending_specs": 72,
-  "reason": "S4SD-0036_0041 remote chunks fail their frozen SHA256 manifest and reassemble to a truncated gzip; HEAD does not contain the processed canonical panel required for deterministic recomputation",
+  "audited_remote_head": "8852d35f511938eb545bbeec5e69559a9b96266e",
+  "last_fully_auditable_spec": "S4SD-0041",
+  "first_missing_spec": "S4SD-0042",
+  "pending_specs": 66,
+  "reason": "S4SD-0036..S4SD-0041 deterministically recomputed after restoring the frozen pandas parquet metadata; remaining specifications are pending",
   "affected_packages": 12,
   "safe_chunk_bytes": 700000,
   "failed_batch": "S4SD-0036..S4SD-0041",
@@ -30,6 +30,16 @@
     "downstream_specs_executed": false,
     "raw_committed": false
   },
-  "reporting_gate": "fail_closed",
+  "panel_sha_resolution": {
+    "first_difference": "pandas parquet metadata and string dtype encoding",
+    "frozen_pandas": "3.0.3",
+    "frozen_pyarrow": "24.0.0",
+    "reproduced_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+    "sha_gate_passed": true,
+    "batch": "S4SD-0036..S4SD-0041",
+    "batch_hashes_match_frozen_manifest": true,
+    "counted_complete": true
+  },
+  "reporting_gate": "fail_closed_recovery_recompute_incomplete",
   "strict_candidates": 0
 }
