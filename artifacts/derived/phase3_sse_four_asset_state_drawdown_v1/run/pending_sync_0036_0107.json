@@ -67,6 +67,26 @@
     "raw_downloaded_or_synced": false,
     "counted_complete": false
   },
+  "current_batch_recompute_attempt": {
+    "batch": "S4SD-0078..S4SD-0083",
+    "base_remote_head": "27114919f04a531806d05200b0d38c73b87fc961",
+    "operation_sha256_expected": "5c949ec12854a6b951dbc8ecc10f470189db049271516a99e997c990702476c2",
+    "operation_sha256_observed": "5c949ec12854a6b951dbc8ecc10f470189db049271516a99e997c990702476c2",
+    "event_ledger_sha256_expected": "ab496ce0daf42e7274b59c2cef87053c4af7a9b8a342d99a5f3b1ef3b1d38c91",
+    "event_ledger_sha256_observed": "ab496ce0daf42e7274b59c2cef87053c4af7a9b8a342d99a5f3b1ef3b1d38c91",
+    "panel_sha256_expected": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+    "panel_path": "artifacts/runtime_data/processed/phase3_etf/multi_asset_sse_canonical.parquet",
+    "panel_gate": "blocked_missing_from_remote_head_and_all_remote_refs",
+    "pandas": "3.0.3",
+    "pyarrow": "24.0.0",
+    "specs_recomputed": 0,
+    "part_and_ledger_files_generated": 0,
+    "content_addressed_chunks_generated": 0,
+    "max_chunk_bytes": 700000,
+    "raw_downloaded_or_synced": false,
+    "reason": "frozen derived panel bytes are not remotely recoverable; public raw download is prohibited",
+    "counted_complete": false
+  },
   "reporting_gate": "fail_closed_recovery_recompute_incomplete",
   "strict_candidates": 0
 }
