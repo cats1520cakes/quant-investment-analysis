@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "family": "sse_four_asset_state_drawdown_v1",
+  "scope": "S4SD-0078..S4SD-0107",
+  "specs": 30,
+  "decision": "excluded_from_completion_and_strict_promotion",
+  "decision_basis": [
+    "frozen panel bytes absent from every remote ref and workspace nonraw storage",
+    "five of five frozen archives truncated and archive SHA mismatched",
+    "five of five reassembled archives fail gzip and tar validation",
+    "fresh clone missing all 60 required part-plus-daily-ledger files",
+    "public market raw download or synchronization prohibited"
+  ],
+  "economic_failure_claimed": false,
+  "evidence_package": "audit_packages/unreachable_S4SD-0078_0107.a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb.json",
+  "evidence_package_sha256": "a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb",
+  "coverage_before": 78,
+  "coverage_after": 78,
+  "strict_candidates_before": 0,
+  "strict_candidates_after": 0
+}

@@ -31,6 +31,18 @@
   "szse_recovered_raw_matching_remote_hashes": 336,
   "low_turnover_baseline_status": "blocked_missing_frozen_operational_definition",
   "low_turnover_baseline_reason": "preregistered family label exists, but no non-label signal/position rule is present in code or manifest; cannot safely substitute 510300 or U3 equal weight",
+  "s4sd_unreachable_scope": "S4SD-0078..S4SD-0107",
+  "s4sd_unreachable_base_head": "a0dbd155ad9ce037c85ed654ae73f623c62c539c",
+  "s4sd_frozen_panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+  "s4sd_panel_remote_refs_present": 0,
+  "s4sd_workspace_nonraw_panel_matches": 0,
+  "s4sd_truncated_archives": "5_of_5",
+  "s4sd_fresh_clone_missing_files": "60_of_60",
+  "s4sd_coverage": "78_of_108_fail_closed",
+  "s4sd_unreachable_evidence_package": "artifacts/derived/phase3_sse_four_asset_state_drawdown_v1/run/audit_packages/unreachable_S4SD-0078_0107.a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb.json",
+  "s4sd_unreachable_evidence_sha256": "a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb",
+  "s4sd_unreachable_registry": "artifacts/derived/phase3_sse_four_asset_state_drawdown_v1/run/unreachable_registry.json",
+  "s4sd_unreachable_elimination_ledger": "artifacts/derived/phase3_sse_four_asset_state_drawdown_v1/run/unreachable_elimination_ledger.json",
   "raw_data_to_sync": false,
   "strict_candidates": 0
 }

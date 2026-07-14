@@ -87,6 +87,25 @@
     "reason": "frozen derived panel bytes are not remotely recoverable; public raw download is prohibited",
     "counted_complete": false
   },
+  "unreachable_evidence_seal": {
+    "scope": "S4SD-0078..S4SD-0107",
+    "base_remote_head": "a0dbd155ad9ce037c85ed654ae73f623c62c539c",
+    "evidence_package": "audit_packages/unreachable_S4SD-0078_0107.a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb.json",
+    "evidence_package_sha256": "a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb",
+    "registry": "unreachable_registry.json",
+    "elimination_ledger": "unreachable_elimination_ledger.json",
+    "frozen_panel_sha256": "c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac",
+    "panel_remote_refs_present": 0,
+    "workspace_nonraw_panel_matches": 0,
+    "truncated_archives": 5,
+    "gzip_failures": 5,
+    "fresh_clone_expected_files": 60,
+    "fresh_clone_missing_files": 60,
+    "public_market_raw_downloaded_or_synced": false,
+    "counted_complete": false,
+    "coverage_after": 78,
+    "strict_candidates_after": 0
+  },
   "reporting_gate": "fail_closed_recovery_recompute_incomplete",
   "strict_candidates": 0
 }

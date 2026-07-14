@@ -128,3 +128,9 @@ Existing development-exposed negative evidence is retained: Phase 1 simple index
 ## Index-option minimum-contract regime v1 — preregistered — 2026-07-13
 
 - This next family is distinct from eliminated continuous-budget O1–O4: it uses an atomic minimum-one-contract affordability rule and causal ETF regime triggers. It cannot run until quote/expiry/settlement evidence is bound; daily-open-only results, if run, remain approximate. Strict candidates: **0**.
+
+## SSE four-asset state/drawdown v1 — unreachable evidence seal — 2026-07-14
+
+- `S4SD-0078`–`S4SD-0107` are sealed as audit-evidence unreachable, not as economic failures and not as completed specifications. The exact frozen panel SHA is `c3e58154...`; its bytes are absent from both remote heads and from workspace nonraw storage, while public-market raw download remains prohibited.
+- All five frozen archive groups are truncated: each reassembled SHA differs from its frozen declaration, and all five fail gzip and tar validation. A fresh clone contains 0/60 required part-plus-daily-ledger files for this scope.
+- Fully auditable coverage remains 78/108; complete-family aggregation remains blocked; strict candidates remain **0**. The machine-readable evidence package is bound from the family registry, elimination ledger and pending manifests.

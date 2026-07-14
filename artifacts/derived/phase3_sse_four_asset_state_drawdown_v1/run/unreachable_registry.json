@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "family": "sse_four_asset_state_drawdown_v1",
+  "status": "partial_audit_fail_closed",
+  "fully_auditable_scope": "S4SD-0000..S4SD-0077",
+  "fully_auditable_specs": 78,
+  "unreachable_scope": "S4SD-0078..S4SD-0107",
+  "unreachable_specs": [
+    "S4SD-0078", "S4SD-0079", "S4SD-0080", "S4SD-0081", "S4SD-0082", "S4SD-0083",
+    "S4SD-0084", "S4SD-0085", "S4SD-0086", "S4SD-0087", "S4SD-0088", "S4SD-0089",
+    "S4SD-0090", "S4SD-0091", "S4SD-0092", "S4SD-0093", "S4SD-0094", "S4SD-0095",
+    "S4SD-0096", "S4SD-0097", "S4SD-0098", "S4SD-0099", "S4SD-0100", "S4SD-0101",
+    "S4SD-0102", "S4SD-0103", "S4SD-0104", "S4SD-0105", "S4SD-0106", "S4SD-0107"
+  ],
+  "unreachable_classification": "audit_evidence_unreachable_not_economic_failure",
+  "blocking_dependency": "exact frozen panel c3e58154c0882b271794caf94ca3dcb69898147e5abfad74b83f6d3edd9370ac or exact SHA-bound part-plus-ledger artifacts",
+  "evidence_package": "audit_packages/unreachable_S4SD-0078_0107.a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb.json",
+  "evidence_package_sha256": "a2ee6235ca6494da4967e53f4ed622f23282270209514b77c603f4f9dd426bdb",
+  "counted_complete": false,
+  "coverage": 78,
+  "strict_candidates": 0
+}
