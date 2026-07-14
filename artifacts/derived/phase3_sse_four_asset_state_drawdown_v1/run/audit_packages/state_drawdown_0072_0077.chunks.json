@@ -5,8 +5,12 @@
   "archive_sha256": "8be5ff4ef073adf84573f8f8becf01746f606df7eb2e677cac146aeb23760c90",
   "reassembly": "concatenate parts in lexical order",
   "parts": [
-    {"path": "state_drawdown_0072_0077.tar.gz.part-00", "bytes": 2000000, "sha256": "18a41a94074887ade05d1b9de4914c7ddecaeff869ad91a37b5f30137e5b6eca"},
-    {"path": "state_drawdown_0072_0077.tar.gz.part-01", "bytes": 2000000, "sha256": "d5f3ba4b75bf4cfd21dd24e7640379a86c747fa031ab56294311966b7a0dc357"},
-    {"path": "state_drawdown_0072_0077.tar.gz.part-02", "bytes": 434003, "sha256": "06c6dc09b9cc84694489147824e2dee43d22f8db809e02e2e872617a97f6127b"}
+    {"path": "state_drawdown_0072_0077.tar.gz.part-00", "bytes": 700000, "sha256": "ee3bfdf0187473046c0a9afef21dd41da5ce049695d32c4bbdac59b127d93245"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-01", "bytes": 700000, "sha256": "8ffcbcd26d38944ae6dcfcb8e63d6ea637f844ca7ba8a0aecc2691fc871d2e30"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-02", "bytes": 700000, "sha256": "16ca689d3f6e50248f7fddbe17ef67d30cf8d36158f9d6b20819b4449bfebc82"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-03", "bytes": 700000, "sha256": "a917d12b2fc2212ec23a11753803ef9f94784e7aa22108bac9110c7bd3ccf3b4"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-04", "bytes": 700000, "sha256": "387904328e050dd8dcc77b58a1a747e7dc1c0d69690ceea5d0538d85d18e0fc1"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-05", "bytes": 700000, "sha256": "d798ca49a44dfe8dd1ec9a192becf996d2d89736889265f274ece6ccae02ec78"},
+    {"path": "state_drawdown_0072_0077.tar.gz.part-06", "bytes": 234003, "sha256": "1563b9e6c272a84424c59b84a3d66b682953218aab66b4a06746c4da15cb1749"}
   ]
 }
