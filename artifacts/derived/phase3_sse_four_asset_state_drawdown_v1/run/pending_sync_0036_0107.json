@@ -51,6 +51,22 @@
     "daily_ledger_hashes_match_frozen_manifest": true,
     "counted_complete": true
   },
+  "current_batch_attempt": {
+    "batch": "S4SD-0078..S4SD-0083",
+    "audited_remote_head": "84751425df99b1739fa5f80b9b8fbfb5673acae9",
+    "frozen_archive_bytes": 4501606,
+    "frozen_archive_sha256": "64a5a582b9809f8bc2b6d7b146f529cc49e3daf8c68aaa61641d9063557289d6",
+    "remote_reassembled_bytes": 2074468,
+    "remote_reassembled_sha256": "b15bccb4acb4d2f238225135cb8547af3e8e5d4bb584b5afc1605358413697dc",
+    "gzip_validation": "failed_invalid_compressed_data_and_unexpected_eof",
+    "expected_manifest_files": 12,
+    "manifest_files_sha256_verified": 0,
+    "archive_rechunk_max_bytes": 700000,
+    "archive_rechunk_performed": false,
+    "reason": "remote frozen archive is truncated; rechunking cannot preserve the frozen archive SHA",
+    "raw_downloaded_or_synced": false,
+    "counted_complete": false
+  },
   "reporting_gate": "fail_closed_recovery_recompute_incomplete",
   "strict_candidates": 0
 }
