@@ -78,3 +78,12 @@ uv run python scripts/build_phase2_realdata.py --config config/phase2_real_data.
 ```
 
 最后一条在当前机器上应当失败并返回 exit 2，因为真实 Phase 2 raw 表还没有下载；这是预期的门禁行为。
+
+## 2026-10-12 增量：美股 Sell Put + SGOV
+
+- 新增 `src/quant_proof/us_short_put.py`、下载/运行脚本、配置及独立账户验证测试。
+- 取得 Yahoo 标的/SGOV 日线、分红与拆股事件，记录原始及 CSV SHA256；SGOV 年回报对照 iShares 官方 2021–2025 数据。
+- SPY/QQQ/KWEB/ARKK/COIN × 三种担保/名义上限设置 × 三种假设 IV 倍数，共 45 组 **proxy_research**。
+- 未取得历史美股期权 NBBO；真实期权长期收益结论仍被阻断。规范 NBBO 路径为 `quote_based_research`，包含 provenance/hash、时间戳和持仓报价门禁。
+- 报告、精确假设及已知限制见 `docs/us_short_put_research.md` 与 `reports/us_short_put/`。不改动 CFFEX 的现金结算账户；复用已有最大回撤实现。
+- 借款 APR、SGOV 保证金比例、派息付款日、提前指派与日内强平尚未完全历史化；不外推为账户实际表现。

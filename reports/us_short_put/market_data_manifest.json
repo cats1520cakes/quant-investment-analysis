@@ -1,0 +1,68 @@
+[
+  {
+    "symbol": "SGOV",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/SGOV?range=10y&interval=1d&events=div%2Csplits",
+    "retrieved_utc": "2026-10-12T11:04:55.198730+00:00",
+    "raw_sha256": "7b0a6dd107717471948596b03be0931f4524009fe46df13d8008f903cd11473a",
+    "csv_sha256": "1af001390ca83e4f4c7612ffaf1f6e3f84716fd1f17874a14e27a6a3e913a58c",
+    "rows": 1599,
+    "first": "2020-06-01",
+    "last": "2026-10-09",
+    "boundary": "Historical underlying/ETF daily close only. Dividend timestamps are ex dates, not payable dates. No option quotes."
+  },
+  {
+    "symbol": "SPY",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=10y&interval=1d&events=div%2Csplits",
+    "retrieved_utc": "2026-10-12T11:04:55.270334+00:00",
+    "raw_sha256": "dca2e57bfcc65237b10bf7e41d51c7632db21adcdd22392a24451362cba29b6a",
+    "csv_sha256": "76186e7dcc678c0225475ebefbf1b4c02368ceab31b53c2dd9402ac47646785b",
+    "rows": 2514,
+    "first": "2016-10-10",
+    "last": "2026-10-09",
+    "boundary": "Historical underlying/ETF daily close only. Dividend timestamps are ex dates, not payable dates. No option quotes."
+  },
+  {
+    "symbol": "QQQ",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/QQQ?range=10y&interval=1d&events=div%2Csplits",
+    "retrieved_utc": "2026-10-12T11:04:55.179964+00:00",
+    "raw_sha256": "e3aee0b484d6dc1a0403284ec57231309f5b0795fab825f0023e5819e4da76c3",
+    "csv_sha256": "78acbcaa76214bb19a54d9b313a962d1bf2fc70fba049a16e4bf627fbf2482df",
+    "rows": 2514,
+    "first": "2016-10-10",
+    "last": "2026-10-09",
+    "boundary": "Historical underlying/ETF daily close only. Dividend timestamps are ex dates, not payable dates. No option quotes."
+  },
+  {
+    "symbol": "KWEB",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/KWEB?range=10y&interval=1d&events=div%2Csplits",
+    "retrieved_utc": "2026-10-12T11:05:06.835632+00:00",
+    "raw_sha256": "78a7d75756d5c0fc5c69048a6052162781a3c57b9280397821f183bddc6c61a8",
+    "csv_sha256": "497a4c1f38b0c847bfdb7b2fe0392edb445b939c34275a195ed4e480822fc4bc",
+    "rows": 2514,
+    "first": "2016-10-10",
+    "last": "2026-10-09",
+    "boundary": "Historical underlying/ETF daily close only. Dividend timestamps are ex dates, not payable dates. No option quotes."
+  },
+  {
+    "symbol": "ARKK",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/ARKK?range=10y&interval=1d&events=div%2Csplits",
+    "retrieved_utc": "2026-10-12T11:05:06.764494+00:00",
+    "raw_sha256": "c91d558cb8d25debe1dd6c1ed6992ed4e4c296ba725b839005f6086d4fc7a202",
+    "csv_sha256": "14e208bafd14fc454a5e43cb94283511faac79b0906482b3e3c63159e3b6da52",
+    "rows": 2514,
+    "first": "2016-10-10",
+    "last": "2026-10-09",
+    "boundary": "Historical underlying/ETF daily close only. Dividend timestamps are ex dates, not payable dates. No option quotes."
+  },
+  {
+    "symbol": "COIN",
+    "url": "https://query1.finance.yahoo.com/v8/finance/chart/COIN?range=10y&interval=1d&events=div%2Csplits",
+    "retrieved_utc": "2026-10-12T11:05:06.745155+00:00",
+    "raw_sha256": "20f0c3224b6bb0e157e75b072930cd77e52272970bbd95b898466ac31938faee",
+    "csv_sha256": "4a873b5b5e633f48bde59ed2a8cce248ea06f85428f66097302803af4cb2c0b7",
+    "rows": 1380,
+    "first": "2021-04-14",
+    "last": "2026-10-09",
+    "boundary": "Historical underlying/ETF daily close only. Dividend timestamps are ex dates, not payable dates. No option quotes."
+  }
+]
