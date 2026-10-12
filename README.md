@@ -153,3 +153,13 @@ uv run pytest -q
 ```
 
 这不是投资建议，也不证明某个策略可以实盘稳定达到目标。工程目标是把目标约束转成可复验的筛选实验，系统寻找哪些操作族在真实数据、真实约束和压力场景下更接近目标。
+
+## US Sell Put + SGOV research
+
+增量模块与证据边界：[研究说明](docs/us_short_put_research.md)；
+[45 组历史现货路径 + 参数化 Put 比较](reports/us_short_put/report.md)；
+[完整参数、来源 SHA256、盈亏分解与压力结果](reports/us_short_put/results.json)。
+
+真实期权链尚未取得。当前结果归类为 `proxy_research`，不能作为美股真实期权收益排名。
+提供规范历史 NBBO 后可运行 `quote_based_research`，缺失持仓报价时失败，禁止代理价格回填。
+不修改或重跑现有 A 股实验。

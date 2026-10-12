@@ -1,0 +1,26 @@
+{
+  "start": "2021-04-15",
+  "end": "2025-12-31",
+  "symbols": ["SPY", "QQQ", "KWEB", "ARKK", "COIN"],
+  "initial_equity": 100000,
+  "target_delta": 0.2,
+  "dte": 30,
+  "assignment_hold_days": 5,
+  "borrow_apr": 0.065,
+  "iv_multipliers": [1.0, 1.2, 1.5],
+  "sgov_margin_rate": 0.25,
+  "house_factor": 1.0,
+  "spread_fraction": 0.05,
+  "withholding_rate": 0.0,
+  "cash_apr": 0.0,
+  "quote_age_minutes": 30,
+  "margin_budget": 0.25,
+  "margin_notional_cap": 2.0,
+  "official_sgov_calendar_total_returns": {
+    "2021": 0.0002,
+    "2022": 0.0158,
+    "2023": 0.0513,
+    "2024": 0.0528,
+    "2025": 0.0424
+  }
+}
